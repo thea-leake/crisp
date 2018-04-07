@@ -1,6 +1,5 @@
 /*
  * Thea's Lisp
- * BSD 3 License
  * Implemented foloowing Build Your Own Lisp - http://www.buildyourownlisp.com/
  * Thea Leake
  * https://github.com/thea-leake/build_a_lisp
@@ -23,11 +22,11 @@ int main(int argc, char** argv) {
     mpc_parser_t* Lispy = mpc_new("lispy");
 
     mpca_lang(MPCA_LANG_DEFAULT,
-        "                                                     \
-            number:   /-?[0-9]+/ ;                            \
-            operator: '+' | '-' | '*' | '\' ;                 \
-            expr:     <number> | '(' <operator> <expr>+ ')' ; \
-            lispy:    /^/ <operator> <expr>+ /$/ ;            \
+        "                                                        \
+            number:   /-?[0-9]+/ ;                               \
+            operator: '+' | '-' | '*' | '/' | '%' ;              \
+            expr:     <number> | '('<operator> <expr>+ ')' ;     \
+            lispy:    /^/<operator> <expr>+/$/ | /^/<expr>/$/ ;  \
         ",
         Number, Operator, Expr, Lispy
     );
@@ -38,7 +37,15 @@ int main(int argc, char** argv) {
 
         add_history(input);
 
-        printf("No you're a %s\n", input);
+        mpc_result_t r;
+        if (mpc_parse("<stdin>", input, Lispy, &r)){
+            // print AST
+            mpc_ast_print(r.output);
+            mpc_ast_delete(r.output);
+        } else {
+            mpc_err_print(r.error);
+            mpc_err_delete(r.error);
+        }
 
         free(input);
 
