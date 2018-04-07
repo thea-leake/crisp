@@ -1,3 +1,7 @@
+DEP_DIRS = ./deps
+C_SRC_FILES =parsing.c deps/mpc/mpc.c
+LINK_LIB_FLAGS = -ledit -lm
+
 deps:
 	clib install orangeduck/mpc
 
@@ -6,9 +10,9 @@ cleandeps:
 
 all: clean  build
 
-build: prompt.c
+build: parsing.c
 	mkdir -p bin
-	gcc -I ./deps --std=c99 -Wall prompt.c -ledit -o bin/prompt
+	gcc -I $(DEP_DIRS) --std=c99 -Wall $(C_SRC_FILES)  $(LINK_LIB_FLAGS) -o bin/parsing
 
 clean:
 	rm -rf bin/
