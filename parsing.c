@@ -16,20 +16,29 @@ int main(int argc, char** argv) {
     printf("Lispy version 0.0.0.0.1, Starting args: %d %p\n", argc, argv);
     puts("To exit type ctrl-c");
 
+    mpc_parser_t* Integer = mpc_new("integer");
+    mpc_parser_t* Float = mpc_new("float");
     mpc_parser_t* Number = mpc_new("number");
-    mpc_parser_t* Operator = mpc_new("operator");
+    mpc_parser_t* String = mpc_new("string");
+    mpc_parser_t* Symbols = mpc_new("symbols");
+    mpc_parser_t* Keywords = mpc_new("keywords");
+    mpc_parser_t* Builtin = mpc_new("builtin");
     mpc_parser_t* Expr = mpc_new("expr");
     mpc_parser_t* Lispy = mpc_new("lispy");
 
     mpca_lang(MPCA_LANG_DEFAULT,
-        "                                                        \
-            number: /-?[0-9]+\\.[0-9]+/ | /-?[0-9]+/  ;          \
-            operator: '+' | '-' | '*' | '/' | '%' | /add/ |      \
-                /sub/ | /div/ | /mod/ ;                          \
-            expr:     <number> | '('<operator> <expr>+ ')' ;     \
-            lispy:    /^/<operator> <expr>+/$/ | /^/<expr>/$/ ;  \
+        "                                                                  \
+            integer: /-?[0-9]+/                                          ; \
+            float: /-?[0-9]+\\.[0-9]+/                                   ; \
+            number: <float> | <integer>                                  ; \
+            string: /\"(\\\\.|[^\"])*\"/                                 ; \
+            symbols: '+' | '-' | '*' | '/' | '%'                         ; \
+            keywords: /add/ | /sub/ | /div/ | /mod/                      ; \
+            builtin: <symbols> | <keywords>                              ; \
+            expr:     <number> | <string> | '('<builtin> <expr>+ ')'     ; \
+            lispy:    /^/<builtin> <expr>+/$/ | /^/<expr>/$/             ; \
         ",
-        Number, Operator, Expr, Lispy
+        Integer, Float, Number, String,  Symbols, Keywords, Builtin, Expr, Lispy
     );
 
     // infinite read eval print loop
@@ -53,6 +62,9 @@ int main(int argc, char** argv) {
     }
 
     // clean up our parsers from memory
-    mpc_cleanup(4, Number, Operator, Expr, Lispy);
+    mpc_cleanup(
+        9,
+        Integer, Float, Number, String,  Symbols, Keywords, Builtin, Expr, Lispy
+    );
     return 0;
 }
