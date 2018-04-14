@@ -10,6 +10,51 @@
 #include <mpc/mpc.h>
 #include <editline/readline.h>
 
+typedef struct {
+    int type;
+    int num_int;
+    long num_long;
+    char* str;
+    char* sym;
+    char* err;
+} lval ;
+
+enum { LVAL_NUM_INT, LVAL_NUM_LONG, LVAL_STR, LVAL_SYMBOL, LVAL_ERR };
+
+lval lval_num_int(int x){
+    lval v;
+    v.type = LVAL_NUM_INT;
+    v.num_int = x;
+    return v;
+}
+
+lval lval_num_long(int x){
+    lval v;
+    v.type = LVAL_NUM_LONG;
+    v.num_long = x;
+    return v;
+}
+
+lval lval_str(char* x){
+    lval v;
+    v.type = LVAL_STR;
+    v.str = x;
+    return v;
+}
+
+lval lval_sym(char* x){
+    lval v;
+    v.type = LVAL_SYMBOL;
+    v.sym = x;
+    return v;
+}
+
+lval lval_err(char* x){
+    lval v;
+    v.type = LVAL_ERR;
+    v.err = x;
+    return v;
+}
 
 int main(int argc, char** argv) {
     // Version and exit information
