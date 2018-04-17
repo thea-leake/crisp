@@ -69,6 +69,54 @@ lval eval(mpc_ast_t* t){
     return lval_err("undefined type");
 }
 
+void print_str(char* s) {
+    char* escaped = malloc(strlen(s)+1);
+    strcpy(escaped, s);
+    escaped = mpcf_escape(escaped);
+    printf("\"%s\"\n", escaped);
+    free(escaped);
+}
+
+void print_lval_str(lval *v) {
+    print_str(v->str);
+}
+
+void print_lval_err(lval* v) {
+    print_str(v->err);
+}
+
+void print_lval_sym(lval* v){
+    print_str(v->sym);
+}
+
+void print_lval_int(lval* v) {
+    printf("%i\n", v->num_int);
+}
+
+void print_lval_float(lval* v) {
+    printf("%f\n", v->num_float);
+}
+
+void print_lval(lval* v){
+    switch(v->type) {
+    case LVAL_ERR:
+        print_lval_err(v);
+        break;
+    case LVAL_STR:
+        print_lval_str(v);
+        break;
+    case LVAL_SYMBOL:
+        print_lval_sym(v);
+        break;
+    case LVAL_NUM_INT:
+        print_lval_int(v);
+        break;
+    case LVAL_NUM_FLOAT:
+        print_lval_float(v);
+        break;
+    }
+}
+
 int main(int argc, char** argv) {
     // Version and exit information
     printf("Lispy version 0.0.0.0.1, Starting args: %d %p\n", argc, argv);
@@ -109,7 +157,7 @@ int main(int argc, char** argv) {
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
             lval result = eval(r.output);
-            printf("%d \n", result.num_int);
+            print_lval(&result);
             mpc_ast_delete(r.output);
         } else {
             mpc_err_print(r.error);
