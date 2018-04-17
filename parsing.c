@@ -13,13 +13,13 @@
 typedef struct {
     int type;
     int num_int;
-    long num_long;
+    float num_float;
     char* str;
     char* sym;
     char* err;
 } lval ;
 
-enum { LVAL_NUM_INT, LVAL_NUM_LONG, LVAL_STR, LVAL_SYMBOL, LVAL_ERR };
+enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYMBOL, LVAL_ERR };
 
 lval lval_num_int(int x){
     lval v;
@@ -28,10 +28,10 @@ lval lval_num_int(int x){
     return v;
 }
 
-lval lval_num_long(int x){
+lval lval_num_float(float x){
     lval v;
-    v.type = LVAL_NUM_LONG;
-    v.num_long = x;
+    v.type = LVAL_NUM_FLOAT;
+    v.num_float = x;
     return v;
 }
 
@@ -54,6 +54,19 @@ lval lval_err(char* x){
     v.type = LVAL_ERR;
     v.err = x;
     return v;
+}
+
+lval eval(mpc_ast_t* t){
+    if (strstr(t->tag, "string")){
+        return lval_str(t->contents);
+    }
+    if (strstr(t->tag, "float")) {
+        return lval_num_int(atof(t->contents));
+    }
+    if (strstr(t->tag, "integer")) {
+        return lval_num_int(atoi(t->contents));
+    }
+    return lval_err("undefined type");
 }
 
 int main(int argc, char** argv) {
@@ -95,7 +108,8 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
-            mpc_ast_print(r.output);
+            lval result = eval(r.output);
+            printf("%d \n", result.num_int);
             mpc_ast_delete(r.output);
         } else {
             mpc_err_print(r.error);
