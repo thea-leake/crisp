@@ -21,6 +21,22 @@ typedef struct {
 
 enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYMBOL, LVAL_ERR };
 
+lval sum(mpc_ast_t* t);
+lval eval(mpc_ast_t* t);
+lval eval_func(char* f, mpc_ast_t* t);
+lval lval_num_int(int x);
+lval lval_num_float(float x);
+lval lval_str(char* x);
+lval lval_sym(char* x);
+lval lval_err(char* x);
+void print_lval_str(lval *v);
+void print_lval_err(lval* v);
+void print_lval_sym(lval* v);
+void print_lval_int(lval* v);
+void print_lval_float(lval* v);
+void print_lval(lval* v);
+
+
 lval lval_num_int(int x){
     lval v;
     v.type = LVAL_NUM_INT;
@@ -104,6 +120,7 @@ void print_lval(lval* v){
     }
 }
 
+
 lval eval(mpc_ast_t* t){
     printf("Num children is %d", t->children_num);
     if ( t->children_num > 0){
@@ -130,7 +147,34 @@ lval eval(mpc_ast_t* t){
         print_lval_int(&v);
         return v;
     }
+    if (strstr(t->tag, "symbols")){
+        lval v = lval_sym(t->contents);
+        print_lval_sym(&v);
+        lval evaluated = eval_func(v.sym, t);
+        return evaluated;
+
+    }
     return lval_err("undefined type");
+}
+
+lval sum(mpc_ast_t* t){
+    lval init_val = eval(t);
+    if (init_val.type == LVAL_ERR || t->children_num == 0){
+        return (init_val);
+    }
+    float accum = init_val.num_int;
+    for (int i=1; i<=t->children_num; i++){
+        lval tmp = eval(t->children[i]);
+        accum += tmp.num_int;
+    }
+    return lval_num_int(accum);
+}
+
+lval eval_func(char* f, mpc_ast_t* t){
+    if (strcmp("+", f) == 0){
+        return sum(t);
+    }
+    return lval_err("func undefined");
 }
 
 int main(int argc, char** argv) {
