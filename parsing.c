@@ -56,19 +56,6 @@ lval lval_err(char* x){
     return v;
 }
 
-lval eval(mpc_ast_t* t){
-    if (strstr(t->tag, "string")){
-        return lval_str(t->contents);
-    }
-    if (strstr(t->tag, "float")) {
-        return lval_num_int(atof(t->contents));
-    }
-    if (strstr(t->tag, "integer")) {
-        return lval_num_int(atoi(t->contents));
-    }
-    return lval_err("undefined type");
-}
-
 void print_str(char* s) {
     char* escaped = malloc(strlen(s)+1);
     strcpy(escaped, s);
@@ -117,6 +104,35 @@ void print_lval(lval* v){
     }
 }
 
+lval eval(mpc_ast_t* t){
+    printf("Num children is %d", t->children_num);
+    if ( t->children_num > 0){
+        for (int i = 0; i <= t->children_num; i++){
+            printf("Iterating through node %d", i);
+            lval tmp = eval(t->children[i]);
+            if (tmp.type != LVAL_ERR) {
+                return tmp;
+            }
+        }
+    }
+    if (strstr(t->tag, "string")){
+        lval v = lval_str(t->contents);
+        print_lval_str(&v);
+        return v;
+    }
+    if (strstr(t->tag, "float")) {
+        lval v = lval_num_int(atof(t->contents));
+        print_lval_float(&v);
+        return v;
+    }
+    if (strstr(t->tag, "integer")) {
+        lval v = lval_num_int(atoi(t->contents));
+        print_lval_int(&v);
+        return v;
+    }
+    return lval_err("undefined type");
+}
+
 int main(int argc, char** argv) {
     // Version and exit information
     printf("Lispy version 0.0.0.0.1, Starting args: %d %p\n", argc, argv);
@@ -156,6 +172,7 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
+            mpc_ast_print(r.output);
             lval result = eval(r.output);
             print_lval(&result);
             mpc_ast_delete(r.output);
