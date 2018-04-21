@@ -233,16 +233,16 @@ int main(int argc, char** argv) {
     mpc_parser_t* Lispy = mpc_new("lispy");
 
     mpca_lang(MPCA_LANG_DEFAULT,
-        "                                                                  \
-            integer: /-?[0-9]+/                                          ; \
-            float: /-?[0-9]+\\.[0-9]+/                                   ; \
-            number: <float> | <integer>                                  ; \
-            string: /\"(\\\\.|[^\"])*\"/                                 ; \
-            symbols: '+' | '-' | '*' | '/' | '%'                         ; \
-            keywords: /add/ | /sub/ | /div/ | /mod/                      ; \
-            builtin: <symbols> | <keywords>                              ; \
-            expr:     <number> | <string> | '('<builtin> <expr>+ ')'     ; \
-            lispy:    /^/<builtin> <expr>+/$/ | /^/<expr>/$/             ; \
+        "                                                                    \
+            integer:  /-?[0-9]+/                                           ; \
+            float:    /-?[0-9]+\\.[0-9]+/                                  ; \
+            number:   <float> | <integer>                                  ; \
+            string:   /\"(\\\\.|[^\"])*\"/                                 ; \
+            symbols:  '+' | '-' | '*' | '/' | '%'                          ; \
+            keywords: /add/ | /sub/ | /div/ | /mod/                        ; \
+            builtin:  <symbols> | <keywords>                               ; \
+            expr:     <number> | <string> | '('<builtin> <expr>+ ')'       ; \
+            lispy:    /^/ <builtin> <expr>+/$/ | /^/<expr> | <builtin> /$/ ; \
         ",
         Integer, Float, Number, String,  Symbols, Keywords, Builtin, Expr, Lispy
     );
