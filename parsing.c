@@ -156,6 +156,9 @@ lval eval(mpc_ast_t* t){
                 accum_count++;
             }
         }
+        if (accum_count <= 1){
+            return accum[0];
+        }
         return eval_func(accum, accum_count);
     }
     return lval_err("undefined type");
@@ -192,6 +195,8 @@ lval eval_func(lval v[], int expr_ct){
     if (strcmp("+", func.sym) == 0){
         return sum(v, expr_ct);
     }
+    print_lval(&func);
+    printf("exr ct is %d", expr_ct);
     return lval_err("func undefined\n");
 }
 
