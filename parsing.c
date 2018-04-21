@@ -122,36 +122,31 @@ void print_lval(lval* v){
 
 
 lval eval(mpc_ast_t* t){
-    printf("Num children is %d\n", t->children_num);
+    // printf("Num children is %d\n", t->children_num);
     if (strstr(t->tag, "string")){
         lval v = lval_str(t->contents);
-        print_lval_str(&v);
         return v;
     }
     if (strstr(t->tag, "float")) {
-        lval v = lval_num_int(atof(t->contents));
-        print_lval_float(&v);
+        lval v = lval_num_float(atof(t->contents));
         return v;
     }
     if (strstr(t->tag, "integer")) {
         lval v = lval_num_int(atoi(t->contents));
-        print_lval_int(&v);
         return v;
     }
     if (strstr(t->tag, "builtin")){
         lval v = lval_sym(t->contents);
-        print_lval_sym(&v);
         return v;
     }
     if ( t->children_num > 0){
         lval accum[t->children_num];
         int accum_count = 0;
         for (int i = 0; i < t->children_num; i++){
-            printf("Iterating through node %d\n", i);
+            // printf("Iterating through node %d\n", i);
             lval tmp = eval(t->children[i]);
             if (tmp.type != LVAL_ERR) {
-                printf("adding to expr accum\n");
-                print_lval(&tmp);
+                // printf("adding to expr accum\n");
                 accum[accum_count] = tmp;
                 accum_count++;
             }
@@ -165,38 +160,60 @@ lval eval(mpc_ast_t* t){
 }
 
 lval sum(lval v[], int expr_ct){
-    printf("Starting sum\n");
+    // printf("Starting sum\n");
     int func_index = 0;
     int init_index = func_index + 1;
     int iter_start = init_index + 1;
     if (expr_ct == 1){
         return v[0];
     }
+    // return additive operator as it has no operands
     lval init_val = v[1];
     if (init_val.type == LVAL_ERR || expr_ct == 2){
+        // return only operative, as there is nothing given to add to it
         return (init_val);
     }
 
-    int accum = init_val.num_int;
+    int is_int;
+    float accum;
+    if (init_val.type == LVAL_NUM_INT){
+        is_int = 0;
+        accum = init_val.num_int;
+    } else {
+        is_int = 1;
+        accum = init_val.num_float;
+    }
+
     for (int i=iter_start; i<=expr_ct; i++){
         lval tmp = v[i];
         if (tmp.type == LVAL_NUM_INT){
             accum += tmp.num_int;
         }
-        printf("Acummulted total so far is: %d\n", accum);
+        else  if (tmp.type == LVAL_NUM_FLOAT) {
+            accum += tmp.num_float;
+            is_int = 1;
+            // printf("Setting type float\n");
+        }
+        // printf("Acummulted total so far is: %f\n", accum);
     }
-    printf("Sum total is: %d\n", accum);
-    return lval_num_int(accum);
+    // printf("is int: %d\n", is_int);
+    if (is_int == 0){
+        int s = (int) accum;
+        // printf("Sum int total is: %d\n", s);
+        return lval_num_int(s);
+    }
+    // printf("Sum float total is: %f\n", accum);
+    return lval_num_float(accum);
 }
 
 lval eval_func(lval v[], int expr_ct){
-    printf("running eval func\n");
+    // printf("running eval func\n");
     lval func = v[0];
     if (strcmp("+", func.sym) == 0){
         return sum(v, expr_ct);
     }
-    print_lval(&func);
-    printf("exr ct is %d", expr_ct);
+    // print_lval(&func);
+    // printf("exr ct is %d", expr_ct);
     return lval_err("func undefined\n");
 }
 
@@ -239,7 +256,7 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
-            mpc_ast_print(r.output);
+            // mpc_ast_print(r.output);
             lval result = eval(r.output);
             print_lval(&result);
             mpc_ast_delete(r.output);

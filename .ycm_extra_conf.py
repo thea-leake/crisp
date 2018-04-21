@@ -2,6 +2,6 @@
 def FlagsForFile(*args, **kwargs):
     return {
         'flags': [
-            '-x', 'c', '-I', './deps', '-Wall', 'parsing.c', 'deps/mpc/mpc.c', '-Wextra', '-Werror'
+            '-x', 'c', 'std', 'c99', '-I', './deps', '-Wall', 'parsing.c', 'deps/mpc/mpc.c', '-Wextra', '-Werror'
             ],
     }
