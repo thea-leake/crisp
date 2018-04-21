@@ -12,35 +12,18 @@ Places interpreter in ```bin/lispy```
 Example usage:
 ```
 build_a_lisp $ ./bin/lispy
-Lispy version 0.0.0.0.1, Starting args: 1 0x7ffee55affa8
+Lispy version 0.0.0.0.1, Starting args: 1 0x7ffeec001fa8
 To exit type ctrl-c
-lispy> +
-"+"
-lispy> -
-"-"
-lispy> %
-"%"
-lispy> /
-"/"
-lispy> *
-"*"
-lispy> add
-"add"
-lispy> sub
-"sub"
-lispy> undefexpr
-<stdin>:1:1: error: expected '+', '-', '*', '/', '%', 'a', 's', 'd', 'm', one or more of one of '0123456789', '"' or '(' at 'u'
-lispy> "itsastr"
-"\"itsastr\""
 lispy> 1
 1
-lispy> + 1 2
-3
-lispy> + 1
+lispy> "rar"
+"\"rar\""
+lispy> *
+"*"
+lispy> / 5 (- 4 2) 1 ( * (* 2 2) 2)
+0.312500
+lispy> (% 5 2)
 1
-lispy> (+ 1 ( + 1 3))
+lispy> / 10 2
 5
-lispy> + 1 (+ 1 ( + 1 3.5 (+ 1 2 3)))
-12.500000
-lispy>
 ```
