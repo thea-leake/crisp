@@ -21,9 +21,9 @@ typedef struct {
 
 enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYMBOL, LVAL_ERR };
 
-lval sum(mpc_ast_t* t);
+lval sum(lval v[], int expr_ct);
 lval eval(mpc_ast_t* t);
-lval eval_func(char* f, mpc_ast_t* t);
+lval eval_func(lval v[], int expr_ct);
 lval lval_num_int(int x);
 lval lval_num_float(float x);
 lval lval_str(char* x);
@@ -122,14 +122,18 @@ void print_lval(lval* v){
 
 
 lval eval(mpc_ast_t* t){
-    printf("Num children is %d", t->children_num);
+    printf("Num children is %d\n", t->children_num);
     if ( t->children_num > 0){
         for (int i = 0; i <= t->children_num; i++){
-            printf("Iterating through node %d", i);
+            printf("Iterating through node %d\n", i);
             lval tmp = eval(t->children[i]);
+            lval accum[t->children_num];
+            int accum_count = 0;
             if (tmp.type != LVAL_ERR) {
-                return tmp;
+                accum[accum_count] = tmp;
+                accum_count++;
             }
+            return eval_func(accum, accum_count);
         }
     }
     if (strstr(t->tag, "string")){
@@ -147,34 +151,41 @@ lval eval(mpc_ast_t* t){
         print_lval_int(&v);
         return v;
     }
-    if (strstr(t->tag, "symbols")){
+    if (strstr(t->tag, "builtin")){
         lval v = lval_sym(t->contents);
         print_lval_sym(&v);
-        lval evaluated = eval_func(v.sym, t);
-        return evaluated;
-
+        return v;
     }
     return lval_err("undefined type");
 }
 
-lval sum(mpc_ast_t* t){
-    lval init_val = eval(t);
-    if (init_val.type == LVAL_ERR || t->children_num == 0){
+lval sum(lval v[], int expr_ct){
+    printf("Starting sum\n");
+    int func_index = 0;
+    int init_index = func_index + 1;
+    int iter_start = init_index + 1;
+    if (expr_ct == 1){
+        return v[0];
+    }
+    lval init_val = v[1];
+    if (init_val.type == LVAL_ERR || expr_ct == 2){
         return (init_val);
     }
-    float accum = init_val.num_int;
-    for (int i=1; i<=t->children_num; i++){
-        lval tmp = eval(t->children[i]);
+    int accum = init_val.num_int;
+    for (int i=iter_start; i<=expr_ct; i++){
+        lval tmp = v[i];
         accum += tmp.num_int;
     }
     return lval_num_int(accum);
 }
 
-lval eval_func(char* f, mpc_ast_t* t){
-    if (strcmp("+", f) == 0){
-        return sum(t);
+lval eval_func(lval v[], int expr_ct){
+    printf("running eval func\n");
+    lval func = v[0];
+    if (strcmp("+", func.sym) == 0){
+        return sum(v, expr_ct);
     }
-    return lval_err("func undefined");
+    return lval_err("func undefined\n");
 }
 
 int main(int argc, char** argv) {
