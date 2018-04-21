@@ -206,6 +206,51 @@ lval eval_func(lval v[], int expr_ct){
                 // printf("Setting type float\n");
             }
 
+        } else if (strcmp("-", func.func) == 0 || strcmp("sub", func.func) == 0){
+            if (tmp.type == LVAL_NUM_INT){
+                accum = accum - tmp.num_int ;
+            }
+            else  if (tmp.type == LVAL_NUM_FLOAT) {
+                accum = accum - tmp.num_float;
+                is_int = 1;
+                // printf("Setting type float\n");
+            }
+        } else if (strcmp("/", func.func) == 0 || strcmp("div", func.func) == 0){
+            if (tmp.type == LVAL_NUM_INT){
+                if (tmp.num_int == 0){
+                    return lval_err("cannot divide by int 0");
+                }
+                int accum_int = (int) accum;
+                if ((accum_int % tmp.num_int) != 0) {
+                    is_int = 1;
+                }
+                accum = accum / tmp.num_int ;
+            }
+            else  if (tmp.type == LVAL_NUM_FLOAT) {
+                if (tmp.num_float == 0){
+                    return lval_err("cannot divide by flt 0");
+                }
+                accum = accum / tmp.num_float;
+                is_int = 1;
+                // printf("Setting type float\n");
+            }
+        } else if (strcmp("%", func.func) == 0 || strcmp("mod", func.func) == 0){
+            int accum_int = (int) accum;
+            if (tmp.type == LVAL_NUM_INT){
+                if (tmp.num_int == 0){
+                    return lval_err("cannot mod 0");
+                }
+                accum = accum_int % tmp.num_int ;
+            }
+            else  if (tmp.type == LVAL_NUM_FLOAT) {
+                if (tmp.num_float == 0){
+                    return lval_err("cannot mod 0");
+                }
+                int tmp_int = (int) tmp.num_float;
+                accum = accum_int % tmp_int;
+                is_int = 1;
+                // printf("Setting type float\n");
+            }
         } else {
             return lval_err("func undefined\n");
         }
