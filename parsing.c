@@ -196,6 +196,16 @@ lval eval_func(lval v[], int expr_ct){
                 is_int = 1;
                 // printf("Setting type float\n");
             }
+        } else if (strcmp("*", func.func) == 0 || strcmp("mul", func.func) == 0){
+            if (tmp.type == LVAL_NUM_INT){
+                accum = tmp.num_int * accum;
+            }
+            else  if (tmp.type == LVAL_NUM_FLOAT) {
+                accum = tmp.num_float * accum;
+                is_int = 1;
+                // printf("Setting type float\n");
+            }
+
         } else {
             return lval_err("func undefined\n");
         }
@@ -233,7 +243,7 @@ int main(int argc, char** argv) {
             number:   <float> | <integer>                                  ; \
             string:   /\"(\\\\.|[^\"])*\"/                                 ; \
             symbols:  '+' | '-' | '*' | '/' | '%'                          ; \
-            keywords: /add/ | /sub/ | /div/ | /mod/                        ; \
+            keywords: /add/ | /sub/ | /mul/ | /div/ | /mod/                ; \
             builtin:  <symbols> | <keywords>                               ; \
             expr:     <number> | <string> | '('<builtin> <expr>+ ')'       ; \
             lispy:    /^/ <builtin> <expr>+/$/ | /^/<expr> | <builtin> /$/ ; \
