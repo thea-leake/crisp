@@ -15,11 +15,11 @@ typedef struct {
     int num_int;
     float num_float;
     char* str;
-    char* sym;
+    char* func;
     char* err;
 } lval ;
 
-enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYMBOL, LVAL_ERR };
+enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR };
 
 lval sum(lval v[], int expr_ct);
 lval eval(mpc_ast_t* t);
@@ -27,11 +27,11 @@ lval eval_func(lval v[], int expr_ct);
 lval lval_num_int(int x);
 lval lval_num_float(float x);
 lval lval_str(char* x);
-lval lval_sym(char* x);
+lval lval_func(char* x);
 lval lval_err(char* x);
 void print_lval_str(lval *v);
 void print_lval_err(lval* v);
-void print_lval_sym(lval* v);
+void print_lval_fun(lval* v);
 void print_lval_int(lval* v);
 void print_lval_float(lval* v);
 void print_lval(lval* v);
@@ -58,10 +58,10 @@ lval lval_str(char* x){
     return v;
 }
 
-lval lval_sym(char* x){
+lval lval_func(char* x){
     lval v;
-    v.type = LVAL_SYMBOL;
-    v.sym = x;
+    v.type = LVAL_FUNC;
+    v.func = x;
     return v;
 }
 
@@ -88,8 +88,8 @@ void print_lval_err(lval* v) {
     print_str(v->err);
 }
 
-void print_lval_sym(lval* v){
-    print_str(v->sym);
+void print_lval_func(lval* v){
+    print_str(v->func);
 }
 
 void print_lval_int(lval* v) {
@@ -108,8 +108,8 @@ void print_lval(lval* v){
     case LVAL_STR:
         print_lval_str(v);
         break;
-    case LVAL_SYMBOL:
-        print_lval_sym(v);
+    case LVAL_FUNC:
+        print_lval_func(v);
         break;
     case LVAL_NUM_INT:
         print_lval_int(v);
@@ -136,7 +136,7 @@ lval eval(mpc_ast_t* t){
         return v;
     }
     if (strstr(t->tag, "builtin")){
-        lval v = lval_sym(t->contents);
+        lval v = lval_func(t->contents);
         return v;
     }
     if ( t->children_num > 0){
@@ -209,7 +209,7 @@ lval sum(lval v[], int expr_ct){
 lval eval_func(lval v[], int expr_ct){
     // printf("running eval func\n");
     lval func = v[0];
-    if (strcmp("+", func.sym) == 0){
+    if (strcmp("+", func.func) == 0 || strcmp("add", func.func) == 0){
         return sum(v, expr_ct);
     }
     // print_lval(&func);
