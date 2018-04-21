@@ -11,7 +11,7 @@ Places interpreter in ```bin/lispy```
 
 Example usage:
 ```
-(default) Thea Addison Leake@Theas-MacBook:build_a_lisp $ ./bin/lispy
+build_a_lisp $ ./bin/lispy
 Lispy version 0.0.0.0.1, Starting args: 1 0x7ffee55affa8
 To exit type ctrl-c
 lispy> +
