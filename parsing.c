@@ -185,7 +185,7 @@ lval eval_func(lval v[], int expr_ct){
     }
 
     lval func = v[0];
-    for (int i=iter_start; i<=expr_ct; i++){
+    for (int i=iter_start; i < expr_ct; i++){
         lval tmp = v[i];
         if (strcmp("+", func.func) == 0 || strcmp("add", func.func) == 0){
             if (tmp.type == LVAL_NUM_INT){
@@ -259,10 +259,10 @@ lval eval_func(lval v[], int expr_ct){
     // printf("is int: %d\n", is_int);
     if (is_int == 0){
         int s = (int) accum;
-        // printf("Sum int total is: %d\n", s);
+        // printf("Accumulated int total is: %d\n", s);
         return lval_num_int(s);
     }
-    // printf("Sum float total is: %f\n", accum);
+    // printf("Accumulated float total is: %f\n", accum);
     return lval_num_float(accum);
 }
 
