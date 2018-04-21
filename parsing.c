@@ -159,7 +159,7 @@ lval eval(mpc_ast_t* t){
     return lval_err("undefined type");
 }
 
-lval sum(lval v[], int expr_ct){
+lval eval_func(lval v[], int expr_ct){
     // printf("Starting sum\n");
     int func_index = 0;
     int init_index = func_index + 1;
@@ -184,15 +184,20 @@ lval sum(lval v[], int expr_ct){
         accum = init_val.num_float;
     }
 
+    lval func = v[0];
     for (int i=iter_start; i<=expr_ct; i++){
         lval tmp = v[i];
-        if (tmp.type == LVAL_NUM_INT){
-            accum += tmp.num_int;
-        }
-        else  if (tmp.type == LVAL_NUM_FLOAT) {
-            accum += tmp.num_float;
-            is_int = 1;
-            // printf("Setting type float\n");
+        if (strcmp("+", func.func) == 0 || strcmp("add", func.func) == 0){
+            if (tmp.type == LVAL_NUM_INT){
+                accum += tmp.num_int;
+            }
+            else  if (tmp.type == LVAL_NUM_FLOAT) {
+                accum += tmp.num_float;
+                is_int = 1;
+                // printf("Setting type float\n");
+            }
+        } else {
+            return lval_err("func undefined\n");
         }
         // printf("Acummulted total so far is: %f\n", accum);
     }
@@ -204,17 +209,6 @@ lval sum(lval v[], int expr_ct){
     }
     // printf("Sum float total is: %f\n", accum);
     return lval_num_float(accum);
-}
-
-lval eval_func(lval v[], int expr_ct){
-    // printf("running eval func\n");
-    lval func = v[0];
-    if (strcmp("+", func.func) == 0 || strcmp("add", func.func) == 0){
-        return sum(v, expr_ct);
-    }
-    // print_lval(&func);
-    // printf("exr ct is %d", expr_ct);
-    return lval_err("func undefined\n");
 }
 
 int main(int argc, char** argv) {
