@@ -123,19 +123,6 @@ void print_lval(lval* v){
 
 lval eval(mpc_ast_t* t){
     printf("Num children is %d\n", t->children_num);
-    if ( t->children_num > 0){
-        for (int i = 0; i <= t->children_num; i++){
-            printf("Iterating through node %d\n", i);
-            lval tmp = eval(t->children[i]);
-            lval accum[t->children_num];
-            int accum_count = 0;
-            if (tmp.type != LVAL_ERR) {
-                accum[accum_count] = tmp;
-                accum_count++;
-            }
-            return eval_func(accum, accum_count);
-        }
-    }
     if (strstr(t->tag, "string")){
         lval v = lval_str(t->contents);
         print_lval_str(&v);
@@ -156,6 +143,21 @@ lval eval(mpc_ast_t* t){
         print_lval_sym(&v);
         return v;
     }
+    if ( t->children_num > 0){
+        lval accum[t->children_num];
+        int accum_count = 0;
+        for (int i = 0; i < t->children_num; i++){
+            printf("Iterating through node %d\n", i);
+            lval tmp = eval(t->children[i]);
+            if (tmp.type != LVAL_ERR) {
+                printf("adding to expr accum\n");
+                print_lval(&tmp);
+                accum[accum_count] = tmp;
+                accum_count++;
+            }
+        }
+        return eval_func(accum, accum_count);
+    }
     return lval_err("undefined type");
 }
 
@@ -171,11 +173,16 @@ lval sum(lval v[], int expr_ct){
     if (init_val.type == LVAL_ERR || expr_ct == 2){
         return (init_val);
     }
+
     int accum = init_val.num_int;
     for (int i=iter_start; i<=expr_ct; i++){
         lval tmp = v[i];
-        accum += tmp.num_int;
+        if (tmp.type == LVAL_NUM_INT){
+            accum += tmp.num_int;
+        }
+        printf("Acummulted total so far is: %d\n", accum);
     }
+    printf("Sum total is: %d\n", accum);
     return lval_num_int(accum);
 }
 
