@@ -12,7 +12,7 @@ all: clean  build
 
 build: parsing.c
 	mkdir -p bin
-	gcc -I $(DEP_DIRS) --std=c99 -Wall $(C_SRC_FILES)  $(LINK_LIB_FLAGS) -o bin/parsing
+	gcc -I $(DEP_DIRS) --std=c99 -Wall $(C_SRC_FILES)  $(LINK_LIB_FLAGS) -o bin/lispy
 
 clean:
 	rm -rf bin/
