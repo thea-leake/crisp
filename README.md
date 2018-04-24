@@ -3,11 +3,14 @@ Thea's Lisp implementation loosely built around  the build your own lisp book ht
 
 #Build:
 ``` make build```
-Places interpreter in ```bin/lispy```
+Builds interpreter and places it in ```bin/lispy```
 
 #Clean:
 ``` make clean```
 
+#Dependencies:
+Dependencies are stored in `deps/` and are pulled in by [clib](https://github.com/clibs/clib)
+Dependencies can be pulled in again via `make deps`, or removed w/ `make cleandeps`, though they should already be available.
 
 Example usage:
 ```
