@@ -156,6 +156,8 @@ lval eval_func(lval v[], int expr_ct){
         return mul_op(v, expr_ct);
     } else if (strcmp("/", func.func) == 0 || strcmp("div", func.func) == 0){
         return div_op(v, expr_ct);
+    } else if (strcmp("%", func.func) == 0 || strcmp("mod", func.func) == 0){
+        return mod_op(v, expr_ct);
     } else {
         return lval_err("func undefined\n");
     }
