@@ -10,25 +10,12 @@
 #include <mpc/mpc.h>
 #include <editline/readline.h>
 
-typedef struct {
-    int type;
-    int num_int;
-    float num_float;
-    char* str;
-    char* func;
-    char* err;
-} lval ;
+#include "common_types.h"
+#include "operators.h"
 
-enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR };
 
-lval sum(lval v[], int expr_ct);
 lval eval(mpc_ast_t* t);
 lval eval_func(lval v[], int expr_ct);
-lval lval_num_int(int x);
-lval lval_num_float(float x);
-lval lval_str(char* x);
-lval lval_func(char* x);
-lval lval_err(char* x);
 void print_lval_str(lval *v);
 void print_lval_err(lval* v);
 void print_lval_fun(lval* v);
@@ -160,111 +147,21 @@ lval eval(mpc_ast_t* t){
 }
 
 lval eval_func(lval v[], int expr_ct){
-    // printf("Starting sum\n");
-    int func_index = 0;
-    int init_index = func_index + 1;
-    int iter_start = init_index + 1;
-    if (expr_ct == 1){
-        return v[0];
-    }
-    // return additive operator as it has no operands
-    lval init_val = v[1];
-    if (init_val.type == LVAL_ERR || expr_ct == 2){
-        // return only operative, as there is nothing given to add to it
-        return (init_val);
-    }
-
-    int is_int;
-    float accum;
-    if (init_val.type == LVAL_NUM_INT){
-        is_int = 0;
-        accum = init_val.num_int;
-    } else {
-        is_int = 1;
-        accum = init_val.num_float;
-    }
-
     lval func = v[0];
-    for (int i=iter_start; i < expr_ct; i++){
-        lval tmp = v[i];
-        if (strcmp("+", func.func) == 0 || strcmp("add", func.func) == 0){
-            if (tmp.type == LVAL_NUM_INT){
-                accum += tmp.num_int;
-            }
-            else  if (tmp.type == LVAL_NUM_FLOAT) {
-                accum += tmp.num_float;
-                is_int = 1;
-                // printf("Setting type float\n");
-            }
-        } else if (strcmp("*", func.func) == 0 || strcmp("mul", func.func) == 0){
-            if (tmp.type == LVAL_NUM_INT){
-                accum = tmp.num_int * accum;
-            }
-            else  if (tmp.type == LVAL_NUM_FLOAT) {
-                accum = tmp.num_float * accum;
-                is_int = 1;
-                // printf("Setting type float\n");
-            }
-
-        } else if (strcmp("-", func.func) == 0 || strcmp("sub", func.func) == 0){
-            if (tmp.type == LVAL_NUM_INT){
-                accum = accum - tmp.num_int ;
-            }
-            else  if (tmp.type == LVAL_NUM_FLOAT) {
-                accum = accum - tmp.num_float;
-                is_int = 1;
-                // printf("Setting type float\n");
-            }
-        } else if (strcmp("/", func.func) == 0 || strcmp("div", func.func) == 0){
-            if (tmp.type == LVAL_NUM_INT){
-                if (tmp.num_int == 0){
-                    return lval_err("cannot divide by int 0");
-                }
-                int accum_int = (int) accum;
-                if ((accum_int % tmp.num_int) != 0) {
-                    is_int = 1;
-                }
-                accum = accum / tmp.num_int ;
-            }
-            else  if (tmp.type == LVAL_NUM_FLOAT) {
-                if (tmp.num_float == 0){
-                    return lval_err("cannot divide by flt 0");
-                }
-                accum = accum / tmp.num_float;
-                is_int = 1;
-                // printf("Setting type float\n");
-            }
-        } else if (strcmp("%", func.func) == 0 || strcmp("mod", func.func) == 0){
-            int accum_int = (int) accum;
-            if (tmp.type == LVAL_NUM_INT){
-                if (tmp.num_int == 0){
-                    return lval_err("cannot mod 0");
-                }
-                accum = accum_int % tmp.num_int ;
-            }
-            else  if (tmp.type == LVAL_NUM_FLOAT) {
-                if (tmp.num_float == 0){
-                    return lval_err("cannot mod 0");
-                }
-                int tmp_int = (int) tmp.num_float;
-                accum = accum_int % tmp_int;
-                is_int = 1;
-                // printf("Setting type float\n");
-            }
-        } else {
-            return lval_err("func undefined\n");
-        }
-        // printf("Acummulted total so far is: %f\n", accum);
+    if (strcmp("+", func.func) == 0 || strcmp("add", func.func) == 0){
+        return sum_op(v, expr_ct);
+    } else if (strcmp("-", func.func) == 0 || strcmp("sub", func.func) == 0){
+        return sub_op(v, expr_ct);
+    } else if (strcmp("*", func.func) == 0 || strcmp("mul", func.func) == 0){
+        return mul_op(v, expr_ct);
+    } else if (strcmp("/", func.func) == 0 || strcmp("div", func.func) == 0){
+        return div_op(v, expr_ct);
+    } else {
+        return lval_err("func undefined\n");
     }
-    // printf("is int: %d\n", is_int);
-    if (is_int == 0){
-        int s = (int) accum;
-        // printf("Accumulated int total is: %d\n", s);
-        return lval_num_int(s);
-    }
-    // printf("Accumulated float total is: %f\n", accum);
-    return lval_num_float(accum);
 }
+
+
 
 int main(int argc, char** argv) {
     // Version and exit information
