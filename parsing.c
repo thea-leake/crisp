@@ -14,8 +14,8 @@
 #include "operators.h"
 
 
-lval eval(mpc_ast_t* t);
-lval eval_func(lval v[], int expr_ct);
+lval* eval(mpc_ast_t* t);
+lval* eval_func(lval* v, int expr_ct);
 void print_lval_str(lval *v);
 void print_lval_err(lval* v);
 void print_lval_fun(lval* v);
@@ -24,38 +24,41 @@ void print_lval_float(lval* v);
 void print_lval(lval* v);
 
 
-lval lval_num_int(int x){
-    lval v;
-    v.type = LVAL_NUM_INT;
-    v.num_int = x;
+lval* lval_num_int(int x){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_NUM_INT;
+    v->num_int = x;
     return v;
 }
 
-lval lval_num_float(float x){
-    lval v;
-    v.type = LVAL_NUM_FLOAT;
-    v.num_float = x;
+lval* lval_num_float(float x){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_NUM_FLOAT;
+    v->num_float = x;
     return v;
 }
 
-lval lval_str(char* x){
-    lval v;
-    v.type = LVAL_STR;
-    v.str = x;
+lval* lval_str(char* x){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_STR;
+    v->str = malloc(sizeof(x) + 1);
+    strcpy(v->str, x);
     return v;
 }
 
-lval lval_func(char* x){
-    lval v;
-    v.type = LVAL_FUNC;
-    v.func = x;
+lval* lval_func(char* x){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_FUNC;
+    v->func = malloc(strlen(x) + 1);
+    strcpy(v->func, x);
     return v;
 }
 
-lval lval_err(char* x){
-    lval v;
-    v.type = LVAL_ERR;
-    v.err = x;
+lval* lval_err(char* x){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_ERR;
+    v->err = malloc(strlen(x) + 1);
+    strcpy(v->err, x);
     return v;
 }
 
@@ -67,7 +70,7 @@ void print_str(char* s) {
     free(escaped);
 }
 
-void print_lval_str(lval *v) {
+void print_lval_str(lval* v) {
     print_str(v->str);
 }
 
@@ -108,31 +111,31 @@ void print_lval(lval* v){
 }
 
 
-lval eval(mpc_ast_t* t){
+lval* eval(mpc_ast_t* t){
     // printf("Num children is %d\n", t->children_num);
     if (strstr(t->tag, "string")){
-        lval v = lval_str(t->contents);
+        lval* v = lval_str(t->contents);
         return v;
     }
     if (strstr(t->tag, "float")) {
-        lval v = lval_num_float(atof(t->contents));
+        lval* v = lval_num_float(atof(t->contents));
         return v;
     }
     if (strstr(t->tag, "integer")) {
-        lval v = lval_num_int(atoi(t->contents));
+        lval* v = lval_num_int(atoi(t->contents));
         return v;
     }
     if (strstr(t->tag, "builtin")){
-        lval v = lval_func(t->contents);
+        lval* v = lval_func(t->contents);
         return v;
     }
     if ( t->children_num > 0){
-        lval accum[t->children_num];
+        lval* accum[t->children_num];
         int accum_count = 0;
         for (int i = 0; i < t->children_num; i++){
             // printf("Iterating through node %d\n", i);
-            lval tmp = eval(t->children[i]);
-            if (tmp.type != LVAL_ERR) {
+            lval* tmp = eval(t->children[i]);
+            if (tmp->type != LVAL_ERR) {
                 // printf("adding to expr accum\n");
                 accum[accum_count] = tmp;
                 accum_count++;
@@ -141,12 +144,12 @@ lval eval(mpc_ast_t* t){
         if (accum_count <= 1){
             return accum[0];
         }
-        return eval_func(accum, accum_count);
+        return eval_func(*accum, accum_count);
     }
     return lval_err("undefined type");
 }
 
-lval eval_func(lval v[], int expr_ct){
+lval* eval_func(lval v[], int expr_ct){
     lval func = v[0];
     if (strcmp("+", func.func) == 0 || strcmp("add", func.func) == 0){
         return sum_op(v, expr_ct);
@@ -205,8 +208,8 @@ int main(int argc, char** argv) {
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
             // mpc_ast_print(r.output);
-            lval result = eval(r.output);
-            print_lval(&result);
+            lval* result = eval(r.output);
+            print_lval(result);
             mpc_ast_delete(r.output);
         } else {
             mpc_err_print(r.error);
