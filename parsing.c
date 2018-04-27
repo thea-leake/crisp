@@ -58,13 +58,16 @@ lval* lval_err(char* x){
 }
 
 void lval_del(lval* v){
+    printf("Deleting lval val\n");
+    print_lval(v);
     switch (v->type){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
-        case LVAL_STR: free(v->str);
-        case LVAL_ERR: free(v->err);
-        case LVAL_FUNC: free(v->func);
+        case LVAL_STR: free(v->str); break;
+        case LVAL_ERR: free(v->err); break;
+        case LVAL_FUNC: free(v->func); break;
     }
+    printf("Deleted lval\n");
     free(v);
 }
 
@@ -77,7 +80,7 @@ void print_lval(lval* v){
         printf("%s\n", v->str);
         break;
     case LVAL_FUNC:
-        printf("%s", v->func);
+        printf("%s\n", v->func);
         break;
     case LVAL_NUM_INT:
         printf("%i\n", v->num_int);
