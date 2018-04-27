@@ -1,19 +1,22 @@
 #include "common_types.h"
 #include "operators.h"
+#include <stdlib.h>
 
-lval* sum_op(lval* v, int expr_ct){
-    // printf("Starting sum\n");
+
+lval* sum_op(lval* v[], int expr_ct){
     int func_index = 0;
     int init_index = func_index + 1;
     int iter_start = init_index + 1;
     if (expr_ct == 1){
+        // return additive operator as it has no operands
         return v[func_index];
     }
-    // return additive operator as it has no operands
+    lval_del(v[func_index]);
+
     lval* init_val = v[init_index];
-    if (init_val.type == LVAL_ERR || expr_ct == iter_start){
-        // return only operative, as there is nothing given to add to it
-        return (init_val);
+    if (init_val->type == LVAL_ERR || expr_ct == 2){
+        // return only operaand, as there is nothing given to add to it
+        return init_val;
     }
 
     float accum;
@@ -22,15 +25,17 @@ lval* sum_op(lval* v, int expr_ct){
     } else {
         accum = init_val->num_float;
     }
+    lval_del(init_val);
 
     for (int i=iter_start; i < expr_ct; i++){
         lval* tmp = v[i];
-          if (tmp.type == LVAL_NUM_INT){
-            accum += tmp->num_int;
-          }
-          else  if (tmp.type == LVAL_NUM_FLOAT) {
-            accum += tmp->num_float;
-          }
+        if (tmp->type == LVAL_NUM_INT){
+          accum += tmp->num_int;
+        }
+        else  if (tmp->type == LVAL_NUM_FLOAT) {
+          accum += tmp->num_float;
+        }
+        lval_del(tmp);
     }
 
     int accum_int = (int) accum;
@@ -41,16 +46,18 @@ lval* sum_op(lval* v, int expr_ct){
     return lval_num_float(accum);
 }
 
-lval* sub_op(lval** v, int expr_ct){
+lval* sub_op(lval* v[], int expr_ct){
     int func_index = 0;
     int init_index = func_index + 1;
     int iter_start = init_index + 1;
     if (expr_ct == 1){
-        return v[func_index];
+        return v[0];
     }
+    lval_del(v[func_index]);
+
     lval* init_val = v[init_index];
     if (init_val->type == LVAL_ERR ){
-        return (init_val);
+        return init_val;
     }
     if (expr_ct == iter_start) {
         if (init_val->type == LVAL_NUM_INT) {
@@ -69,6 +76,8 @@ lval* sub_op(lval** v, int expr_ct){
     } else {
         accum = init_val->num_float;
     }
+    lval_del(init_val);
+
 
     for (int i=iter_start; i < expr_ct; i++){
         lval* tmp = v[i];
@@ -78,6 +87,7 @@ lval* sub_op(lval** v, int expr_ct){
         else  if (tmp->type == LVAL_NUM_FLOAT) {
             accum = accum - tmp->num_float;
         }
+        lval_del(tmp);
     }
     int accum_int = (int) accum;
     if (accum == accum_int) {
@@ -88,25 +98,28 @@ lval* sub_op(lval** v, int expr_ct){
 }
 
 
-lval* mul_op(lval* v, int expr_ct){
+lval* mul_op(lval* v[], int expr_ct){
     // printf("Starting sum\n");
     int func_index = 0;
     int init_index = func_index + 1;
     int iter_start = init_index + 1;
     if (expr_ct == 1){
-        return v[func_index];
+        return v[0];
     }
-    lval init_val = v[init_index];
-    if (init_val.type == LVAL_ERR || expr_ct == iter_start){
-        return (init_val);
+    lval_del(v[func_index]);
+
+    lval* init_val = v[init_index];
+    if (init_val->type == LVAL_ERR || expr_ct == iter_start){
+        return init_val;
     }
 
     float accum;
-    if (init_val.type == LVAL_NUM_INT){
+    if (init_val->type == LVAL_NUM_INT){
         accum = init_val->num_int;
     } else {
         accum = init_val->num_float;
     }
+    lval_del(init_val);
 
     for (int i=iter_start; i < expr_ct; i++){
         lval* tmp = v[i];
@@ -116,6 +129,7 @@ lval* mul_op(lval* v, int expr_ct){
           else  if (tmp->type == LVAL_NUM_FLOAT) {
             accum = tmp->num_float * accum;
           }
+        lval_del(tmp);
     }
     int accum_int = (int) accum;
     if (accum == accum_int) {
@@ -131,11 +145,13 @@ lval* div_op(lval* v[], int expr_ct){
     int init_index = func_index + 1;
     int iter_start = init_index + 1;
     if (expr_ct == 1){
-        return v[func_index];
+        return v[0];
     }
+    lval_del(v[func_index]);
+
     lval* init_val = v[init_index];
     if (init_val->type == LVAL_ERR || expr_ct == 2){
-        return (init_val);
+        return init_val;
     }
 
     float accum;
@@ -144,6 +160,7 @@ lval* div_op(lval* v[], int expr_ct){
     } else {
         accum = init_val->num_float;
     }
+    lval_del(init_val);
 
     for (int i=iter_start; i < expr_ct; i++){
         lval* tmp = v[i];
@@ -159,6 +176,7 @@ lval* div_op(lval* v[], int expr_ct){
               }
               accum = accum / tmp->num_float;
           }
+        lval_del(tmp);
     }
     int accum_int = (int) accum;
     if (accum == accum_int) {
@@ -168,18 +186,21 @@ lval* div_op(lval* v[], int expr_ct){
     return lval_num_float(accum);
 }
 
-lval* mod_op(lval* v, int expr_ct){
+lval* mod_op(lval* v[], int expr_ct){
     // printf("Starting sum\n");
     int func_index = 0;
     int init_index = func_index + 1;
     int iter_start = init_index + 1;
     if (expr_ct == 1){
-        return v[func_index];
+        return v[0];
     }
-    lval init_val = v[init_index];
+    lval_del(v[func_index]);
+
+    lval* init_val = v[init_index];
     if (init_val->type == LVAL_ERR || expr_ct == iter_start){
-        return (init_val);
+        return init_val;
     }
+    lval_del(init_val);
 
     int accum = init_val->num_int;
 
@@ -189,6 +210,7 @@ lval* mod_op(lval* v, int expr_ct){
             return lval_err("Non-int passed into modulo");
         }
         accum =  accum % tmp->num_int;
+        lval_del(tmp);
     }
     return lval_num_int(accum);
 }

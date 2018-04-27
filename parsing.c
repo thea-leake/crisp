@@ -15,7 +15,7 @@
 
 
 lval* eval(mpc_ast_t* t);
-lval* eval_func(lval* v, int expr_ct);
+lval* eval_func(lval* v[], int expr_ct);
 void print_lval_str(lval *v);
 void print_lval_err(lval* v);
 void print_lval_fun(lval* v);
@@ -60,6 +60,17 @@ lval* lval_err(char* x){
     v->err = malloc(strlen(x) + 1);
     strcpy(v->err, x);
     return v;
+}
+
+void lval_del(lval* v){
+    switch (v->type){
+        case LVAL_NUM_INT: break;
+        case LVAL_NUM_FLOAT: break;
+        case LVAL_STR: free(v->str);
+        case LVAL_ERR: free(v->err);
+        case LVAL_FUNC: free(v->func);
+    }
+    free(v);
 }
 
 void print_str(char* s) {
@@ -144,22 +155,22 @@ lval* eval(mpc_ast_t* t){
         if (accum_count <= 1){
             return accum[0];
         }
-        return eval_func(*accum, accum_count);
+        return eval_func(accum, accum_count);
     }
     return lval_err("undefined type");
 }
 
-lval* eval_func(lval v[], int expr_ct){
-    lval func = v[0];
-    if (strcmp("+", func.func) == 0 || strcmp("add", func.func) == 0){
+lval* eval_func(lval* v[], int expr_ct){
+    lval* func = v[0];
+    if (strcmp("+", func->func) == 0 || strcmp("add", func->func) == 0){
         return sum_op(v, expr_ct);
-    } else if (strcmp("-", func.func) == 0 || strcmp("sub", func.func) == 0){
+    } else if (strcmp("-", func->func) == 0 || strcmp("sub", func->func) == 0){
         return sub_op(v, expr_ct);
-    } else if (strcmp("*", func.func) == 0 || strcmp("mul", func.func) == 0){
+    } else if (strcmp("*", func->func) == 0 || strcmp("mul", func->func) == 0){
         return mul_op(v, expr_ct);
-    } else if (strcmp("/", func.func) == 0 || strcmp("div", func.func) == 0){
+    } else if (strcmp("/", func->func) == 0 || strcmp("div", func->func) == 0){
         return div_op(v, expr_ct);
-    } else if (strcmp("%", func.func) == 0 || strcmp("mod", func.func) == 0){
+    } else if (strcmp("%", func->func) == 0 || strcmp("mod", func->func) == 0){
         return mod_op(v, expr_ct);
     } else {
         return lval_err("func undefined\n");
@@ -210,6 +221,7 @@ int main(int argc, char** argv) {
             // mpc_ast_print(r.output);
             lval* result = eval(r.output);
             print_lval(result);
+            lval_del(result);
             mpc_ast_delete(r.output);
         } else {
             mpc_err_print(r.error);
