@@ -16,11 +16,6 @@
 
 lval* eval(mpc_ast_t* t);
 lval* eval_func(lval* v[], int expr_ct);
-void print_lval_str(lval *v);
-void print_lval_err(lval* v);
-void print_lval_fun(lval* v);
-void print_lval_int(lval* v);
-void print_lval_float(lval* v);
 void print_lval(lval* v);
 
 
@@ -73,50 +68,22 @@ void lval_del(lval* v){
     free(v);
 }
 
-void print_str(char* s) {
-    char* escaped = malloc(strlen(s)+1);
-    strcpy(escaped, s);
-    escaped = mpcf_escape(escaped);
-    printf("\"%s\"\n", escaped);
-    free(escaped);
-}
-
-void print_lval_str(lval* v) {
-    print_str(v->str);
-}
-
-void print_lval_err(lval* v) {
-    print_str(v->err);
-}
-
-void print_lval_func(lval* v){
-    print_str(v->func);
-}
-
-void print_lval_int(lval* v) {
-    printf("%i\n", v->num_int);
-}
-
-void print_lval_float(lval* v) {
-    printf("%f\n", v->num_float);
-}
-
 void print_lval(lval* v){
     switch(v->type) {
     case LVAL_ERR:
-        print_lval_err(v);
+        printf("%s\n", v->err);
         break;
     case LVAL_STR:
-        print_lval_str(v);
+        printf("%s\n", v->str);
         break;
     case LVAL_FUNC:
-        print_lval_func(v);
+        printf("%s", v->func);
         break;
     case LVAL_NUM_INT:
-        print_lval_int(v);
+        printf("%i\n", v->num_int);
         break;
     case LVAL_NUM_FLOAT:
-        print_lval_float(v);
+        printf("%f\n", v->num_float);
         break;
     }
 }
