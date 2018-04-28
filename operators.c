@@ -5,9 +5,8 @@
 
 lval* sum_op(list* l){
     if (l->next == NULL){
-        // return additive operator as it has no operands
         lval* v = l->expr;
-        list_del(l)
+        free(l);
         return v;
     }
     lval* expr = l->expr;
@@ -28,8 +27,9 @@ lval* sum_op(list* l){
         accum_val = accum->num_float;
     }
 
-    list_del(l);
     float sum = expr_val + accum_val;
+
+    list_del(l);
     int sum_int = (int) sum;
     if (sum == sum_int) {
          int s = (int) sum;
@@ -38,55 +38,46 @@ lval* sum_op(list* l){
     return lval_num_float(sum);
 }
 
-lval* sub_op(lval* v[], int expr_ct){
-    int func_index = 0;
-    int init_index = func_index + 1;
-    int iter_start = init_index + 1;
-    if (expr_ct == 1){
-        return v[0];
-    }
-    lval_del(v[func_index]);
-
-    lval* init_val = v[init_index];
-    if (init_val->type == LVAL_ERR ){
-        return init_val;
-    }
-    if (expr_ct == iter_start) {
-        if (init_val->type == LVAL_NUM_INT) {
-            int negated = init_val->num_int * -1;
-            return lval_num_int(negated);
+lval* sub_op(list* l){
+    if (l->next == NULL){
+        lval* v = l->expr;
+        lval* r;
+        if (v->type == LVAL_NUM_INT){
+            lval* r = lval_num_int(v->num_int * -1);
+        } else if (v->type == LVAL_NUM_FLOAT){
+            lval* r = lval_num_float(v->num_float * -1);
         }
-        if (init_val->type == LVAL_NUM_FLOAT) {
-            int negated = init_val->num_float * -1;
-            return lval_num_float(negated);
-        }
+        list_del(l);
+        return r;
     }
-
-    float accum;
-    if (init_val->type == LVAL_NUM_INT){
-        accum = init_val->num_int;
-    } else {
-        accum = init_val->num_float;
-    }
-    lval_del(init_val);
+    lval* expr = l->expr;
+    lval* accum = sum_op(rest_expr(l));
+    float expr_val;
+    float accum_val;
 
 
-    for (int i=iter_start; i < expr_ct; i++){
-        lval* tmp = v[i];
-        if (tmp->type == LVAL_NUM_INT){
-            accum = accum - tmp->num_int ;
-        }
-        else  if (tmp->type == LVAL_NUM_FLOAT) {
-            accum = accum - tmp->num_float;
-        }
-        lval_del(tmp);
+    if (expr->type == LVAL_NUM_INT){
+        expr_val = expr->num_int;
     }
-    int accum_int = (int) accum;
-    if (accum == accum_int) {
-         int s = (int) accum;
+    else  if (expr->type == LVAL_NUM_FLOAT) {
+        expr_val = expr->num_float;
+    }
+    if (accum->type == LVAL_NUM_INT){
+        accum_val = accum->num_int;
+    } else if (accum->type == LVAL_NUM_FLOAT){
+        accum_val = accum->num_float;
+    }
+
+    float sum = expr_val - accum_val;
+
+    list_del(l);
+
+    int sum_int = (int) sum;
+    if (sum == sum_int) {
+         int s = (int) sum;
          return lval_num_int(s);
     }
-    return lval_num_float(accum);
+    return lval_num_float(sum);
 }
 
 
