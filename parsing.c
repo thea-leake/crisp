@@ -15,7 +15,7 @@
 
 
 lval* eval(mpc_ast_t* t);
-lval* eval_func(lval* v[], int expr_ct);
+lval* eval_func(list * l);
 
 
 
@@ -52,23 +52,25 @@ lval* eval(mpc_ast_t* t){
         if (accum_count <= 1){
             return accum[0];
         }
-        return eval_func(accum, accum_count);
+        list* expr_list = list_create(accum, accum_count);
+        return eval_func(expr_list);
     }
     return lval_err("undefined type");
 }
 
-lval* eval_func(lval* v[], int expr_ct){
-    lval* func = v[0];
+lval* eval_func(list * l){
+    lval* func = l->expr;
+    list* operands = rest_expr(l);
     if (strcmp("+", func->func) == 0 || strcmp("add", func->func) == 0){
-        return sum_op(v, expr_ct);
+        return sum_op(operands);
     } else if (strcmp("-", func->func) == 0 || strcmp("sub", func->func) == 0){
-        return sub_op(v, expr_ct);
+        return sub_op(operands);
     } else if (strcmp("*", func->func) == 0 || strcmp("mul", func->func) == 0){
-        return mul_op(v, expr_ct);
+        return mul_op(operands);
     } else if (strcmp("/", func->func) == 0 || strcmp("div", func->func) == 0){
-        return div_op(v, expr_ct);
+        return div_op(operands);
     } else if (strcmp("%", func->func) == 0 || strcmp("mod", func->func) == 0){
-        return mod_op(v, expr_ct);
+        return mod_op(operands);
     } else {
         return lval_err("func undefined\n");
     }

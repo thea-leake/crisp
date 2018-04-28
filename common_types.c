@@ -42,6 +42,42 @@ lval* lval_err(char* x){
     return v;
 }
 
+list* list_create(lval* v[], int expr_ct){
+    list* l = malloc(sizeof(list));
+    l->expr = *v;
+    if (expr_ct > 1) {
+        lval** rest = v - 1;
+        int rem_ct = expr_ct - 1;
+        l->next = list_create(rest, rem_ct);
+    } else {
+        l->next = NULL;
+    }
+    return l;
+}
+
+list* list_prepend(list* l, lval* v){
+    list* n = malloc(sizeof(list));
+    n->expr = v;
+    n->next = l;
+    return n;
+}
+
+lval* first_expr(list* l){
+   return l->expr;
+}
+
+lval* pop(list* l){
+    lval* expr = l->expr;
+    list* new_dest = l->next;
+    free(l);
+    l = new_dest;
+    return expr;
+}
+
+list* rest_expr(list* l){
+    return l->next;
+}
+
 void lval_del(lval* v){
     print_lval(v);
     switch (v->type){
@@ -54,6 +90,14 @@ void lval_del(lval* v){
     free(v);
 }
 
+void list_del(list* l){
+    lval_del(l->expr);
+    list* n = l->next;
+    free(l);
+    if (n != NULL) {
+        list_del(n);
+    }
+}
 void print_lval(lval* v){
     switch(v->type) {
     case LVAL_ERR:
