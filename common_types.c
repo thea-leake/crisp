@@ -34,6 +34,13 @@ lval* lval_func(char* x){
     return v;
 }
 
+lval* lval_list(list* l){
+   lval* v = malloc(sizeof(lval));
+   v->type = LVAL_LIST;
+   v->list = l;
+   return v;
+}
+
 lval* lval_err(char* x){
     lval* v = malloc(sizeof(lval));
     v->type = LVAL_ERR;
@@ -98,6 +105,7 @@ void lval_del(lval* v){
         case LVAL_NUM_FLOAT: break;
         case LVAL_NIL: break;
         case LVAL_NOOP: break;
+        case LVAL_LIST: list_del(v->list);
         case LVAL_STR: free(v->str); break;
         case LVAL_ERR: free(v->err); break;
         case LVAL_FUNC: free(v->func); break;
@@ -136,6 +144,9 @@ void print_lval(lval* v){
         break;
     case LVAL_NUM_FLOAT:
         printf("%f\n", v->num_float);
+        break;
+    case LVAL_LIST:
+        print_list(v->list);
         break;
     case LVAL_NIL:
         printf("nil\n");

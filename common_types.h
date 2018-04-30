@@ -1,3 +1,5 @@
+typedef struct list list;
+
 typedef struct {
     int type;
     int num_int;
@@ -5,9 +7,8 @@ typedef struct {
     char* str;
     char* func;
     char* err;
+    list* list;
 } lval ;
-
-typedef struct list list;
 
 struct list {
     lval* expr;
