@@ -144,21 +144,22 @@ lval* mul_op(list* l){
 lval* div_op(list* l){
     if (l->next == NULL){
         lval* v = l->expr;
-        lval* r;
         if (v->type == LVAL_NUM_INT){
             if (v->num_int == 0){
                 return lval_err("Unable to divide by 0");
             }
-            r = lval_num_float(1 / v->num_int );
+            return lval_num_int(v->num_int );
         } else if (v->type == LVAL_NUM_FLOAT){
             if (v->num_float == 0){
                 return lval_err("Unable to divide by 0");
             }
-            r = lval_num_float(1 / v->num_float );
+            return lval_num_float(v->num_float );
+        } else if (v->type == LVAL_ERR) {
+            return lval_err(v->err);
         } else {
+            print_lval(v);
             return lval_err("Invalid Type provided");
         }
-        return r;
     }
     lval* expr = l->expr;
     lval* accum = div_op(rest_expr(l));
@@ -185,6 +186,8 @@ lval* div_op(list* l){
             return lval_err("Unable to divide by 0");
         }
        accum_val = accum->num_float;
+    } else if ( accum->type == LVAL_ERR ) {
+        return lval_err(accum->err);
     } else {
         return lval_err("Invalid Type provided");
     }
@@ -206,23 +209,18 @@ lval* mod_op(list* l){
     }
     lval* expr = l->expr;
     lval* accum = sum_op(rest_expr(l));
-    float expr_val;
-    float accum_val;
+    int expr_val;
+    int accum_val;
 
 
     if (expr->type == LVAL_NUM_INT){
         expr_val = expr->num_int;
-    }
-    else  if (expr->type == LVAL_NUM_FLOAT) {
-        expr_val = expr->num_float;
     } else {
         return lval_err("Invalid Type provided");
     }
 
     if (accum->type == LVAL_NUM_INT){
         accum_val = accum->num_int;
-    } else if (accum->type == LVAL_NUM_FLOAT){
-        accum_val = accum->num_float;
     } else {
         return lval_err("Invalid Type provided");
     }
@@ -231,13 +229,7 @@ lval* mod_op(list* l){
         return lval_err("Unable to divide by 0");
     }
 
-    float product = expr_val + accum_val;
-//    lval_del(accum);
+    int modulo = expr_val % accum_val;
 
-    int product_int = (int) product;
-    if (product == product_int) {
-         int s = (int) product;
-         return lval_num_int(s);
-    }
-    return lval_num_float(product);
+     return lval_num_int(modulo);
 }
