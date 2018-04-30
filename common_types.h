@@ -15,7 +15,7 @@ struct list {
 } ;
 
 
-enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_NIL };
+enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_NIL, LVAL_NOOP};
 
 lval* lval_num_int(int x);
 lval* lval_num_float(float x);
@@ -23,6 +23,7 @@ lval* lval_str(char* x);
 lval* lval_func(char* x);
 lval* lval_err(char* x);
 lval* lval_nil();
+lval* lval_noop();
 list* list_create(lval* v[], int expr_index, int expr_ct);
 list* list_preprend(list* l, lval* v);
 lval* first_expr(list* l);

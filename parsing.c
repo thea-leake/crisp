@@ -43,7 +43,7 @@ lval* eval(mpc_ast_t* t){
         for (int i = 0; i < t->children_num; i++){
             // printf("Iterating through node %d\n", i);
             lval* tmp = eval(t->children[i]);
-            if (tmp->type != LVAL_NIL) {
+            if (tmp->type != LVAL_NOOP) {
                 // printf("adding to expr accum\n");
                 accum[accum_count] = tmp;
                 accum_count++;
@@ -60,7 +60,7 @@ lval* eval(mpc_ast_t* t){
         list_del(expr_list);
         return eval_result;
     }
-    return lval_nil();
+    return lval_noop();
 }
 
 lval* eval_func(list * l){

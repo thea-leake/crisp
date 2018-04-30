@@ -49,6 +49,13 @@ lval* lval_nil(){
 }
 
 
+lval* lval_noop(){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_NOOP;
+    return v;
+}
+
+
 list* list_create(lval* v[], int expr_index, int expr_ct){
     list* l = malloc(sizeof(list));
     l->expr = v[expr_index];
@@ -90,6 +97,7 @@ void lval_del(lval* v){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
         case LVAL_NIL: break;
+        case LVAL_NOOP: break;
         case LVAL_STR: free(v->str); break;
         case LVAL_ERR: free(v->err); break;
         case LVAL_FUNC: free(v->func); break;
@@ -131,6 +139,9 @@ void print_lval(lval* v){
         break;
     case LVAL_NIL:
         printf("nil\n");
+        break;
+    case LVAL_NOOP:
+        printf("_NOOP\n");
         break;
     }
 }
