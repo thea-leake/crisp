@@ -13,7 +13,7 @@ lval* sum_op(list* l){
             return lval_num_float(expr->num_float);
         } else {
         return lval_err("Invalid Type provided");
-    }
+        }
     }
     lval* expr = l->expr;
     lval* accum = sum_op(rest_expr(l));
@@ -100,9 +100,14 @@ lval* sub_op(list* l){
 
 lval* mul_op(list* l){
     if (l->next == NULL){
-        lval* v = l->expr;
-        //free(l);
-        return v;
+        lval* expr = l->expr;
+        if (expr->type == LVAL_NUM_INT){
+            return lval_num_int(expr->num_int);
+        } else if (expr->type == LVAL_NUM_INT){
+            return lval_num_float(expr->num_float);
+        } else {
+        return lval_err("Invalid Type provided");
+        }
     }
     lval* expr = l->expr;
     lval* accum = mul_op(rest_expr(l));
@@ -125,7 +130,7 @@ lval* mul_op(list* l){
     } else {
         return lval_err("Invalid Type provided");
     }
-    float product = expr_val + accum_val;
+    float product = expr_val * accum_val;
  //   lval_del(accum);
 
     int product_int = (int) product;
