@@ -43,19 +43,24 @@ lval* eval(mpc_ast_t* t){
         for (int i = 0; i < t->children_num; i++){
             // printf("Iterating through node %d\n", i);
             lval* tmp = eval(t->children[i]);
-            if (tmp->type != LVAL_ERR) {
+            if (tmp->type != LVAL_NIL) {
                 // printf("adding to expr accum\n");
                 accum[accum_count] = tmp;
                 accum_count++;
+            }
+            else {
+                lval_del(tmp);
             }
         }
         if (accum_count <= 1){
             return accum[0];
         }
-        list* expr_list = list_create(accum, accum_count);
-        return eval_func(expr_list);
+        list* expr_list = list_create(accum, 0, accum_count);
+        lval* eval_result = eval_func(expr_list);
+        list_del(expr_list);
+        return eval_result;
     }
-    return lval_err("undefined type");
+    return lval_nil();
 }
 
 lval* eval_func(list * l){

@@ -42,13 +42,20 @@ lval* lval_err(char* x){
     return v;
 }
 
-list* list_create(lval* v[], int expr_ct){
+lval* lval_nil(){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_NIL;
+    return v;
+}
+
+
+list* list_create(lval* v[], int expr_index, int expr_ct){
     list* l = malloc(sizeof(list));
-    l->expr = *v;
+    l->expr = v[expr_index];
     if (expr_ct > 1) {
-        lval** rest = v - 1;
         int rem_ct = expr_ct - 1;
-        l->next = list_create(rest, rem_ct);
+        int rest_index = expr_index + 1;
+        l->next = list_create(v, rest_index, rem_ct);
     } else {
         l->next = NULL;
     }
@@ -79,10 +86,10 @@ list* rest_expr(list* l){
 }
 
 void lval_del(lval* v){
-    print_lval(v);
     switch (v->type){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
+        case LVAL_NIL: break;
         case LVAL_STR: free(v->str); break;
         case LVAL_ERR: free(v->err); break;
         case LVAL_FUNC: free(v->func); break;
@@ -97,6 +104,13 @@ void list_del(list* l){
     if (n != NULL) {
         list_del(n);
     }
+}
+
+void print_list(list* l ){
+   print_lval(l->expr);
+   if (l->next != NULL){
+      print_list(l->next);
+   }
 }
 void print_lval(lval* v){
     switch(v->type) {
@@ -114,6 +128,9 @@ void print_lval(lval* v){
         break;
     case LVAL_NUM_FLOAT:
         printf("%f\n", v->num_float);
+        break;
+    case LVAL_NIL:
+        printf("nil\n");
         break;
     }
 }

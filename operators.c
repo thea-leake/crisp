@@ -6,17 +6,20 @@
 
 lval* sum_op(list* l){
     if (l->next == NULL){
-        lval* v = l->expr;
-//        free(l);
-        return v;
+        lval* expr = l->expr;
+        if (expr->type == LVAL_NUM_INT){
+            return lval_num_int(expr->num_int);
+        } else if (expr->type == LVAL_NUM_INT){
+            return lval_num_float(expr->num_float);
+        } else {
+        return lval_err("Invalid Type provided");
+    }
     }
     lval* expr = l->expr;
     lval* accum = sum_op(rest_expr(l));
     float expr_val;
     float accum_val;
 
-    print_lval(l->expr);
-    printf("Type is %d", l->expr->type);
 
     if (expr->type == LVAL_NUM_INT){
         expr_val = expr->num_int;
@@ -24,7 +27,7 @@ lval* sum_op(list* l){
     else  if (expr->type == LVAL_NUM_FLOAT) {
         expr_val = expr->num_float;
     } else {
-//        list_del(l);
+        lval_del(accum);
         return lval_err("Invalid Type provided");
     }
     if (accum->type == LVAL_NUM_INT){
@@ -32,14 +35,14 @@ lval* sum_op(list* l){
     } else if (accum->type == LVAL_NUM_FLOAT){
         accum_val = accum->num_float;
     } else {
- //       list_del(l);
+        lval_del(accum);
         return lval_err("Invalid Type provided");
     }
 
     float sum = expr_val + accum_val;
     lval_del(accum);
+    //lval_del(accum);
 
-    list_del(l);
     int sum_int = (int) sum;
     if (sum == sum_int) {
          int s = (int) sum;
@@ -57,10 +60,8 @@ lval* sub_op(list* l){
         } else if (v->type == LVAL_NUM_FLOAT){
             r = lval_num_float(v->num_float * -1);
         } else {
-            list_del(l);
             return lval_err("Invalid Type provided");
         }
-        list_del(l);
         return r;
     }
     lval* expr = l->expr;
@@ -75,7 +76,6 @@ lval* sub_op(list* l){
     else  if (expr->type == LVAL_NUM_FLOAT) {
         expr_val = expr->num_float;
     } else {
-        list_del(l);
         return lval_err("Invalid Type provided");
     }
     if (accum->type == LVAL_NUM_INT){
@@ -83,14 +83,12 @@ lval* sub_op(list* l){
     } else if (accum->type == LVAL_NUM_FLOAT){
         accum_val = accum->num_float;
     } else {
-        list_del(l);
         return lval_err("Invalid Type provided");
     }
 
     float diff = expr_val - accum_val;
     lval_del(accum);
 
-    list_del(l);
 
     int diff_int = (int) diff;
     if (diff == diff_int) {
@@ -103,7 +101,7 @@ lval* sub_op(list* l){
 lval* mul_op(list* l){
     if (l->next == NULL){
         lval* v = l->expr;
-        free(l);
+        //free(l);
         return v;
     }
     lval* expr = l->expr;
@@ -118,7 +116,6 @@ lval* mul_op(list* l){
     else  if (expr->type == LVAL_NUM_FLOAT) {
         expr_val = expr->num_float;
     } else {
-        list_del(l);
         return lval_err("Invalid Type provided");
     }
     if (accum->type == LVAL_NUM_INT){
@@ -126,13 +123,11 @@ lval* mul_op(list* l){
     } else if (accum->type == LVAL_NUM_FLOAT){
         accum_val = accum->num_float;
     } else {
-        list_del(l);
         return lval_err("Invalid Type provided");
     }
     float product = expr_val + accum_val;
  //   lval_del(accum);
 
-//    list_del(l);
     int product_int = (int) product;
     if (product == product_int) {
          int s = (int) product;
@@ -147,21 +142,17 @@ lval* div_op(list* l){
         lval* r;
         if (v->type == LVAL_NUM_INT){
             if (v->num_int == 0){
-//                list_del(l);
                 return lval_err("Unable to divide by 0");
             }
             r = lval_num_float(1 / v->num_int );
         } else if (v->type == LVAL_NUM_FLOAT){
             if (v->num_float == 0){
-//                list_del(l);
                 return lval_err("Unable to divide by 0");
             }
             r = lval_num_float(1 / v->num_float );
         } else {
-//            list_del(l);
             return lval_err("Invalid Type provided");
         }
-//        list_del(l);
         return r;
     }
     lval* expr = l->expr;
@@ -176,31 +167,26 @@ lval* div_op(list* l){
     else  if (expr->type == LVAL_NUM_FLOAT) {
         expr_val = expr->num_float;
     } else {
-//        list_del(l);
         return lval_err("Invalid Type provided");
     }
 
     if (accum->type == LVAL_NUM_INT){
          if (accum->num_int == 0){
-//            list_del(l);
             return lval_err("Unable to divide by 0");
         }
        accum_val = accum->num_int;
     } else if (accum->type == LVAL_NUM_FLOAT){
         if (accum->num_float == 0){
-//            list_del(l);
             return lval_err("Unable to divide by 0");
         }
        accum_val = accum->num_float;
     } else {
-//        list_del(l);
         return lval_err("Invalid Type provided");
     }
 
     float ratio = expr_val / accum_val;
 //    lval_del(accum);
 
-//    list_del(l);
     int ratio_int = (int) ratio;
     if (ratio == ratio_int) {
          int s = (int) ratio;
@@ -211,7 +197,6 @@ lval* div_op(list* l){
 
 lval* mod_op(list* l){
     if (l->next == NULL){
-        list_del(l);
         return lval_err("Only one arg provided");
     }
     lval* expr = l->expr;
@@ -226,7 +211,6 @@ lval* mod_op(list* l){
     else  if (expr->type == LVAL_NUM_FLOAT) {
         expr_val = expr->num_float;
     } else {
-//        list_del(l);
         return lval_err("Invalid Type provided");
     }
 
@@ -235,19 +219,16 @@ lval* mod_op(list* l){
     } else if (accum->type == LVAL_NUM_FLOAT){
         accum_val = accum->num_float;
     } else {
-//        list_del(l);
         return lval_err("Invalid Type provided");
     }
 
     if (accum_val == 0){
-//        list_del(l);
         return lval_err("Unable to divide by 0");
     }
 
     float product = expr_val + accum_val;
 //    lval_del(accum);
 
-//    list_del(l);
     int product_int = (int) product;
     if (product == product_int) {
          int s = (int) product;
