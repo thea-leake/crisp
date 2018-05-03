@@ -38,8 +38,7 @@ list* build_list(mpc_ast_t* t, int count, int accum_count){
     return build_list(t, count, next_count);
 }
 
-lval* eval(mpc_ast_t* t){
-    // printf("Num children is %d\n", t->children_num);
+lval* get_eval_type(mpc_ast_t* t){
     if (strstr(t->tag, "string")){
         lval* v = lval_str(t->contents);
         return v;
@@ -56,8 +55,20 @@ lval* eval(mpc_ast_t* t){
         lval* v = lval_func(t->contents);
         return v;
     }
-    if ( t->children_num > 0){
-        list* expr_list = build_list(t, t->children_num, 0);
+    if (strstr(t->tag, "list")){
+        list* l = build_list(t, t->children_num, 0);
+        print_list(l);
+        lval* v = lval_list(l);
+        return v;
+    }
+    return lval_noop();
+}
+
+lval* eval(mpc_ast_t* t){
+    list* expr_list = build_list(t, t->children_num, 0);
+    lval* first = first_expr(expr_list);
+    if ( first->type == LVAL_FUNC){
+        print_list(expr_list);
         lval* eval_result = eval_func(expr_list);
         list_del(expr_list);
         return eval_result;
