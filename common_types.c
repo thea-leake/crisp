@@ -63,13 +63,30 @@ lval* lval_noop(){
 }
 
 
-list* list_create(lval* v[], int expr_index, int expr_ct){
+list* prepend_create(lval* v, list* l){
+   if (l == NULL){
+      return init_list(v);
+   }
+   list* n = malloc(sizeof(list));
+   n->expr = v;
+   n->next = l;
+   return n;
+}
+
+list* init_list(lval* v){
+   list* n = malloc(sizeof(list));
+   n->expr = v;
+   n->next = NULL;
+   return n;
+}
+
+list* list_from_arrary(lval* v[], int expr_index, int expr_ct){
     list* l = malloc(sizeof(list));
     l->expr = v[expr_index];
     if (expr_ct > 1) {
         int rem_ct = expr_ct - 1;
         int rest_index = expr_index + 1;
-        l->next = list_create(v, rest_index, rem_ct);
+        l->next = list_from_arrary(v, rest_index, rem_ct);
     } else {
         l->next = NULL;
     }
@@ -123,9 +140,13 @@ void list_del(list* l){
 }
 
 void print_list(list* l ){
-   print_lval(l->expr);
-   if (l->next != NULL){
-      print_list(l->next);
+   if (l != NULL){
+      print_lval(l->expr);
+      if (l->next != NULL){
+         print_list(l->next);
+      }
+   } else {
+      printf("Null value for list\n");
    }
 }
 void print_lval(lval* v){

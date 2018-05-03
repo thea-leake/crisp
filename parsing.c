@@ -18,6 +18,25 @@ lval* eval(mpc_ast_t* t);
 lval* eval_func(list * l);
 
 
+list* build_list(mpc_ast_t* t, int count, int accum_count){
+    lval* tmp = eval(t->children[accum_count]);
+    int next_count = accum_count + 1;
+    if (next_count == count) {
+        printf("Hit anchor\n");
+        if (tmp->type != LVAL_NOOP){
+            list* anchor = prepend_create(tmp, NULL);
+            return anchor;
+        }
+        printf("Returning NULL\n");
+        return NULL;
+    }
+    if (tmp->type != LVAL_NOOP){
+        list* next_elem =  build_list(t, count, next_count);
+        return prepend_create(tmp, next_elem);
+    }
+    lval_del(tmp);
+    return build_list(t, count, next_count);
+}
 
 lval* eval(mpc_ast_t* t){
     // printf("Num children is %d\n", t->children_num);
@@ -38,24 +57,7 @@ lval* eval(mpc_ast_t* t){
         return v;
     }
     if ( t->children_num > 0){
-        lval* accum[t->children_num];
-        int accum_count = 0;
-        for (int i = 0; i < t->children_num; i++){
-            // printf("Iterating through node %d\n", i);
-            lval* tmp = eval(t->children[i]);
-            if (tmp->type != LVAL_NOOP) {
-                // printf("adding to expr accum\n");
-                accum[accum_count] = tmp;
-                accum_count++;
-            }
-            else {
-                lval_del(tmp);
-            }
-        }
-        if (accum_count <= 1){
-            return accum[0];
-        }
-        list* expr_list = list_create(accum, 0, accum_count);
+        list* expr_list = build_list(t, t->children_num, 0);
         lval* eval_result = eval_func(expr_list);
         list_del(expr_list);
         return eval_result;
@@ -96,21 +98,23 @@ int main(int argc, char** argv) {
     mpc_parser_t* Keywords = mpc_new("keywords");
     mpc_parser_t* Builtin = mpc_new("builtin");
     mpc_parser_t* Expr = mpc_new("expr");
+    mpc_parser_t* List = mpc_new("list");
     mpc_parser_t* Lispy = mpc_new("lispy");
 
     mpca_lang(MPCA_LANG_DEFAULT,
-        "                                                                    \
-            integer:  /-?[0-9]+/                                           ; \
-            float:    /-?[0-9]+\\.[0-9]+/                                  ; \
-            number:   <float> | <integer>                                  ; \
-            string:   /\"(\\\\.|[^\"])*\"/                                 ; \
-            symbols:  '+' | '-' | '*' | '/' | '%'                          ; \
-            keywords: /add/ | /sub/ | /mul/ | /div/ | /mod/                ; \
-            builtin:  <symbols> | <keywords>                               ; \
-            expr:     <number> | <string> | '('<builtin> <expr>+ ')'       ; \
-            lispy:    /^/ <builtin> <expr>+/$/ | /^/<expr> | <builtin> /$/ ; \
+        "                                                                             \
+            integer:  /-?[0-9]+/                                                    ; \
+            float:    /-?[0-9]+\\.[0-9]+/                                           ; \
+            number:   <float> | <integer>                                           ; \
+            string:   /\"(\\\\.|[^\"])*\"/                                          ; \
+            symbols:  '+' | '-' | '*' | '/' | '%'                                   ; \
+            keywords: /add/ | /sub/ | /mul/ | /div/ | /mod/                         ; \
+            builtin:  <symbols> | <keywords>                                        ; \
+            expr:     <number> | <string> | <builtin> | '('<expr>+ ')'              ; \
+            list:     '''<expr>                                                       ; \
+            lispy:    /^/ <builtin> <expr>+/$/ | /^/<expr> | <builtin> | <list> /$/ ; \
         ",
-        Integer, Float, Number, String,  Symbols, Keywords, Builtin, Expr, Lispy
+        Integer, Float, Number, String,  Symbols, Keywords, Builtin, Expr, List, Lispy
     );
 
     // infinite read eval print loop
@@ -122,7 +126,7 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
-            // mpc_ast_print(r.output);
+            mpc_ast_print(r.output);
             lval* result = eval(r.output);
             print_lval(result);
             lval_del(result);
@@ -139,7 +143,7 @@ int main(int argc, char** argv) {
     // clean up our parsers from memory
     mpc_cleanup(
         9,
-        Integer, Float, Number, String,  Symbols, Keywords, Builtin, Expr, Lispy
+        Integer, Float, Number, String,  Symbols, Keywords, Builtin, Expr, List, Lispy
     );
     return 0;
 }

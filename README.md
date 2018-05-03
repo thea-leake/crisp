@@ -1,4 +1,7 @@
-Thea's Lisp implementation loosely built around  the build your own lisp book http://www.buildyourownlisp.com/ by Daniel Holden.
+My Lisp implementation loosely built around the build your own lisp book http://www.buildyourownlisp.com/ by Daniel Holden.
+
+
+As of right now it is pretty much just an infix notation calculator using cons cells..
 
 
 #Build:
