@@ -117,6 +117,8 @@ list* rest_expr(list* l){
 }
 
 void lval_del(lval* v){
+    //print_lval(v);
+    printf("$Freeing lval\n");
     switch (v->type){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
@@ -127,50 +129,75 @@ void lval_del(lval* v){
         case LVAL_ERR: free(v->err); break;
         case LVAL_FUNC: free(v->func); break;
     }
+    //printf("Deleting lval %d\n", v->type);
+    //print_lval(v);
     free(v);
+    printf("#Free'd lval\n");
 }
 
 void list_del(list* l){
-    lval_del(l->expr);
-    list* n = l->next;
-    free(l);
-    if (n != NULL) {
-        list_del(n);
+   //printf("Running list delete\n");
+   //print_list(l);
+   if (l != NULL){
+      if (l->expr != NULL){
+         //printf("Deleting expression\n");
+         //print_lval(l->expr);
+         //printf("deleting expr\n");
+         lval_del(l->expr);
+         //printf("deleted expr\n");
+      }
+    if (l->next != NULL) {
+        //printf("deleting next item\n");
+        //printf("Deleting next cell\n");
+        //print_list(l->next);
+        list_del(l->next);
+        //printf("deleted next item\n");
     }
+    //printf("Freeing list\n");
+    free(l);
+    //printf("Free'd list\n");
+   }
 }
 
-void print_list(list* l ){
+void print_list(list* l, int start){
+   if (start == 1){
+      printf("(");
+   }
    if (l != NULL){
+      printf(" ");
       print_lval(l->expr);
+      printf(" ");
       if (l->next != NULL){
-         print_list(l->next);
+         print_list(l->next, 0);
+      } else {
+         printf(")");
       }
    } else {
-      printf("Null value for list\n");
+      printf( " nil");
    }
 }
 void print_lval(lval* v){
     switch(v->type) {
     case LVAL_ERR:
-        printf("%s\n", v->err);
+        printf("%s", v->err);
         break;
     case LVAL_STR:
-        printf("%s\n", v->str);
+        printf("%s", v->str);
         break;
     case LVAL_FUNC:
-        printf("%s\n", v->func);
+        printf("%s", v->func);
         break;
     case LVAL_NUM_INT:
-        printf("%i\n", v->num_int);
+        printf("%i", v->num_int);
         break;
     case LVAL_NUM_FLOAT:
-        printf("%f\n", v->num_float);
+        printf("%f", v->num_float);
         break;
     case LVAL_LIST:
-        print_list(v->list);
+        print_list(v->list, 1);
         break;
     case LVAL_NIL:
-        printf("nil\n");
+        printf("nil");
         break;
     case LVAL_NOOP:
         printf("_NOOP\n");

@@ -23,23 +23,17 @@ list* build_list(mpc_ast_t* t, int count, int accum_count){
     lval* tmp = get_eval_type(t->children[accum_count]);
     int next_count = accum_count + 1;
     if (next_count == count) {
-        printf("Hit anchor\n");
         if (tmp->type != LVAL_NOOP){
             list* anchor = prepend_create(tmp, NULL);
             return anchor;
         }
-        printf("Returning NULL\n");
         return NULL;
     }
     if (tmp->type != LVAL_NOOP){
-        printf("Adding tmp to list\n");
         list* next_elem =  build_list(t, count, next_count);
-        print_lval(tmp);
         return prepend_create(tmp, next_elem);
     }
-    printf("Returning prev\n");
     lval_del(tmp);
-    printf("Deleting tmp");
     return build_list(t, count, next_count);
 }
 
@@ -61,9 +55,9 @@ lval* get_eval_type(mpc_ast_t* t){
         return v;
     }
     if (strstr(t->tag, "list")){
-        mpc_ast_t* tl = &t[1];
-        list* l = build_list(tl, tl->children_num, 1);
-        print_list(l);
+        mpc_ast_t* tl = t;
+        list* l = build_list(tl, tl->children_num, 0);
+        print_list(l, 1);
         lval* v = lval_list(l);
         return v;
     }
@@ -71,7 +65,8 @@ lval* get_eval_type(mpc_ast_t* t){
         lval* v = lval_nil();
         return v;
     }
-    return lval_noop();
+    lval* v = lval_noop();
+    return v;
 }
 
 lval* eval(mpc_ast_t* t){
@@ -82,12 +77,12 @@ lval* eval(mpc_ast_t* t){
             return get_eval_type(tval);
         }
         list* expr_list = build_list(tval, tval->children_num, 0);
-        printf("Have list\n");
         lval* first = first_expr(expr_list);
-        printf("printing first\n");
-        print_lval(first);
         if ( first->type == LVAL_FUNC){
             lval* eval_result = eval_func(expr_list);
+            printf("have eval result\n");
+            print_lval(eval_result);
+            printf("deleting expr list\n");
             list_del(expr_list);
             return eval_result;
 
@@ -171,10 +166,13 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
-            mpc_ast_print(r.output);
+            //mpc_ast_print(r.output);
             lval* result = eval(r.output);
+            printf("lval result\n");
             print_lval(result);
+            printf("deleting eval lval\n");
             lval_del(result);
+            printf("deleted eval lval\n");
             mpc_ast_delete(r.output);
         } else {
             mpc_err_print(r.error);

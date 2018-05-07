@@ -35,4 +35,4 @@ list* rest_expr(list* l);
 void lval_del(lval* v);
 void list_del(list* l);
 void print_lval(lval* v);
-void print_list(list* l);
+void print_list(list* l, int start);
