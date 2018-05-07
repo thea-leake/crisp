@@ -16,10 +16,11 @@
 
 lval* eval(mpc_ast_t* t);
 lval* eval_func(list * l);
+lval* get_eval_type(mpc_ast_t* t);
 
 
 list* build_list(mpc_ast_t* t, int count, int accum_count){
-    lval* tmp = eval(t->children[accum_count]);
+    lval* tmp = get_eval_type(t->children[accum_count]);
     int next_count = accum_count + 1;
     if (next_count == count) {
         printf("Hit anchor\n");
@@ -31,10 +32,14 @@ list* build_list(mpc_ast_t* t, int count, int accum_count){
         return NULL;
     }
     if (tmp->type != LVAL_NOOP){
+        printf("Adding tmp to list\n");
         list* next_elem =  build_list(t, count, next_count);
+        print_lval(tmp);
         return prepend_create(tmp, next_elem);
     }
+    printf("Returning prev\n");
     lval_del(tmp);
+    printf("Deleting tmp");
     return build_list(t, count, next_count);
 }
 
@@ -56,22 +61,46 @@ lval* get_eval_type(mpc_ast_t* t){
         return v;
     }
     if (strstr(t->tag, "list")){
-        list* l = build_list(t, t->children_num, 0);
+        mpc_ast_t* tl = &t[1];
+        list* l = build_list(tl, tl->children_num, 1);
         print_list(l);
         lval* v = lval_list(l);
+        return v;
+    }
+    if (strstr(t->tag, "nil")){
+        lval* v = lval_nil();
         return v;
     }
     return lval_noop();
 }
 
 lval* eval(mpc_ast_t* t){
-    list* expr_list = build_list(t, t->children_num, 0);
-    lval* first = first_expr(expr_list);
-    if ( first->type == LVAL_FUNC){
-        print_list(expr_list);
-        lval* eval_result = eval_func(expr_list);
-        list_del(expr_list);
-        return eval_result;
+    if (t->children_num > 0) {
+        // t->cildren[0] is regex node, irrelevant
+        mpc_ast_t* tval = t->children[1];
+        if (strstr(tval->tag, "atom")){
+            return get_eval_type(tval);
+        }
+        list* expr_list = build_list(tval, tval->children_num, 0);
+        printf("Have list\n");
+        lval* first = first_expr(expr_list);
+        printf("printing first\n");
+        print_lval(first);
+        if ( first->type == LVAL_FUNC){
+            lval* eval_result = eval_func(expr_list);
+            list_del(expr_list);
+            return eval_result;
+
+        }
+        if (first->type == LVAL_LIST){
+            return lval_list(expr_list);
+        }
+        list* rest = rest_expr(expr_list);
+        if (rest == NULL) {
+            return first;
+        }
+
+        return lval_err("Expression unable to use operands\n");
     }
     return lval_noop();
 }
@@ -105,27 +134,32 @@ int main(int argc, char** argv) {
     mpc_parser_t* Float = mpc_new("float");
     mpc_parser_t* Number = mpc_new("number");
     mpc_parser_t* String = mpc_new("string");
+    mpc_parser_t* Nil = mpc_new("nil");
     mpc_parser_t* Symbols = mpc_new("symbols");
     mpc_parser_t* Keywords = mpc_new("keywords");
     mpc_parser_t* Builtin = mpc_new("builtin");
-    mpc_parser_t* Expr = mpc_new("expr");
+    mpc_parser_t* Atom = mpc_new("atom");
     mpc_parser_t* List = mpc_new("list");
+    mpc_parser_t* Literal = mpc_new("literal");
     mpc_parser_t* Lispy = mpc_new("lispy");
 
     mpca_lang(MPCA_LANG_DEFAULT,
-        "                                                                             \
-            integer:  /-?[0-9]+/                                                    ; \
-            float:    /-?[0-9]+\\.[0-9]+/                                           ; \
-            number:   <float> | <integer>                                           ; \
-            string:   /\"(\\\\.|[^\"])*\"/                                          ; \
-            symbols:  '+' | '-' | '*' | '/' | '%'                                   ; \
-            keywords: /add/ | /sub/ | /mul/ | /div/ | /mod/                         ; \
-            builtin:  <symbols> | <keywords>                                        ; \
-            expr:     <number> | <string> | <builtin> | '('<expr>+ ')'              ; \
-            list:     '''<expr>                                                       ; \
-            lispy:    /^/ <builtin> <expr>+/$/ | /^/<expr> | <builtin> | <list> /$/ ; \
+        "                                                                            \
+            integer:  /-?[0-9]+/                                                    ;\
+            float:    /-?[0-9]+\\.[0-9]+/                                           ;\
+            number:   <float> | <integer>                                           ;\
+            string:   /\"(\\\\.|[^\"])*\"/                                          ;\
+            nil:      /nil/                                                         ;\
+            symbols:  '+' | '-' | '*' | '/' | '%'                                   ;\
+            keywords: /add/ | /sub/ | /mul/ | /div/ | /mod/                         ;\
+            builtin:  <symbols> | <keywords>                                        ;\
+            atom:     <builtin> | <string> | <number> | <nil>                       ;\
+            list:     '(' <atom>+ ')' |<atom>+  | '(' <list>+ ')'                   ;\
+            literal:  '''<expr>                                                     ;\
+            lispy:    /^/ <list>| <literal> /$/                                     ;\
         ",
-        Integer, Float, Number, String,  Symbols, Keywords, Builtin, Expr, List, Lispy
+        Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
+        Literal, Lispy
     );
 
     // infinite read eval print loop
@@ -154,7 +188,8 @@ int main(int argc, char** argv) {
     // clean up our parsers from memory
     mpc_cleanup(
         9,
-        Integer, Float, Number, String,  Symbols, Keywords, Builtin, Expr, List, Lispy
+        Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
+        Literal, Lispy
     );
     return 0;
 }
