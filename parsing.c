@@ -135,6 +135,7 @@ int main(int argc, char** argv) {
     mpc_parser_t* Builtin = mpc_new("builtin");
     mpc_parser_t* Atom = mpc_new("atom");
     mpc_parser_t* List = mpc_new("list");
+    mpc_parser_t* Element = mpc_new("element");
     mpc_parser_t* Literal = mpc_new("literal");
     mpc_parser_t* Lispy = mpc_new("lispy");
 
@@ -149,12 +150,13 @@ int main(int argc, char** argv) {
             keywords: /add/ | /sub/ | /mul/ | /div/ | /mod/                         ;\
             builtin:  <symbols> | <keywords>                                        ;\
             atom:     <builtin> | <string> | <number> | <nil>                       ;\
-            list:     '(' <atom>+ ')' |<atom>+  | '(' <list>+ ')'                   ;\
-            literal:  '''<expr>                                                     ;\
+            list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ | '(' <element>+')';\
+            element:   <atom> | <list> | <literal>                                  ;\
+            literal:  '''<list>                                                     ;\
             lispy:    /^/ <list>| <literal> /$/                                     ;\
         ",
         Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
-        Literal, Lispy
+        Element, Literal, Lispy
     );
 
     // infinite read eval print loop
@@ -166,10 +168,11 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
-            //mpc_ast_print(r.output);
+            mpc_ast_print(r.output);
             lval* result = eval(r.output);
             printf("lval result\n");
             print_lval(result);
+            printf("\n");
             printf("deleting eval lval\n");
             lval_del(result);
             printf("deleted eval lval\n");
@@ -187,7 +190,7 @@ int main(int argc, char** argv) {
     mpc_cleanup(
         9,
         Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
-        Literal, Lispy
+        Element, Literal, Lispy
     );
     return 0;
 }
