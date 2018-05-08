@@ -86,28 +86,7 @@ lval* eval(mpc_ast_t* t){
         int index = get_ast_expr_index(t, 0);
         mpc_ast_t* tval = t->children[index];
         lval* expr = get_eval_type(tval);
-        printf("Expr list:");
-        print_lval(expr);
-        printf("\n");
-        lval* first = first_expr(expr->list);
-        if ( first->type == LVAL_FUNC){
-            lval* eval_result = eval_func(expr->list);
-            printf("have eval result\n");
-            print_lval(eval_result);
-            printf("deleting expr list\n");
-            lval_del(expr);
-            return eval_result;
-
-        }
-        if (first->type == LVAL_LIST){
-            return lval_list(expr->list);
-        }
-        list* rest = rest_expr(expr->list);
-        if (rest == NULL) {
-            return first;
-        }
-
-        return lval_err("Expression unable to use operands\n");
+        return expr;
     }
     return lval_noop();
 }
