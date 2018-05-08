@@ -56,8 +56,8 @@ lval* get_eval_type(mpc_ast_t* t){
     }
     if (strstr(t->tag, "list")){
         list* l = build_list(t, t->children_num, 0);
-        lval* v = lval_list(l);
-        printf("Created list \n");
+        lval* v = eval_func(l);
+        printf("Evaluated list \n");
         print_lval(v);
         printf("\n");
         return v;
@@ -86,9 +86,6 @@ lval* eval(mpc_ast_t* t){
         int index = get_ast_expr_index(t, 0);
         mpc_ast_t* tval = t->children[index];
         lval* expr = get_eval_type(tval);
-        if (strstr(tval->tag, "atom")){
-            return expr;
-        }
         printf("Expr list:");
         print_lval(expr);
         printf("\n");
