@@ -57,9 +57,6 @@ lval* get_eval_type(mpc_ast_t* t){
     if (strstr(t->tag, "list")){
         list* l = build_list(t, t->children_num, 0);
         lval* v = eval_func(l);
-        printf("Evaluated list \n");
-        print_lval(v);
-        printf("\n");
         return v;
     }
     if (strstr(t->tag, "nil")){
@@ -73,7 +70,6 @@ lval* get_eval_type(mpc_ast_t* t){
 int get_ast_expr_index(mpc_ast_t* t, int index){
     mpc_ast_t* ti = t->children[index];
     if (strstr(ti->tag, "atom") || (strstr(ti->tag, "list")) || (strstr(ti->tag, "literal"))){
-        printf("Found index at %d\n", index);
           return index;
     }
     int n = index + 1;
@@ -159,14 +155,10 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
-            mpc_ast_print(r.output);
+            //mpc_ast_print(r.output);
             lval* result = eval(r.output);
-            printf("lval result\n");
             print_lval(result);
             printf("\n");
-            printf("deleting eval lval\n");
-            lval_del(result);
-            printf("deleted eval lval\n");
             mpc_ast_delete(r.output);
         } else {
             mpc_err_print(r.error);
