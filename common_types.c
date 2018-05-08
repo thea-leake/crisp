@@ -117,8 +117,6 @@ list* rest_expr(list* l){
 }
 
 void lval_del(lval* v){
-    //print_lval(v);
-    printf("$Freeing lval\n");
     switch (v->type){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
@@ -129,33 +127,18 @@ void lval_del(lval* v){
         case LVAL_ERR: free(v->err); break;
         case LVAL_FUNC: free(v->func); break;
     }
-    //printf("Deleting lval %d\n", v->type);
-    //print_lval(v);
     free(v);
-    printf("#Free'd lval\n");
 }
 
 void list_del(list* l){
-   //printf("Running list delete\n");
-   //print_list(l);
    if (l != NULL){
       if (l->expr != NULL){
-         //printf("Deleting expression\n");
-         //print_lval(l->expr);
-         //printf("deleting expr\n");
          lval_del(l->expr);
-         //printf("deleted expr\n");
       }
     if (l->next != NULL) {
-        //printf("deleting next item\n");
-        //printf("Deleting next cell\n");
-        //print_list(l->next);
         list_del(l->next);
-        //printf("deleted next item\n");
     }
-    //printf("Freeing list\n");
     free(l);
-    //printf("Free'd list\n");
    }
 }
 
@@ -173,7 +156,7 @@ void print_list(list* l, int start){
          printf(")");
       }
    } else {
-      printf( " nil");
+      printf( "nil");
    }
 }
 void print_lval(lval* v){

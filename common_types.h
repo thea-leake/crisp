@@ -8,6 +8,7 @@ typedef struct {
     char* func;
     char* err;
     list* list;
+    list* literal;
 } lval ;
 
 struct list {
@@ -16,7 +17,7 @@ struct list {
 } ;
 
 
-enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_NIL, LVAL_NOOP};
+enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_LITERAL, LVAL_NIL, LVAL_NOOP};
 
 lval* lval_num_int(int x);
 lval* lval_num_float(float x);

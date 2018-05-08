@@ -55,10 +55,11 @@ lval* get_eval_type(mpc_ast_t* t){
         return v;
     }
     if (strstr(t->tag, "list")){
-        mpc_ast_t* tl = t;
-        list* l = build_list(tl, tl->children_num, 0);
-        print_list(l, 1);
+        list* l = build_list(t, t->children_num, 0);
         lval* v = lval_list(l);
+        printf("Created list \n");
+        print_lval(v);
+        printf("\n");
         return v;
     }
     if (strstr(t->tag, "nil")){
@@ -69,28 +70,42 @@ lval* get_eval_type(mpc_ast_t* t){
     return v;
 }
 
+int get_ast_expr_index(mpc_ast_t* t, int index){
+    mpc_ast_t* ti = t->children[index];
+    if (strstr(ti->tag, "atom") || (strstr(ti->tag, "list")) || (strstr(ti->tag, "literal"))){
+        printf("Found index at %d\n", index);
+          return index;
+    }
+    int n = index + 1;
+    return get_ast_expr_index(t, n);
+}
+
 lval* eval(mpc_ast_t* t){
     if (t->children_num > 0) {
         // t->cildren[0] is regex node, irrelevant
-        mpc_ast_t* tval = t->children[1];
+        int index = get_ast_expr_index(t, 0);
+        mpc_ast_t* tval = t->children[index];
+        lval* expr = get_eval_type(tval);
         if (strstr(tval->tag, "atom")){
-            return get_eval_type(tval);
+            return expr;
         }
-        list* expr_list = build_list(tval, tval->children_num, 0);
-        lval* first = first_expr(expr_list);
+        printf("Expr list:");
+        print_lval(expr);
+        printf("\n");
+        lval* first = first_expr(expr->list);
         if ( first->type == LVAL_FUNC){
-            lval* eval_result = eval_func(expr_list);
+            lval* eval_result = eval_func(expr->list);
             printf("have eval result\n");
             print_lval(eval_result);
             printf("deleting expr list\n");
-            list_del(expr_list);
+            lval_del(expr);
             return eval_result;
 
         }
         if (first->type == LVAL_LIST){
-            return lval_list(expr_list);
+            return lval_list(expr->list);
         }
-        list* rest = rest_expr(expr_list);
+        list* rest = rest_expr(expr->list);
         if (rest == NULL) {
             return first;
         }
