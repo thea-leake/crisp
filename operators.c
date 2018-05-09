@@ -233,3 +233,7 @@ lval* mod_op(list* l){
 
      return lval_num_int(modulo);
 }
+
+lval* car_op(list* l){
+    return first_expr(l->expr->list);
+}

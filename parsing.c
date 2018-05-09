@@ -50,10 +50,10 @@ lval* list_retrieve(mpc_ast_t* t, int is_literal){
 
 lval* get_eval_type(mpc_ast_t* t){
     if (strstr(t->tag, "literal")){
-        int index = get_literal_list_index(t, 0);
-        list* l = build_list(t, t->children_num, index, 1);
-        lval* v = lval_list(l);
-        return v;
+       //int index = get_literal_list_index(t, 0);
+       //list* l = build_list(t, t->children_num, index, 1);
+       //lval* v = lval_list(l);
+        return get_literal(t);
     }
     if (strstr(t->tag, "list")){
         list* l = build_list(t, t->children_num, 0, 0);
@@ -70,7 +70,14 @@ lval* get_eval_type(mpc_ast_t* t){
 
 
 lval* get_literal(mpc_ast_t* t){
-    if ((strstr(t->tag, "literal")) || (strstr(t->tag, "list"))){
+    if (strstr(t->tag, "literal"))  {
+        int index = get_literal_list_index(t, 0);
+        mpc_ast_t* lit = t->children[index];
+        list* l = build_list(lit, lit->children_num, index, 1);
+        lval* v = lval_list(l);
+        return v;
+    }
+    if (strstr(t->tag, "list")) {
         int index = get_literal_list_index(t, 0);
         list* l = build_list(t, t->children_num, index, 1);
         lval* v = lval_list(l);
@@ -140,17 +147,24 @@ lval* eval_func(list * l){
     list* operands = l->next;
     if (strcmp("+", func->func) == 0 || strcmp("add", func->func) == 0){
         return sum_op(operands);
-    } else if (strcmp("-", func->func) == 0 || strcmp("sub", func->func) == 0){
+    } if (strcmp("-", func->func) == 0 || strcmp("sub", func->func) == 0){
         return sub_op(operands);
-    } else if (strcmp("*", func->func) == 0 || strcmp("mul", func->func) == 0){
+    } if (strcmp("*", func->func) == 0 || strcmp("mul", func->func) == 0){
         return mul_op(operands);
-    } else if (strcmp("/", func->func) == 0 || strcmp("div", func->func) == 0){
+    } if (strcmp("/", func->func) == 0 || strcmp("div", func->func) == 0){
         return div_op(operands);
-    } else if (strcmp("%", func->func) == 0 || strcmp("mod", func->func) == 0){
+    } if (strcmp("%", func->func) == 0 || strcmp("mod", func->func) == 0){
         return mod_op(operands);
-    } else {
-        return lval_err("func undefined\n");
     }
+    if (strcmp("car", func->func)){
+       return car_op(operands);
+    }
+    if (strcmp("cdr", func->func)){
+       printf("operands:\n");
+       print_list(operands, 1);
+       return lval_list(rest_expr(operands));
+    }
+    return lval_err("func undefined\n");
 }
 
 
@@ -180,9 +194,10 @@ int main(int argc, char** argv) {
             float:    /-?[0-9]+\\.[0-9]+/                                           ;\
             number:   <float> | <integer>                                           ;\
             string:   /\"(\\\\.|[^\"])*\"/                                          ;\
-            nil:      /nil/                                                         ;\
+            nil:      \"nil\"                                                       ;\
             symbols:  '+' | '-' | '*' | '/' | '%'                                   ;\
-            keywords: /add/ | /sub/ | /mul/ | /div/ | /mod/                         ;\
+            keywords: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |    \
+            \"cdr\" |  \"const\" | \"eval\" | \"list\"                              ;\
             builtin:  <symbols> | <keywords>                                        ;\
             atom:     <builtin> | <string> | <number> | <nil>                       ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ | '(' <element>+')';\
@@ -203,7 +218,7 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
-            mpc_ast_print(r.output);
+            //mpc_ast_print(r.output);
             lval* result = eval(r.output);
             print_lval(result);
             printf("\n");
