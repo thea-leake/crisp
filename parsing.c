@@ -1,6 +1,5 @@
 /*
  * Thea's Lisp
- * Implemented foloowing Build Your Own Lisp - http://www.buildyourownlisp.com/
  * Thea Leake
  * https://github.com/thea-leake/build_a_lisp
  */
@@ -59,11 +58,16 @@ lval* get_eval_type(mpc_ast_t* t){
         lval* v = eval_func(l);
         return v;
     }
+    if (strstr(t->tag, "literal")){
+        list* l = build_list(t, t->children_num, 0);
+        lval* v = lval_list(l);
+        return v;
+    }
     if (strstr(t->tag, "nil")){
         lval* v = lval_nil();
         return v;
     }
-    lval* v = lval_noop();
+   lval* v = lval_noop();
     return v;
 }
 
@@ -89,7 +93,7 @@ lval* eval(mpc_ast_t* t){
 
 lval* eval_func(list * l){
     lval* func = l->expr;
-    list* operands = rest_expr(l);
+    list* operands = l->next;
     if (strcmp("+", func->func) == 0 || strcmp("add", func->func) == 0){
         return sum_op(operands);
     } else if (strcmp("-", func->func) == 0 || strcmp("sub", func->func) == 0){

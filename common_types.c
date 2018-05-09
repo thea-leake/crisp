@@ -80,19 +80,6 @@ list* init_list(lval* v){
    return n;
 }
 
-list* list_from_arrary(lval* v[], int expr_index, int expr_ct){
-    list* l = malloc(sizeof(list));
-    l->expr = v[expr_index];
-    if (expr_ct > 1) {
-        int rem_ct = expr_ct - 1;
-        int rest_index = expr_index + 1;
-        l->next = list_from_arrary(v, rest_index, rem_ct);
-    } else {
-        l->next = NULL;
-    }
-    return l;
-}
-
 list* list_prepend(list* l, lval* v){
     list* n = malloc(sizeof(list));
     n->expr = v;
@@ -104,13 +91,7 @@ lval* first_expr(list* l){
    return l->expr;
 }
 
-lval* pop(list* l){
-    lval* expr = l->expr;
-    list* new_dest = l->next;
-    free(l);
-    l = new_dest;
-    return expr;
-}
+
 
 list* rest_expr(list* l){
     return l->next;

@@ -16,7 +16,7 @@ lval* sum_op(list* l){
         }
     }
     lval* expr = l->expr;
-    lval* accum = sum_op(rest_expr(l));
+    lval* accum = sum_op(l->next);
     float expr_val;
     float accum_val;
 
@@ -65,7 +65,7 @@ lval* sub_op(list* l){
         return r;
     }
     lval* expr = l->expr;
-    lval* accum = sub_op(rest_expr(l));
+    lval* accum = sub_op(l->next);
     float expr_val;
     float accum_val;
 
@@ -110,7 +110,7 @@ lval* mul_op(list* l){
         }
     }
     lval* expr = l->expr;
-    lval* accum = mul_op(rest_expr(l));
+    lval* accum = mul_op(l->next);
     float expr_val;
     float accum_val;
 
@@ -162,7 +162,7 @@ lval* div_op(list* l){
         }
     }
     lval* expr = l->expr;
-    lval* accum = div_op(rest_expr(l));
+    lval* accum = div_op(l->next);
     float expr_val;
     float accum_val;
 
@@ -208,7 +208,7 @@ lval* mod_op(list* l){
         return lval_err("Only one arg provided");
     }
     lval* expr = l->expr;
-    lval* accum = sum_op(rest_expr(l));
+    lval* accum = sum_op(l->next);
     int expr_val;
     int accum_val;
 
