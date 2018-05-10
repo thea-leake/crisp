@@ -26,7 +26,7 @@ int get_literal_list_index(mpc_ast_t* t, int index);
 list* build_list(mpc_ast_t* t, int count, int accum_count, int is_literal){
     lval* tmp = list_retrieve(t->children[accum_count], is_literal);
     int next_count = accum_count + 1;
-    if (next_count == count) {
+    if (next_count >= count) {
         if (tmp->type != LVAL_NOOP){
             list* anchor = prepend_create(tmp, NULL);
             return anchor;
@@ -35,10 +35,12 @@ list* build_list(mpc_ast_t* t, int count, int accum_count, int is_literal){
     }
     if (tmp->type != LVAL_NOOP){
         list* next_elem =  build_list(t, count, next_count, is_literal);
-        return prepend_create(tmp, next_elem);
+        list* tmp_lst =  prepend_create(tmp, next_elem);
+        return tmp_lst;
     }
     lval_del(tmp);
-    return build_list(t, count, next_count, is_literal);
+    list* tmp_lst = build_list(t, count, next_count, is_literal);
+    return tmp_lst;
 }
 
 lval* list_retrieve(mpc_ast_t* t, int is_literal){
@@ -50,13 +52,11 @@ lval* list_retrieve(mpc_ast_t* t, int is_literal){
 
 lval* get_eval_type(mpc_ast_t* t){
     if (strstr(t->tag, "literal")){
-       //int index = get_literal_list_index(t, 0);
-       //list* l = build_list(t, t->children_num, index, 1);
-       //lval* v = lval_list(l);
         return get_literal(t);
     }
     if (strstr(t->tag, "list")){
         list* l = build_list(t, t->children_num, 0, 0);
+        // segfault happening after here
         lval* v = eval_func(l);
         return v;
     }
@@ -143,8 +143,21 @@ lval* eval(mpc_ast_t* t){
 }
 
 lval* eval_func(list * l){
+   printf("calling eval\n");
     lval* func = l->expr;
+    printf("func is : ");
+    print_lval(func); printf(" - %s\n", func->func);
+    printf("\ngetting list\n");
     list* operands = l->next;
+    printf("Have list\n");
+    printf("getting to car strcmp\n");
+    if (strcmp("car", func->func)){
+       printf("calling car op\n");
+       return car_op(operands);
+    }
+    if (strcmp("cdr", func->func)){
+       return lval_list(rest_expr(operands));
+    }
     if (strcmp("+", func->func) == 0 || strcmp("add", func->func) == 0){
         return sum_op(operands);
     } if (strcmp("-", func->func) == 0 || strcmp("sub", func->func) == 0){
@@ -155,14 +168,6 @@ lval* eval_func(list * l){
         return div_op(operands);
     } if (strcmp("%", func->func) == 0 || strcmp("mod", func->func) == 0){
         return mod_op(operands);
-    }
-    if (strcmp("car", func->func)){
-       return car_op(operands);
-    }
-    if (strcmp("cdr", func->func)){
-       printf("operands:\n");
-       print_list(operands, 1);
-       return lval_list(rest_expr(operands));
     }
     return lval_err("func undefined\n");
 }

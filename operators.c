@@ -235,5 +235,6 @@ lval* mod_op(list* l){
 }
 
 lval* car_op(list* l){
+    print_list(l, 1);
     return first_expr(l->expr->list);
 }
