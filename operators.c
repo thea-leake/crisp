@@ -236,3 +236,7 @@ lval* mod_op(list* l){
 lval* car_op(list* l){
     return first_expr(l->expr->list);
 }
+
+lval* cdr_op(list* l){
+    return lval_list(rest_expr(l->expr->list));
+}

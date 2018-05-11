@@ -158,7 +158,7 @@ lval* eval_func(list * l){
     } if (func->func == CAR) {
        return car_op(operands);
     } if (func->func == CDR) {
-       return lval_list(rest_expr(operands));
+       return cdr_op(operands);
     }
     return lval_err("func undefined\n");
 }
