@@ -44,7 +44,7 @@ list* build_list(mpc_ast_t* t, int count, int accum_count, int is_literal){
 }
 
 lval* list_retrieve(mpc_ast_t* t, int is_literal){
-   if (is_literal == 1){
+   if (is_literal == True){
       return get_literal(t);
    }
    return get_eval_type(t);
@@ -55,7 +55,7 @@ lval* get_eval_type(mpc_ast_t* t){
         return get_literal(t);
     }
     if (strstr(t->tag, "list")){
-        list* l = build_list(t, t->children_num, 0, 0);
+        list* l = build_list(t, t->children_num, 0, False);
         // segfault happening after here
         lval* v = eval_func(l);
         return v;
@@ -73,13 +73,13 @@ lval* get_literal(mpc_ast_t* t){
     if (strstr(t->tag, "literal"))  {
         int index = get_literal_list_index(t, 0);
         mpc_ast_t* lit = t->children[index];
-        list* l = build_list(lit, lit->children_num, index, 1);
+        list* l = build_list(lit, lit->children_num, index, True);
         lval* v = lval_list(l);
         return v;
     }
     if (strstr(t->tag, "list")) {
         int index = get_literal_list_index(t, 0);
-        list* l = build_list(t, t->children_num, index, 1);
+        list* l = build_list(t, t->children_num, index, True);
         lval* v = lval_list(l);
         return v;
     }

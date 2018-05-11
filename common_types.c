@@ -123,7 +123,7 @@ void list_del(list* l){
 }
 
 void print_list(list* l, int start){
-   if (start == 1){
+   if (start == True){
       printf("(");
    }
    if (l != NULL){
@@ -131,7 +131,7 @@ void print_list(list* l, int start){
       print_lval(l->expr);
       printf(" ");
       if (l->next != NULL){
-         print_list(l->next, 0);
+         print_list(l->next, False);
       } else {
          printf(")");
       }
@@ -157,7 +157,7 @@ void print_lval(lval* v){
         printf("%f", v->num_float);
         break;
     case LVAL_LIST:
-        print_list(v->list, 1);
+        print_list(v->list, True);
         break;
     case LVAL_NIL:
         printf("nil");
