@@ -145,22 +145,16 @@ lval* eval(mpc_ast_t* t){
 lval* eval_func(list * l){
     lval* func = l->expr;
     list* operands = l->next;
-    if (func->func == SUM){
-        return sum_op(operands);
-    } if (func->func == DIFF){
-        return sub_op(operands);
-    } if (func->func == MUL){
-        return mul_op(operands);
-    } if (func->func == DIV){
-        return div_op(operands);
-    } if (func->func == MOD){
-        return mod_op(operands);
-    } if (func->func == CAR) {
-       return car_op(operands);
-    } if (func->func == CDR) {
-       return cdr_op(operands);
-    }
-    return lval_err("func undefined\n");
+    switch(func->func){
+      case SUM:  return sum_op(operands);
+      case DIFF:  return sub_op(operands);
+      case MUL:  return mul_op(operands);
+      case DIV:  return div_op(operands);
+      case MOD: return mod_op(operands);
+      case CAR:return car_op(operands);
+      case CDR: return cdr_op(operands);
+      default:   return lval_err("func undefined\n");
+   }
 }
 
 
