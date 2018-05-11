@@ -157,7 +157,6 @@ lval* div_op(list* l){
         } else if (v->type == LVAL_ERR) {
             return lval_err(v->err);
         } else {
-            print_lval(v);
             return lval_err("Invalid Type provided");
         }
     }
@@ -235,6 +234,5 @@ lval* mod_op(list* l){
 }
 
 lval* car_op(list* l){
-    print_list(l, 1);
     return first_expr(l->expr->list);
 }

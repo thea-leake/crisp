@@ -29,8 +29,7 @@ lval* lval_str(char* x){
 lval* lval_func(char* x){
     lval* v = malloc(sizeof(lval));
     v->type = LVAL_FUNC;
-    v->func = malloc(strlen(x) + 1);
-    strcpy(v->func, x);
+    v->func = get_opr(x);
     return v;
 }
 
@@ -101,12 +100,12 @@ void lval_del(lval* v){
     switch (v->type){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
+        case LVAL_FUNC: break;
         case LVAL_NIL: break;
         case LVAL_NOOP: break;
         case LVAL_LIST: list_del(v->list);
         case LVAL_STR: free(v->str); break;
         case LVAL_ERR: free(v->err); break;
-        case LVAL_FUNC: free(v->func); break;
     }
     free(v);
 }
@@ -149,7 +148,7 @@ void print_lval(lval* v){
         printf("%s", v->str);
         break;
     case LVAL_FUNC:
-        printf("%s", v->func);
+        print_opr(v->func);
         break;
     case LVAL_NUM_INT:
         printf("%i", v->num_int);
@@ -167,4 +166,36 @@ void print_lval(lval* v){
         printf("_NOOP\n");
         break;
     }
+}
+
+int get_opr(char* x){
+    if (strcmp("+", x) == 0 || strcmp("add", x) == 0){
+        return SUM;
+    } if (strcmp("-", x) == 0 || strcmp("sub", x) == 0){
+        return DIFF;
+    } if (strcmp("*", x) == 0 || strcmp("mul", x) == 0){
+        return MUL;
+    } if (strcmp("/", x) == 0 || strcmp("div", x) == 0){
+        return DIV;
+    } if (strcmp("%", x) == 0 || strcmp("mod", x) == 0){
+        return MOD;
+    } if (strcmp("car", x) == 0) {
+       return CAR;
+    } if (strcmp("cdr", x) == 0) {
+       return CDR;
+    }
+    return FUNC_UNDEF;
+}
+
+void print_opr(int x){
+   switch(x){
+      case SUM: printf("+"); break;
+      case DIFF: printf("-"); break;
+      case MUL: printf("*"); break;
+      case DIV: printf("/"); break;
+      case MOD: printf("%%"); break;
+      case CAR: printf("car"); break;
+      case CDR: printf("cdr"); break;
+      default: printf("!!func undefined!!");
+   }
 }

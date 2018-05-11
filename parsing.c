@@ -92,6 +92,10 @@ lval* get_literal(mpc_ast_t* t){
 }
 
 lval* get_atom_type(mpc_ast_t* t){
+    if (strstr(t->tag, "builtin")){
+        lval* v = lval_func(t->contents);
+        return v;
+    }
     if (strstr(t->tag, "string")){
         lval* v = lval_str(t->contents);
         return v;
@@ -102,10 +106,6 @@ lval* get_atom_type(mpc_ast_t* t){
     }
     if (strstr(t->tag, "integer")) {
         lval* v = lval_num_int(atoi(t->contents));
-        return v;
-    }
-    if (strstr(t->tag, "builtin")){
-        lval* v = lval_func(t->contents);
         return v;
     }
    lval* v = lval_noop();
@@ -143,31 +143,22 @@ lval* eval(mpc_ast_t* t){
 }
 
 lval* eval_func(list * l){
-   printf("calling eval\n");
     lval* func = l->expr;
-    printf("func is : ");
-    print_lval(func); printf(" - %s\n", func->func);
-    printf("\ngetting list\n");
     list* operands = l->next;
-    printf("Have list\n");
-    printf("getting to car strcmp\n");
-    if (strcmp("car", func->func)){
-       printf("calling car op\n");
-       return car_op(operands);
-    }
-    if (strcmp("cdr", func->func)){
-       return lval_list(rest_expr(operands));
-    }
-    if (strcmp("+", func->func) == 0 || strcmp("add", func->func) == 0){
+    if (func->func == SUM){
         return sum_op(operands);
-    } if (strcmp("-", func->func) == 0 || strcmp("sub", func->func) == 0){
+    } if (func->func == DIFF){
         return sub_op(operands);
-    } if (strcmp("*", func->func) == 0 || strcmp("mul", func->func) == 0){
+    } if (func->func == MUL){
         return mul_op(operands);
-    } if (strcmp("/", func->func) == 0 || strcmp("div", func->func) == 0){
+    } if (func->func == DIV){
         return div_op(operands);
-    } if (strcmp("%", func->func) == 0 || strcmp("mod", func->func) == 0){
+    } if (func->func == MOD){
         return mod_op(operands);
+    } if (func->func == CAR) {
+       return car_op(operands);
+    } if (func->func == CDR) {
+       return lval_list(rest_expr(operands));
     }
     return lval_err("func undefined\n");
 }
@@ -223,7 +214,7 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
-            //mpc_ast_print(r.output);
+            // mpc_ast_print(r.output);
             lval* result = eval(r.output);
             print_lval(result);
             printf("\n");
@@ -240,6 +231,7 @@ int main(int argc, char** argv) {
     // clean up our parsers from memory
     mpc_cleanup(
         9,
+
         Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
         Element, Literal, Lispy
     );
