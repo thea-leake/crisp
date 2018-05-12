@@ -8,7 +8,6 @@ typedef struct {
     int func;
     char* err;
     list* list;
-    list* literal;
 } lval ;
 
 struct list {
@@ -17,9 +16,9 @@ struct list {
 } ;
 
 
-enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_LITERAL, LVAL_NIL, LVAL_NOOP};
+enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_NIL, LVAL_NOOP};
 enum {False, True};
-enum {SUM, DIFF, MUL, DIV, MOD, CAR, CDR, LIST,  FUNC_UNDEF};
+enum {SUM, DIFF, MUL, DIV, MOD, CAR, CDR, LIST, CONS, FUNC_UNDEF};
 
 lval* lval_num_int(int x);
 lval* lval_num_float(float x);
@@ -29,12 +28,17 @@ lval* lval_err(char* x);
 lval* lval_list(list* l);
 lval* lval_nil();
 lval* lval_noop();
+lval* copy_lval(lval* v);
+lval* copy_func(lval* v);
+lval* copy_err(lval* v);
+lval* copy_str(lval* l);
 list* prepend_create(lval* v, list* l);
 list* init_list(lval* v);
 list* list_from_array(lval* v[], int expr_index, int expr_ct);
 list* list_preprend(list* l, lval* v);
 lval* first_expr(list* l);
 list* rest_expr(list* l);
+list* copy_list(list* l);
 int get_opr(char* x);
 void lval_del(lval* v);
 void list_del(list* l);

@@ -18,6 +18,14 @@ lval* lval_num_float(float x){
     return v;
 }
 
+lval* copy_str(lval* v){
+    lval* n = malloc(sizeof(lval));
+    n->type = LVAL_STR;
+    n->str = malloc(sizeof(v->str));
+    strcpy(n->str, v->str);
+    return n;
+}
+
 lval* lval_str(char* x){
     lval* v = malloc(sizeof(lval));
     v->type = LVAL_STR;
@@ -33,11 +41,27 @@ lval* lval_func(char* x){
     return v;
 }
 
+lval* copy_func(lval* v){
+    lval* n = malloc(sizeof(lval));
+    n->type = LVAL_FUNC;
+    n->func = v->func;
+    return n;
+}
+
 lval* lval_list(list* l){
    lval* v = malloc(sizeof(lval));
    v->type = LVAL_LIST;
    v->list = l;
    return v;
+}
+
+
+lval* copy_err(lval* v){
+    lval* n = malloc(sizeof(lval));
+    n->type = LVAL_ERR;
+    n->err = malloc(strlen(v->err));
+    strcpy(n->err, v->err);
+    return n;
 }
 
 lval* lval_err(char* x){
@@ -61,6 +85,37 @@ lval* lval_noop(){
     return v;
 }
 
+lval* copy_lval(lval* v){
+   switch(v->type){
+      case LVAL_NUM_INT:
+         return lval_num_int(v->num_int);
+      case LVAL_NUM_FLOAT:
+         return lval_num_float(v->num_float);
+      case LVAL_STR:
+         return copy_str(v);
+      case LVAL_FUNC:
+         return copy_func(v);
+      case LVAL_ERR:
+         return lval_err(v->err);
+      case LVAL_LIST:
+         return lval_list(v->list);
+      case LVAL_NIL:
+         return lval_nil();
+      default:
+         printf("Error copying lval ");
+         print_lval(v); printf("\n");
+         return lval_err("Unable to copy lval");
+   }
+}
+
+list* copy_list(list* l){
+   lval* v = copy_lval(l->expr);
+   if (l->next == NULL){
+      return prepend_create(v, NULL);
+   }
+   list* n = copy_list(l->next);
+   return prepend_create(v, n);
+}
 
 list* prepend_create(lval* v, list* l){
    if (l == NULL){
@@ -89,8 +144,6 @@ list* list_prepend(list* l, lval* v){
 lval* first_expr(list* l){
    return l->expr;
 }
-
-
 
 list* rest_expr(list* l){
     return l->next;
