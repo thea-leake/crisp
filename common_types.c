@@ -55,7 +55,6 @@ lval* lval_list(list* l){
    return v;
 }
 
-
 lval* copy_err(lval* v){
     lval* n = malloc(sizeof(lval));
     n->type = LVAL_ERR;
@@ -236,6 +235,8 @@ int get_opr(char* x){
        return CDR;
     } if (strcmp("list", x) == 0){
        return LIST;
+    } if (strcmp("cons", x) == 0){
+       return CONS;
     }
     return FUNC_UNDEF;
 }

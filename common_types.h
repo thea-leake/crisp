@@ -35,7 +35,7 @@ lval* copy_str(lval* l);
 list* prepend_create(lval* v, list* l);
 list* init_list(lval* v);
 list* list_from_array(lval* v[], int expr_index, int expr_ct);
-list* list_preprend(list* l, lval* v);
+list* list_prepend(list* l, lval* v);
 lval* first_expr(list* l);
 list* rest_expr(list* l);
 list* copy_list(list* l);

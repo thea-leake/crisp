@@ -240,3 +240,22 @@ lval* car_op(list* l){
 lval* cdr_op(list* l){
     return lval_list(rest_expr(l->expr->list));
 }
+
+lval* list_op(list* l){
+    return lval_list(l);
+}
+
+lval* cons_op(list* l){
+    if (l->next == NULL){
+        return lval_err("No list to const to");
+    } if (l->next->next != NULL){
+        return lval_err("Too many arguments, expect lval and list");
+    } if (l->next->expr->type != LVAL_LIST){
+        return lval_err("Second arg must be list");
+    }
+    lval* x = l->expr;
+    list* y = l->next->expr->list;
+    //might use copy_list, depending on ease of garbage collection
+    list* n = list_prepend(y, x);
+    return lval_list(n);
+}
