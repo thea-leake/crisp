@@ -153,6 +153,7 @@ lval* eval_func(list * l){
       case MOD: return mod_op(operands);
       case CAR:return car_op(operands);
       case CDR: return cdr_op(operands);
+      case LIST: return lval_list(operands);
       default:   return lval_err("func undefined\n");
    }
 }
@@ -187,7 +188,7 @@ int main(int argc, char** argv) {
             nil:      \"nil\"                                                       ;\
             symbols:  '+' | '-' | '*' | '/' | '%'                                   ;\
             keywords: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |    \
-            \"cdr\" |  \"const\" | \"eval\" | \"list\"                              ;\
+            \"cdr\" |  \"list\" | \"eval\" | \"list\"                              ;\
             builtin:  <symbols> | <keywords>                                        ;\
             atom:     <builtin> | <string> | <number> | <nil>                       ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ | '(' <element>+')';\

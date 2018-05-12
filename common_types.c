@@ -181,6 +181,8 @@ int get_opr(char* x){
        return CAR;
     } if (strcmp("cdr", x) == 0) {
        return CDR;
+    } if (strcmp("list", x) == 0){
+       return LIST;
     }
     return FUNC_UNDEF;
 }
@@ -194,6 +196,7 @@ void print_opr(int x){
       case MOD: printf("%%"); break;
       case CAR: printf("car"); break;
       case CDR: printf("cdr"); break;
+      case LIST: printf("cons"); break;
       default: printf("!!func undefined!!");
    }
 }

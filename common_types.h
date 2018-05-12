@@ -19,7 +19,7 @@ struct list {
 
 enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_LITERAL, LVAL_NIL, LVAL_NOOP};
 enum {False, True};
-enum {SUM, DIFF, MUL, DIV, MOD, CAR, CDR, FUNC_UNDEF};
+enum {SUM, DIFF, MUL, DIV, MOD, CAR, CDR, LIST,  FUNC_UNDEF};
 
 lval* lval_num_int(int x);
 lval* lval_num_float(float x);
