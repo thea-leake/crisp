@@ -118,7 +118,11 @@ lval* get_atom_type(mpc_ast_t* t){
 
 int get_ast_expr_index(mpc_ast_t* t, int index){
     mpc_ast_t* ti = t->children[index];
-    if (strstr(ti->tag, "atom") || (strstr(ti->tag, "list")) || (strstr(ti->tag, "literal"))){
+    if (
+          (strstr(ti->tag, "atom")) ||
+          (strstr(ti->tag, "list")) ||
+          (strstr(ti->tag, "literal"))
+    ){
           return index;
     }
     int n = index + 1;
@@ -187,24 +191,25 @@ int main(int argc, char** argv) {
 
     mpca_lang(MPCA_LANG_DEFAULT,
         "                                                                            \
-            bool:  \"true\" | \"false\"                                             ;\
-            integer:  /-?[0-9]+/                                                    ;\
-            float:    /-?[0-9]+\\.[0-9]+/                                           ;\
-            number:   <float> | <integer>                                           ;\
-            string:   /\"(\\\\.|[^\"])*\"/                                          ;\
-            nil:      \"nil\"                                                       ;\
-            symbols:  '+' | '-' | '*' | '/' | '%'                                   ;\
-            keywords: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |    \
-            \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\"                    ;\
-            builtin:  <symbols> | <keywords>                                        ;\
-            atom:     <builtin> | <string> | <number> | <bool> | <nil>                       ;\
-            list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ | '(' <element>+')';\
-            element:   <atom> | <list> | <literal>                                  ;\
-            literal:  '''<list>                                                     ;\
-            lispy:    /^/ <list>| <literal> /$/                                     ;\
+            bool:  \"true\" | \"false\"                                           ;\
+            integer:  /-?[0-9]+/                                                  ;\
+            float:    /-?[0-9]+\\.[0-9]+/                                         ;\
+            number:   <float> | <integer>                                         ;\
+            string:   /\"(\\\\.|[^\"])*\"/                                        ;\
+            nil:      \"nil\"                                                     ;\
+            symbols:  '+' | '-' | '*' | '/' | '%'                                 ;\
+            keywords: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |  \
+               \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\"               ;\
+            builtin:  <symbols> | <keywords>                                      ;\
+            atom:     <builtin> | <string> | <number> | <bool> | <nil>            ;\
+            list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
+               '(' <element>+')'                                                  ;\
+            element:   <atom> | <list> | <literal>                                ;\
+            literal:  '''<list>                                                   ;\
+            lispy:    /^/ <list>| <literal> /$/                                   ;\
         ",
-        Bool, Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
-        Element, Literal, Lispy
+        Bool, Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom,
+        List, Element, Literal, Lispy
     );
 
     // infinite read eval print loop
@@ -234,8 +239,8 @@ int main(int argc, char** argv) {
     mpc_cleanup(
         9,
 
-        Bool, Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
-        Element, Literal, Lispy
+        Bool, Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom,
+        List, Element, Literal, Lispy
     );
     return 0;
 }
