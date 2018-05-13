@@ -275,17 +275,17 @@ list* eval_list(list* l, bool list_start){
         return prepend_create(v, NULL);
     }
     list* n = eval_list(l->next, False);
+
+    list* r = prepend_create(v, n);
     if (list_start == True) {
-        return prepend_create(eval_func(n), NULL);
-    }
-    return prepend_create(v, n);
+      return prepend_create(eval_func(r), NULL);
+   }
+   return r;
 }
 
 lval* eval_lval(lval* v){
     if (v->type == LVAL_LIST){
         return eval_op(v->list);
-    } if (v->type == LVAL_FUNC){
-        return eval_func(prepend_create(v, NULL));
     }
     return v;
 }
