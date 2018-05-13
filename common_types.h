@@ -1,5 +1,8 @@
 typedef struct list list;
 
+typedef int bool;
+enum {False, True};
+
 typedef struct {
     int type;
     int num_int;
@@ -7,6 +10,7 @@ typedef struct {
     char* str;
     int func;
     char* err;
+    bool bool;
     list* list;
 } lval ;
 
@@ -17,8 +21,6 @@ struct list {
 
 
 enum { LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_NIL, LVAL_NOOP};
-enum {False, True};
-enum {SUM, DIFF, MUL, DIV, MOD, CAR, CDR, LIST, CONS, FUNC_UNDEF};
 
 lval* lval_num_int(int x);
 lval* lval_num_float(float x);

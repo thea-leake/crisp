@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "common_types.h"
+#include "operators.h"
 
 lval* lval_num_int(int x){
     lval* v = malloc(sizeof(lval));
