@@ -150,22 +150,7 @@ lval* eval(mpc_ast_t* t){
     return lval_noop();
 }
 
-lval* eval_func(list * l){
-    lval* func = l->expr;
-    list* operands = l->next;
-    switch(func->func){
-      case SUM:  return sum_op(operands);
-      case DIFF:  return sub_op(operands);
-      case MUL:  return mul_op(operands);
-      case DIV:  return div_op(operands);
-      case MOD: return mod_op(operands);
-      case CAR:return car_op(operands);
-      case CDR: return cdr_op(operands);
-      case LIST: return list_op(operands);
-      case CONS: return cons_op(operands);
-      default:   return lval_err("func undefined\n");
-   }
-}
+
 
 
 

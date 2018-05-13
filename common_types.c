@@ -107,7 +107,7 @@ lval* copy_lval(lval* v){
       case LVAL_ERR:
          return lval_err(v->err);
       case LVAL_LIST:
-         return lval_list(v->list);
+         return lval_list(copy_list(v->list));
       case LVAL_NIL:
          return lval_nil();
       default:
@@ -250,6 +250,8 @@ int get_opr(char* x){
        return LIST;
     } if (strcmp("cons", x) == 0){
        return CONS;
+    } if (strcmp("eval", x) == 0){
+       return EVAL;
     }
     return FUNC_UNDEF;
 }
@@ -264,6 +266,7 @@ void print_opr(int x){
       case CAR: printf("car"); break;
       case CDR: printf("cdr"); break;
       case LIST: printf("cons"); break;
+      case EVAL: printf("eval"); break;
       default: printf("!!func undefined!!");
    }
 }
