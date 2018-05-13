@@ -6,6 +6,7 @@
 #include "common_types.h"
 #include "operators.h"
 #include "parsing.h"
+#include "eval.h"
 
 
 int main(int argc, char** argv) {

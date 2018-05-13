@@ -11,6 +11,7 @@
 #include "common_types.h"
 #include "operators.h"
 #include "parsing.h"
+#include "eval.h"
 
 list* build_list(mpc_ast_t* t, int count, int accum_count, bool is_literal){
     lval* tmp = list_retrieve(t->children[accum_count], is_literal);

@@ -10,6 +10,3 @@ lval* cdr_op(list* l);
 lval* list_op(list* l);
 lval* cons_op(list* l);
 lval* eval_op(list* l);
-list* eval_list(list* l, bool list_start);
-lval* eval_lval(lval* l);
-lval* eval_func(list * l);
