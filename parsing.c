@@ -108,6 +108,10 @@ lval* get_atom_type(mpc_ast_t* t){
         lval* v = lval_num_int(atoi(t->contents));
         return v;
     }
+    if (strstr(t->tag, "bool")){
+       lval* v = lval_bool(atoi(t->contents));
+       return v;
+    }
    lval* v = lval_noop();
     return v;
 }
@@ -166,6 +170,7 @@ int main(int argc, char** argv) {
     printf("Lispy version 0.0.0.0.1, Starting args: %d %p\n", argc, argv);
     puts("To exit type ctrl-c");
 
+    mpc_parser_t* Bool = mpc_new("bool");
     mpc_parser_t* Integer = mpc_new("integer");
     mpc_parser_t* Float = mpc_new("float");
     mpc_parser_t* Number = mpc_new("number");
@@ -182,6 +187,7 @@ int main(int argc, char** argv) {
 
     mpca_lang(MPCA_LANG_DEFAULT,
         "                                                                            \
+            bool:  \"true\" | \"false\"                                             ;\
             integer:  /-?[0-9]+/                                                    ;\
             float:    /-?[0-9]+\\.[0-9]+/                                           ;\
             number:   <float> | <integer>                                           ;\
@@ -191,13 +197,13 @@ int main(int argc, char** argv) {
             keywords: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |    \
             \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\"                    ;\
             builtin:  <symbols> | <keywords>                                        ;\
-            atom:     <builtin> | <string> | <number> | <nil>                       ;\
+            atom:     <builtin> | <string> | <number> | <bool> | <nil>                       ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ | '(' <element>+')';\
             element:   <atom> | <list> | <literal>                                  ;\
             literal:  '''<list>                                                     ;\
             lispy:    /^/ <list>| <literal> /$/                                     ;\
         ",
-        Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
+        Bool, Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
         Element, Literal, Lispy
     );
 
@@ -228,7 +234,7 @@ int main(int argc, char** argv) {
     mpc_cleanup(
         9,
 
-        Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
+        Bool, Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom, List,
         Element, Literal, Lispy
     );
     return 0;

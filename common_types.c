@@ -12,6 +12,13 @@ lval* lval_num_int(int x){
     return v;
 }
 
+lval* lval_bool(bool x){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_BOOL;
+    v->num_int = x;
+    return v;
+}
+
 lval* lval_num_float(float x){
     lval* v = malloc(sizeof(lval));
     v->type = LVAL_NUM_FLOAT;
@@ -89,6 +96,8 @@ lval* copy_lval(lval* v){
    switch(v->type){
       case LVAL_NUM_INT:
          return lval_num_int(v->num_int);
+      case LVAL_BOOL:
+         return lval_bool(v->bool);
       case LVAL_NUM_FLOAT:
          return lval_num_float(v->num_float);
       case LVAL_STR:
@@ -154,6 +163,7 @@ void lval_del(lval* v){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
         case LVAL_FUNC: break;
+        case LVAL_BOOL: break;
         case LVAL_NIL: break;
         case LVAL_NOOP: break;
         case LVAL_LIST: list_del(v->list);
@@ -201,6 +211,8 @@ void print_lval(lval* v){
     case LVAL_FUNC:
         print_opr(v->func);
         break;
+    case LVAL_BOOL:
+        printf("%i", v->bool);
     case LVAL_NUM_INT:
         printf("%i", v->num_int);
         break;
