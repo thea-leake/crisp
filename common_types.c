@@ -254,6 +254,10 @@ int get_opr(char* x){
        return EVAL;
     } if (strcmp("if", x) == 0){
        return IF;
+    } if (strcmp("and", x) == 0){
+       return AND;
+    } if (strcmp("or", x) == 0){
+       return OR;
     }
     return FUNC_UNDEF;
 }

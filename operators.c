@@ -84,7 +84,6 @@ lval* sub_op(list* l){
 
 
     int diff_int = (int) diff;
-    printf("diff result: %d\n", diff_int);
     if (diff == diff_int) {
          int s = (int) diff;
          return lval_num_int(s);
@@ -306,4 +305,26 @@ lval* if_op(list* l){
         return tr;
     }
     return fls;
+}
+
+lval* and_op(list* l){
+    lval* e = eval_lval(l->expr);
+    if (l->next == NULL){
+        return e;
+    }
+    if (is_true(e) == False){
+        return e;
+    }
+    return and_op(l->next);
+}
+
+lval* or_op(list* l){
+    lval* e = eval_lval(l->expr);
+    if (l->next == NULL){
+        return e;
+    }
+    if (is_true(e) == True){
+        return e;
+    }
+    return and_op(l->next);
 }
