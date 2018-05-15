@@ -3,6 +3,7 @@
 #include "eval.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 
 lval* sum_op(list* l){
@@ -268,4 +269,49 @@ lval* eval_op(list* l){
         return lval_err("Eval returned too many values");
     }
     return r->expr;
+}
+
+
+bool is_true(lval* v){
+    int t = v->type;
+    if (t == LVAL_BOOL){
+        return v->bool;
+    } if (t == LVAL_NUM_INT){
+        if (v->num_int > 0 || v->num_int < 0){
+            return True;
+        }
+        return False;
+    } if (t == LVAL_NUM_FLOAT){
+        if (v->num_float > 0 || v->num_float < 0){
+            return True;
+        }
+        return False;
+    } if (t == LVAL_STR) {
+        if (strcmp(v->str, "") != 0){
+            return True;
+        }
+        return False;
+    } if (t == LVAL_LIST){
+        if (v->list->expr != NULL || v->list->next != NULL){
+            return True;
+        }
+        return False;
+    } if (t == LVAL_FUNC) {
+        return True;
+    }
+    //nil and err should always return false
+    return False;
+}
+
+lval* if_op(list* l){
+    if (l->next->next->next != NULL){
+        return lval_err("Too many arguments passed in to if.");
+    }
+    lval* r = eval_lval(l->expr);
+    lval* tr  = eval_lval(l->next->expr);
+    lval* fls = eval_lval(l->next->next->expr);
+    if (is_true(r)) {
+        return tr;
+    }
+    return fls;
 }

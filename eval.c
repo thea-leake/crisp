@@ -39,6 +39,7 @@ lval* eval_func(list * l){
       case LIST: return list_op(operands);
       case CONS: return cons_op(operands);
       case EVAL: return eval_op(operands);
+      case IF: return if_op(operands);
       default:   return lval_err("func undefined\n");
    }
 }

@@ -252,6 +252,8 @@ int get_opr(char* x){
        return CONS;
     } if (strcmp("eval", x) == 0){
        return EVAL;
+    } if (strcmp("if", x) == 0){
+       return IF;
     }
     return FUNC_UNDEF;
 }
@@ -267,6 +269,7 @@ void print_opr(int x){
       case CDR: printf("cdr"); break;
       case LIST: printf("cons"); break;
       case EVAL: printf("eval"); break;
+      case IF: printf("if"); break;
       default: printf("!!func undefined!!");
    }
 }

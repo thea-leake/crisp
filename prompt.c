@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
             nil:      \"nil\"                                                     ;\
             symbols:  '+' | '-' | '*' | '/' | '%'                                 ;\
             keywords: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |  \
-               \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\"               ;\
+               \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\" | \"if\"      ;\
             builtin:  <symbols> | <keywords>                                      ;\
             atom:     <builtin> | <string> | <number> | <bool> | <nil>            ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
