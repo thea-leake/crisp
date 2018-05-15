@@ -11,3 +11,4 @@ lval* list_op(list* l);
 lval* cons_op(list* l);
 lval* eval_op(list* l);
 lval* if_op(list* l);
+bool is_true(lval* v);
