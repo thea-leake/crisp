@@ -55,16 +55,7 @@ lval* sum_op(list* l){
 
 lval* sub_op(list* l){
     if (l->next == NULL){
-        lval* v = l->expr;
-        lval* r;
-        if (v->type == LVAL_NUM_INT){
-            r = lval_num_int(v->num_int * -1);
-        } else if (v->type == LVAL_NUM_FLOAT){
-            r = lval_num_float(v->num_float * -1);
-        } else {
-            return lval_err("Invalid Type provided");
-        }
-        return r;
+        return l->expr;
     }
     lval* expr = l->expr;
     lval* accum = sub_op(l->next);
@@ -93,6 +84,7 @@ lval* sub_op(list* l){
 
 
     int diff_int = (int) diff;
+    printf("diff result: %d\n", diff_int);
     if (diff == diff_int) {
          int s = (int) diff;
          return lval_num_int(s);
@@ -209,7 +201,7 @@ lval* mod_op(list* l){
         return lval_err("Only one arg provided");
     }
     lval* expr = l->expr;
-    lval* accum = sum_op(l->next);
+    lval* accum = mod_op(l->next);
     int expr_val;
     int accum_val;
 
