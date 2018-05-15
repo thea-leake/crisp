@@ -20,8 +20,6 @@ int main(int argc, char** argv) {
     mpc_parser_t* Number = mpc_new("number");
     mpc_parser_t* String = mpc_new("string");
     mpc_parser_t* Nil = mpc_new("nil");
-    mpc_parser_t* Symbols = mpc_new("symbols");
-    mpc_parser_t* Keywords = mpc_new("keywords");
     mpc_parser_t* Builtin = mpc_new("builtin");
     mpc_parser_t* Atom = mpc_new("atom");
     mpc_parser_t* List = mpc_new("list");
@@ -37,11 +35,9 @@ int main(int argc, char** argv) {
             number:   <float> | <integer>                                         ;\
             string:   /\"(\\\\.|[^\"])*\"/                                        ;\
             nil:      \"nil\"                                                     ;\
-            symbols:  '+' | '-' | '*' | '/' | '%'                                 ;\
-            keywords: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |  \
+            builtin: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |   \
                \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\" | \"if\" |     \
-               \"and\" | \"or\"                                                   ;\
-            builtin:  <symbols> | <keywords>                                      ;\
+               \"and\" | \"or\" | \"+\" | \"-\" | \"*\" | \"/\" | \"%\"           ;\
             atom:     <builtin> | <string> | <number> | <bool> | <nil>            ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
                '(' <element>+')'                                                  ;\
@@ -49,8 +45,8 @@ int main(int argc, char** argv) {
             literal:  '''<list>                                                   ;\
             lispy:    /^/ <list>| <literal> /$/                                   ;\
         ",
-        Bool, Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom,
-        List, Element, Literal, Lispy
+        Bool, Integer, Float, Number, String, Nil, Builtin, Atom, List, Element,
+        Literal, Lispy
     );
 
     // infinite read eval print loop
@@ -78,10 +74,10 @@ int main(int argc, char** argv) {
 
     // clean up our parsers from memory
     mpc_cleanup(
-        14,
+        12,
 
-        Bool, Integer, Float, Number, String, Nil, Symbols, Keywords, Builtin, Atom,
-        List, Element, Literal, Lispy
+        Bool, Integer, Float, Number, String, Nil, Builtin, Atom, List, Element,
+        Literal, Lispy
     );
     return 0;
 }
