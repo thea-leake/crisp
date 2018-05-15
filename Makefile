@@ -1,5 +1,5 @@
 DEP_DIRS = ./deps
-C_SRC_FILES = parsing.c operators.c common_types.c eval.c prompt.c deps/mpc/mpc.c
+C_SRC_FILES = parsing.c operators.c common_types.c eval.c prompt.c environment.c deps/mpc/mpc.c
 LINK_LIB_FLAGS = -ledit -lm
 
 deps:
