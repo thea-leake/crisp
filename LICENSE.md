@@ -1,6 +1,6 @@
 License: BSD
 
-Copyright (c) 2018, Thea Leake
+Copyright (c) 2018, Thea Leake.
 All Rights Reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
