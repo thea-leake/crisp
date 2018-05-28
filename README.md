@@ -1,11 +1,10 @@
-My Lisp implementation that uses recursion for all flow control aside from the repl prompt (the loop part of repl :) ).
+A Lisp interpreter written in C built around recursing - hence crisp.
 
-It originally started around the Build Your Own Lisp book http://www.buildyourownlisp.com/ by Daniel Holden and the Make-A-Lisp project at https://github.com/kanaka/mal/blob/master/process/guide.md. But has since diverged into it's own thing.
+It originally started around the [Build Your Own Lisp](http://www.buildyourownlisp.com/) and the [Make-A-Lisp](https://github.com/kanaka/mal/blob/master/process/guide.md) project, but has largely been personal exploration.  Most of the decisions around what have been done have been centered around exploration/expiramentation as a fun way of learning C.
 
-
-As of right now it is pretty much just an infix notation calculator using cons cells..
-It also uses recursion for all iteration except for the repl loop (it's a toy, and a Lisp!), and not all are TCO compatible yet so large datasets run the risk of stack call overflows.
-
+# Notes on usage:
+ - It currently uses GCCs TCO build option, but is many of the recursive functions are currently not TCO compatible.
+ - Numeric functions automatically downcast return to int when return val is int.
 
 # Build:
 ``` make build```
