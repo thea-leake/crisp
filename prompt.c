@@ -48,6 +48,7 @@ int main(int argc, char** argv) {
         Bool, Integer, Float, Number, String, Nil, Builtin, Atom, List, Element,
         Literal, Lispy
     );
+    env* session_env = init_env();
 
     // infinite read eval print loop
     while(1) {
@@ -59,7 +60,7 @@ int main(int argc, char** argv) {
         if (mpc_parse("<stdin>", input, Lispy, &r)){
             // print AST
             // mpc_ast_print(r.output);
-            lval* result = parse_eval(r.output);
+            lval* result = parse_eval(r.output, session_env);
             print_lval(result);
             printf("\n");
             mpc_ast_delete(r.output);

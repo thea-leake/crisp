@@ -12,98 +12,85 @@
 #include "operators.h"
 #include "parsing.h"
 #include "eval.h"
+#include "environment.h"
 
-list* build_list(mpc_ast_t* t, int count, int accum_count, bool is_literal){
-    lval* tmp = list_retrieve(t->children[accum_count], is_literal);
+list* build_list(mpc_ast_t* t, env* e, int count, int accum_count, bool is_literal){
+    lval* tmp = list_retrieve(t->children[accum_count], e, is_literal);
     int next_count = accum_count + 1;
     if (next_count >= count) {
         if (tmp->type != LVAL_NOOP){
-            list* anchor = prepend_create(tmp, NULL);
-            return anchor;
+            return  prepend_create(tmp, NULL);
         }
         return NULL;
     }
     if (tmp->type != LVAL_NOOP){
-        list* next_elem =  build_list(t, count, next_count, is_literal);
-        list* tmp_lst =  prepend_create(tmp, next_elem);
-        return tmp_lst;
+        list* next_elem =  build_list(t, e,  count, next_count, is_literal);
+        return prepend_create(tmp, next_elem);
     }
     lval_del(tmp);
-    list* tmp_lst = build_list(t, count, next_count, is_literal);
-    return tmp_lst;
+    return build_list(t, e, count, next_count, is_literal);
 }
 
-lval* list_retrieve(mpc_ast_t* t, bool is_literal){
+lval* list_retrieve(mpc_ast_t* t, env* e, bool is_literal){
    if (is_literal == True){
-      return get_literal(t);
+      return get_literal(t, e);
    }
-   return get_eval_type(t);
+   return get_eval_type(t, e);
 }
 
-lval* get_eval_type(mpc_ast_t* t){
+lval* get_eval_type(mpc_ast_t* t, env* e){
     if (strstr(t->tag, "literal")){
-        return get_literal(t);
+        return get_literal(t, e);
     }
     if (strstr(t->tag, "list")){
-        list* l = build_list(t, t->children_num, 0, False);
-        // segfault happening after here
-        lval* v = eval_func(l);
-        return v;
+        list* l = build_list(t, e, t->children_num, 0, False);
+        return eval_func(e, l);
     }
     if (strstr(t->tag, "nil")){
-        lval* v = lval_nil();
-        return v;
+        return lval_nil();
     }
-   lval* v = get_atom_type(t);
-    return v;
+    return get_atom_type(t);
 }
 
 
-lval* get_literal(mpc_ast_t* t){
+lval* get_literal(mpc_ast_t* t, env* e){
     if (strstr(t->tag, "literal"))  {
         int index = get_literal_list_index(t, 0);
         mpc_ast_t* lit = t->children[index];
-        list* l = build_list(lit, lit->children_num, index, True);
-        lval* v = lval_list(l);
-        return v;
+        list* l = build_list(lit, NULL, lit->children_num, index, True);
+        return lval_list(l);
     }
     if (strstr(t->tag, "list")) {
         int index = get_literal_list_index(t, 0);
-        list* l = build_list(t, t->children_num, index, True);
-        lval* v = lval_list(l);
-        return v;
+        list* l = build_list(t, e, t->children_num, index, True);
+        return lval_list(l);
     }
     if (strstr(t->tag, "nil")){
-        lval* v = lval_nil();
-        return v;
+        return lval_nil();
     }
-   lval* v = get_eval_type(t);
-    return v;
+    return get_eval_type(t, e);
 }
 
 lval* get_atom_type(mpc_ast_t* t){
     if (strstr(t->tag, "builtin")){
-        lval* v = lval_func(t->contents);
-        return v;
+        return lval_func(t->contents);
     }
     if (strstr(t->tag, "string")){
-        lval* v = lval_str(t->contents);
-        return v;
+        return lval_str(t->contents);
     }
     if (strstr(t->tag, "float")) {
-        lval* v = lval_num_float(atof(t->contents));
-        return v;
+        return lval_num_float(atof(t->contents));
     }
     if (strstr(t->tag, "integer")) {
-        lval* v = lval_num_int(atoi(t->contents));
-        return v;
+        return lval_num_int(atoi(t->contents));
     }
     if (strstr(t->tag, "bool")){
-       lval* v = lval_bool(atoi(t->contents));
-       return v;
+       return lval_bool(atoi(t->contents));
     }
-   lval* v = lval_noop();
-    return v;
+    if (strstr(t->tag, "symbol")){
+       return lval_sym(t->contents);
+    }
+    return lval_noop();
 }
 
 int get_ast_expr_index(mpc_ast_t* t, int index){
@@ -129,13 +116,12 @@ int get_literal_list_index(mpc_ast_t* t, int index){
 
 }
 
-lval* parse_eval(mpc_ast_t* t){
+lval* parse_eval(mpc_ast_t* t, env* e){
     if (t->children_num > 0) {
         // t->cildren[0] is regex node, irrelevant
         int index = get_ast_expr_index(t, 0);
         mpc_ast_t* tval = t->children[index];
-        lval* expr = get_eval_type(tval);
-        return expr;
+        return get_eval_type(tval, e);
     }
     return lval_noop();
 }

@@ -26,19 +26,19 @@ lval* lval_num_float(float x){
     return v;
 }
 
-lval* copy_str(lval* v){
-    lval* n = malloc(sizeof(lval));
-    n->type = LVAL_STR;
-    n->str = malloc(sizeof(v->str));
-    strcpy(n->str, v->str);
-    return n;
-}
-
 lval* lval_str(char* x){
     lval* v = malloc(sizeof(lval));
     v->type = LVAL_STR;
-    v->str = malloc(sizeof(x) + 1);
+    v->str = malloc(strlen(x) + 1);
     strcpy(v->str, x);
+    return v;
+}
+
+lval* lval_sym(char* x){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_SYM;
+    v->str = malloc(strlen(x) + 1);
+    strcpy(v->sym, x);
     return v;
 }
 
@@ -63,13 +63,6 @@ lval* lval_list(list* l){
    return v;
 }
 
-lval* copy_err(lval* v){
-    lval* n = malloc(sizeof(lval));
-    n->type = LVAL_ERR;
-    n->err = malloc(strlen(v->err));
-    strcpy(n->err, v->err);
-    return n;
-}
 
 lval* lval_err(char* x){
     lval* v = malloc(sizeof(lval));
@@ -101,7 +94,9 @@ lval* copy_lval(lval* v){
       case LVAL_NUM_FLOAT:
          return lval_num_float(v->num_float);
       case LVAL_STR:
-         return copy_str(v);
+         return lval_str(v->str);
+      case LVAL_SYM:
+         return lval_sym(v->sym);
       case LVAL_FUNC:
          return copy_func(v);
       case LVAL_ERR:

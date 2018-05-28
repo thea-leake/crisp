@@ -253,8 +253,8 @@ lval* cons_op(list* l){
     return lval_list(n);
 }
 
-lval* eval_op(list* l){
-    list* r = eval_list(l, True);
+lval* eval_op(env* e, list* l){
+    list* r = eval_list(e, l, True);
     if (r->next != NULL){
         // lists should be contained in an lval list
         return lval_err("Eval returned too many values");
@@ -294,37 +294,37 @@ bool is_true(lval* v){
     return False;
 }
 
-lval* if_op(list* l){
+lval* if_op(env* e, list* l){
     if (l->next->next->next != NULL){
         return lval_err("Too many arguments passed in to if.");
     }
-    lval* r = eval_lval(l->expr);
-    lval* tr  = eval_lval(l->next->expr);
-    lval* fls = eval_lval(l->next->next->expr);
+    lval* r = eval_lval(e, l->expr);
+    lval* tr  = eval_lval(e, l->next->expr);
+    lval* fls = eval_lval(e, l->next->next->expr);
     if (is_true(r)) {
         return tr;
     }
     return fls;
 }
 
-lval* and_op(list* l){
-    lval* e = eval_lval(l->expr);
+lval* and_op(env* e, list* l){
+    lval* n = eval_lval(e, l->expr);
     if (l->next == NULL){
-        return e;
+        return n;
     }
-    if (is_true(e) == False){
-        return e;
+    if (is_true(n) == False){
+        return n;
     }
-    return and_op(l->next);
+    return and_op(e, l->next);
 }
 
-lval* or_op(list* l){
-    lval* e = eval_lval(l->expr);
+lval* or_op(env* e, list* l){
+    lval* n = eval_lval(e, l->expr);
     if (l->next == NULL){
-        return e;
+        return n;
     }
-    if (is_true(e) == True){
-        return e;
+    if (is_true(n) == True){
+        return n;
     }
-    return and_op(l->next);
+    return or_op(e, l->next);
 }
