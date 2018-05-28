@@ -28,22 +28,24 @@ int main(int argc, char** argv) {
     mpc_parser_t* Expr = mpc_new("expr");
 
     mpca_lang(MPCA_LANG_DEFAULT,
-        "                                                                            \
-            bool:  \"true\" | \"false\"                                           ;\
+        "                                                                          \
+            bool:    \"true\" | \"false\"                                         ;\
             integer:  /-?[0-9]+/                                                  ;\
             float:    /-?[0-9]+\\.[0-9]+/                                         ;\
             number:   <float> | <integer>                                         ;\
             string:   /\"(\\\\.|[^\"])*\"/                                        ;\
             nil:      \"nil\"                                                     ;\
-            builtin: \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |   \
-               \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\" | \"if\" |     \
-               \"and\" | \"or\" | \"+\" | \"-\" | \"*\" | \"/\" | \"%\"           ;\
-            atom:     <builtin> | <string> | <number> | <bool> | <nil>            ;\
+            builtin:  \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |  \
+                      \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\" |       \
+                      \"if\" | \"and\" | \"or\" | \"+\" | \"-\" | \"*\" | \"/\" |  \
+                      \"%\"                                                       ;\
+            symbol:   /[a-zA-Z:!_\\-]+/                                           ;\
+            atom:     <builtin> | <string> | <number> | <bool> | <nil> | <symbol> ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
-               '(' <element>+')'                                                  ;\
+                      '(' <element>+')'                                           ;\
             element:   <atom> | <list> | <literal>                                ;\
             literal:  '''<list>                                                   ;\
-            expr:    /^/ <list>| <literal> /$/                                    ;\
+            expr:     /^/ <list>| <literal> /$/                                   ;\
         ",
         Bool, Integer, Float, Number, String, Nil, Builtin, Atom, List, Element,
         Literal, Expr

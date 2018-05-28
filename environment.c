@@ -12,7 +12,7 @@ lval* get_val(env* e, char* key){
    if (strcmp(key, e->key) == 0) {
       return e->val;
    } if (e->next == NULL){
-      return lval_err("No matching key");
+      return lval_nil();
    }
    return get_val(e->next, key);
 }
