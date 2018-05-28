@@ -7,14 +7,14 @@ As of right now it is pretty much just an infix notation calculator using cons c
 It also uses recursion for all iteration except for the repl loop (it's a toy, and a Lisp!), and not all are TCO compatible yet so large datasets run the risk of stack call overflows.
 
 
-#Build:
+# Build:
 ``` make build```
 Builds interpreter and places it in ```bin/lispy```
 
-#Clean:
+# Clean:
 ``` make clean```
 
-#Dependencies:
+# Dependencies:
 Dependencies are stored in `deps/` and should be included in the repo by default.
 Dependencies are pulled in by [clib](https://github.com/clibs/clib)
 Dependencies can be pulled in again via `make deps`, or removed w/ `make cleandeps`.
@@ -22,7 +22,7 @@ Dependencies can be pulled in again via `make deps`, or removed w/ `make cleande
 Current external dependencies are:
  - [mpc](https://github.com/orangeduck/mpc): for parsing code into AST.
 
-#Example usage:
+# Example usage:
 ```
 $ ./bin/crispy
 Lispy version 0.0.0.0.1, Starting args: 1 0x7ffee766a130
