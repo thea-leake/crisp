@@ -23,11 +23,14 @@ lval* eval_lval(env* e, lval* v){
     if (v->type == LVAL_LIST){
         return eval_op(e, v->list);
     }
+    if (v->type == LVAL_SYM){
+       return get_val(e, v->sym);
+    }
     return v;
 }
 
 lval* eval_func(env* e, list * l){
-    lval* func = l->expr;
+    lval* func = eval_lval(e, l->expr);
     list* operands = l->next;
     switch(func->func){
       case SUM:  return sum_op(operands);
