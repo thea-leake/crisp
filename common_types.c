@@ -100,7 +100,7 @@ lval* lval_noop(){
     return v;
 }
 
-lval* copy_lval(lval* v){
+lval* copy_lval(env* e, lval* v){
    switch(v->type){
       case LVAL_NUM_INT:
          return lval_num_int(v->num_int);
@@ -117,22 +117,22 @@ lval* copy_lval(lval* v){
       case LVAL_ERR:
          return lval_err(v->err);
       case LVAL_LIST:
-         return lval_list(copy_list(v->list));
+         return lval_list(copy_list(e, v->list));
       case LVAL_NIL:
          return lval_nil();
       default:
          printf("Error copying lval ");
-         print_lval(v); printf("\n");
+         print_lval(e, v); printf("\n");
          return lval_err("Unable to copy lval");
    }
 }
 
-list* copy_list(list* l){
-   lval* v = copy_lval(l->expr);
+list* copy_list(env* e, list* l){
+   lval* v = copy_lval(e, l->expr);
    if (l->next == NULL){
       return prepend_create(v, NULL);
    }
-   list* n = copy_list(l->next);
+   list* n = copy_list(e, l->next);
    return prepend_create(v, n);
 }
 
@@ -179,6 +179,7 @@ void lval_del(lval* v){
         case LVAL_LIST: list_del(v->list);
         case LVAL_STR: free(v->str); break;
         case LVAL_ERR: free(v->err); break;
+        case LVAL_SYM: free(v->sym); break;
     }
     free(v);
 }
@@ -195,18 +196,18 @@ void list_del(list* l){
    }
 }
 
-void print_list(list* l){
+void print_list(env* e, list* l){
    printf("(");
-   print_list_contents(l);
+   print_list_contents(e, l);
    printf(")");
 }
 
-void print_list_contents(list* l){
+void print_list_contents(env* e, list* l){
    if (l != NULL){
-      print_lval(l->expr);
+      print_lval(e, l->expr);
       if (l->next != NULL){
          printf(" ");
-         print_list_contents(l->next);
+         print_list_contents(e, l->next);
       }
    }
 }
@@ -221,7 +222,7 @@ void print_bool(int b){
    }
 }
 
-void print_lval(lval* v){
+void print_lval(env* e, lval* v){
     switch(v->type) {
     case LVAL_ERR:
         printf("%s", v->err);
@@ -242,8 +243,10 @@ void print_lval(lval* v){
         printf("%f", v->num_float);
         break;
     case LVAL_LIST:
-        print_list(v->list);
+        print_list(e, v->list);
         break;
+    case LVAL_SYM:
+        print_lval(e, get_val(e, v->sym));
     case LVAL_NIL:
         printf("nil");
         break;
@@ -280,6 +283,8 @@ int get_opr(char* x){
        return AND;
     } if (strcmp("or", x) == 0){
        return OR;
+    } if (strcmp("define", x) == 0){
+       return DEFINE;
     }
     return FUNC_UNDEF;
 }

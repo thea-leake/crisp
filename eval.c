@@ -46,6 +46,7 @@ lval* eval_func(env* e, list * l){
       case IF: return if_op(e, operands);
       case AND: return and_op(e, operands);
       case OR: return or_op(e, operands);
+      case DEFINE: return define_op(e, operands);
       default:   return lval_err("func undefined\n");
    }
 }

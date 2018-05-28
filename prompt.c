@@ -21,6 +21,7 @@ int main(int argc, char** argv) {
     mpc_parser_t* String = mpc_new("string");
     mpc_parser_t* Nil = mpc_new("nil");
     mpc_parser_t* Builtin = mpc_new("builtin");
+    mpc_parser_t* Symbol = mpc_new("symbol");
     mpc_parser_t* Atom = mpc_new("atom");
     mpc_parser_t* List = mpc_new("list");
     mpc_parser_t* Element = mpc_new("element");
@@ -47,8 +48,8 @@ int main(int argc, char** argv) {
             literal:  '''<list>                                                   ;\
             expr:     /^/ <list>| <literal> /$/                                   ;\
         ",
-        Bool, Integer, Float, Number, String, Nil, Builtin, Atom, List, Element,
-        Literal, Expr
+        Bool, Integer, Float, Number, String, Nil, Builtin, Symbol, Atom, List,
+        Element, Literal, Expr
     );
     env* session_env = init_env();
 
@@ -63,7 +64,7 @@ int main(int argc, char** argv) {
             // print AST
             // mpc_ast_print(r.output);
             lval* result = parse_eval(r.output, session_env);
-            print_lval(result);
+            print_lval(session_env, result);
             printf("\n");
             mpc_ast_delete(r.output);
         } else {
@@ -78,10 +79,10 @@ int main(int argc, char** argv) {
 
     // clean up our parsers from memory
     mpc_cleanup(
-        12,
+        13,
 
-        Bool, Integer, Float, Number, String, Nil, Builtin, Atom, List, Element,
-        Literal, Expr
+        Bool, Integer, Float, Number, String, Nil, Builtin, Symbol, Atom, List,
+        Element, Literal, Expr
     );
     return 0;
 }

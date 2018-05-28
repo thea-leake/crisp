@@ -313,3 +313,13 @@ lval* or_op(env* e, list* l){
     }
     return or_op(e, l->next);
 }
+
+lval* define_op(env* e, list* l){
+    char* key = l->expr->sym;
+    lval* exists = get_val(e, key);
+    if (exists->type != LVAL_NIL){
+        return lval_err("already defined");
+    }
+    put_val(e, eval_lval(e, l->next->expr), key);
+    return lval_nil();
+}

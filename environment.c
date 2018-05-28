@@ -39,7 +39,7 @@ env* new_val(lval* l, char* key){
    char* nk = malloc(strlen(key) + 1);
    strcpy(nk, key);
    n->key = nk;
-   n->val = copy_lval(l);
+   n->val = copy_lval(n, l);
    return n;
 }
 

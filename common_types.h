@@ -1,6 +1,7 @@
 #ifndef common_types_h
 #define common_types_h
 
+
 typedef struct list list;
 
 typedef int bool;
@@ -26,6 +27,9 @@ struct list {
 
 enum { LVAL_BOOL, LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYM, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_NIL, LVAL_NOOP};
 
+
+#include  "environment.h"
+
 lval* lval_num_int(int x);
 lval* lval_bool(char*  x);
 lval* lval_num_float(float x);
@@ -36,7 +40,7 @@ lval* lval_err(char* x);
 lval* lval_list(list* l);
 lval* lval_nil();
 lval* lval_noop();
-lval* copy_lval(lval* v);
+lval* copy_lval(env* e, lval* v);
 lval* copy_func(lval* v);
 lval* copy_bool(lval* v);
 list* prepend_create(lval* v, list* l);
@@ -45,13 +49,13 @@ list* list_from_array(lval* v[], int expr_index, int expr_ct);
 list* list_prepend(list* l, lval* v);
 lval* first_expr(list* l);
 list* rest_expr(list* l);
-list* copy_list(list* l);
+list* copy_list(env* e, list* l);
 int get_opr(char* x);
 void lval_del(lval* v);
 void list_del(list* l);
-void print_lval(lval* v);
-void print_list(list* l);
-void print_list_contents(list* l);
+void print_lval(env* e, lval* v);
+void print_list(env* e, list* l);
+void print_list_contents(env* e, list* l);
 void print_bool(int b);
 void print_opr(int x);
 
