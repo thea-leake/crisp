@@ -15,8 +15,12 @@ Builds interpreter and places it in ```bin/lispy```
 ``` make clean```
 
 #Dependencies:
-Dependencies are stored in `deps/` and are pulled in by [clib](https://github.com/clibs/clib)
-Dependencies can be pulled in again via `make deps`, or removed w/ `make cleandeps`, though they should already be available.
+Dependencies are stored in `deps/` and should be included in the repo by default.
+Dependencies are pulled in by [clib](https://github.com/clibs/clib)
+Dependencies can be pulled in again via `make deps`, or removed w/ `make cleandeps`.
+
+Current external dependencies are:
+ - [mpc](https://github.com/orangeduck/mpc): for parsing code into AST.
 
 #Example usage:
 ```
