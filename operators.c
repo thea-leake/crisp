@@ -266,32 +266,19 @@ lval* eval_op(env* e, list* l){
 bool is_true(lval* v){
     int t = v->type;
     if (t == LVAL_BOOL){
-        return v->bool;
-    } if (t == LVAL_NUM_INT){
-        if (v->num_int > 0 || v->num_int < 0){
+        if (v->bool == True){
             return True;
         }
         return False;
-    } if (t == LVAL_NUM_FLOAT){
-        if (v->num_float > 0 || v->num_float < 0){
-            return True;
-        }
-        return False;
-    } if (t == LVAL_STR) {
-        if (strcmp(v->str, "") != 0){
-            return True;
-        }
+    } if (t == LVAL_NIL) {
         return False;
     } if (t == LVAL_LIST){
         if (v->list->expr != NULL || v->list->next != NULL){
             return True;
         }
         return False;
-    } if (t == LVAL_FUNC) {
-        return True;
     }
-    //nil and err should always return false
-    return False;
+    return True;
 }
 
 lval* if_op(env* e, list* l){
@@ -299,12 +286,10 @@ lval* if_op(env* e, list* l){
         return lval_err("Too many arguments passed in to if.");
     }
     lval* r = eval_lval(e, l->expr);
-    lval* tr  = eval_lval(e, l->next->expr);
-    lval* fls = eval_lval(e, l->next->next->expr);
     if (is_true(r)) {
-        return tr;
+        return eval_lval(e, l->next->expr);
     }
-    return fls;
+    return eval_lval(e, l->next->next->expr);
 }
 
 lval* and_op(env* e, list* l){

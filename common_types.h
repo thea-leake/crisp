@@ -27,7 +27,7 @@ struct list {
 enum { LVAL_BOOL, LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYM, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_NIL, LVAL_NOOP};
 
 lval* lval_num_int(int x);
-lval* lval_bool(int x);
+lval* lval_bool(char*  x);
 lval* lval_num_float(float x);
 lval* lval_str(char* x);
 lval* lval_sym(char* x);
@@ -38,6 +38,7 @@ lval* lval_nil();
 lval* lval_noop();
 lval* copy_lval(lval* v);
 lval* copy_func(lval* v);
+lval* copy_bool(lval* v);
 list* prepend_create(lval* v, list* l);
 list* init_list(lval* v);
 list* list_from_array(lval* v[], int expr_index, int expr_ct);
@@ -51,6 +52,7 @@ void list_del(list* l);
 void print_lval(lval* v);
 void print_list(list* l);
 void print_list_contents(list* l);
+void print_bool(int b);
 void print_opr(int x);
 
 #endif

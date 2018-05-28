@@ -12,11 +12,26 @@ lval* lval_num_int(int x){
     return v;
 }
 
-lval* lval_bool(bool x){
-    lval* v = malloc(sizeof(lval));
-    v->type = LVAL_BOOL;
-    v->num_int = x;
-    return v;
+lval* lval_bool(char* x){
+    if (strcmp("true", x) == 0){
+       lval* t = malloc(sizeof(lval));
+       t->type = LVAL_BOOL;
+       t->bool = True;
+       return t;
+    } if (strcmp("false", x) == 0){
+       lval* f = malloc(sizeof(lval));
+       f->type = LVAL_BOOL;
+       f->bool = False;
+       return f;
+    }
+    return lval_err("Invalid bool val");
+}
+
+lval* copy_bool(lval* v){
+   lval* n = malloc(sizeof(lval));
+   n->type = LVAL_BOOL;
+   n->bool = v->bool;
+   return n;
 }
 
 lval* lval_num_float(float x){
@@ -90,7 +105,7 @@ lval* copy_lval(lval* v){
       case LVAL_NUM_INT:
          return lval_num_int(v->num_int);
       case LVAL_BOOL:
-         return lval_bool(v->bool);
+         return copy_bool(v);
       case LVAL_NUM_FLOAT:
          return lval_num_float(v->num_float);
       case LVAL_STR:
@@ -195,6 +210,17 @@ void print_list_contents(list* l){
       }
    }
 }
+
+void print_bool(int b){
+   if (b == True){
+      printf("true");
+   } else if (b == False){
+      printf("false");
+   } else {
+      printf("Invalid bool value %d", b);
+   }
+}
+
 void print_lval(lval* v){
     switch(v->type) {
     case LVAL_ERR:
@@ -207,7 +233,8 @@ void print_lval(lval* v){
         print_opr(v->func);
         break;
     case LVAL_BOOL:
-        printf("%i", v->bool);
+        print_bool(v->bool);
+        break;
     case LVAL_NUM_INT:
         printf("%i", v->num_int);
         break;

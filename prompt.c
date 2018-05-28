@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
 
     // infinite read eval print loop
     while(1) {
-        char* input = readline("lispy> ");
+        char* input = readline("crispy> ");
 
         add_history(input);
 

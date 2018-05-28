@@ -75,9 +75,6 @@ lval* get_atom_type(mpc_ast_t* t){
     if (strstr(t->tag, "builtin")){
         return lval_func(t->contents);
     }
-    if (strstr(t->tag, "string")){
-        return lval_str(t->contents);
-    }
     if (strstr(t->tag, "float")) {
         return lval_num_float(atof(t->contents));
     }
@@ -85,11 +82,15 @@ lval* get_atom_type(mpc_ast_t* t){
         return lval_num_int(atoi(t->contents));
     }
     if (strstr(t->tag, "bool")){
-       return lval_bool(atoi(t->contents));
+       return lval_bool(t->contents);
     }
     if (strstr(t->tag, "symbol")){
        return lval_sym(t->contents);
     }
+    if (strstr(t->tag, "string")){
+        return lval_str(t->contents);
+    }
+
     return lval_noop();
 }
 
