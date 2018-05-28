@@ -11,7 +11,7 @@
 
 int main(int argc, char** argv) {
     // Version and exit information
-    printf("Lispy version 0.0.0.0.1, Starting args: %d %p\n", argc, argv);
+    printf("Crisp version 0.0.0.0.1, Starting args: %d %p\n", argc, argv);
     puts("To exit type ctrl-c");
 
     mpc_parser_t* Bool = mpc_new("bool");
@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     mpc_parser_t* List = mpc_new("list");
     mpc_parser_t* Element = mpc_new("element");
     mpc_parser_t* Literal = mpc_new("literal");
-    mpc_parser_t* Lispy = mpc_new("lispy");
+    mpc_parser_t* Expr = mpc_new("expr");
 
     mpca_lang(MPCA_LANG_DEFAULT,
         "                                                                            \
@@ -43,10 +43,10 @@ int main(int argc, char** argv) {
                '(' <element>+')'                                                  ;\
             element:   <atom> | <list> | <literal>                                ;\
             literal:  '''<list>                                                   ;\
-            lispy:    /^/ <list>| <literal> /$/                                   ;\
+            expr:    /^/ <list>| <literal> /$/                                    ;\
         ",
         Bool, Integer, Float, Number, String, Nil, Builtin, Atom, List, Element,
-        Literal, Lispy
+        Literal, Expr
     );
     env* session_env = init_env();
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
         add_history(input);
 
         mpc_result_t r;
-        if (mpc_parse("<stdin>", input, Lispy, &r)){
+        if (mpc_parse("<stdin>", input, Expr, &r)){
             // print AST
             // mpc_ast_print(r.output);
             lval* result = parse_eval(r.output, session_env);
@@ -72,13 +72,14 @@ int main(int argc, char** argv) {
         free(input);
 
     }
+    del_env(session_env);
 
     // clean up our parsers from memory
     mpc_cleanup(
         12,
 
         Bool, Integer, Float, Number, String, Nil, Builtin, Atom, List, Element,
-        Literal, Lispy
+        Literal, Expr
     );
     return 0;
 }
