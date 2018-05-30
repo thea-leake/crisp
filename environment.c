@@ -6,13 +6,14 @@
 #include "environment.h"
 
 lval* get_val(env* e, char* key){
+   if (e == NULL){
+      return lval_nil();
+   }
    if (e->key == NULL){
       return get_val(e->next, key);
    }
    if (strcmp(key, e->key) == 0) {
       return e->val;
-   } if (e->next == NULL){
-      return lval_nil();
    }
    return get_val(e->next, key);
 }

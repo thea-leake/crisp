@@ -52,7 +52,7 @@ lval* lval_str(char* x){
 lval* lval_sym(char* x){
     lval* v = malloc(sizeof(lval));
     v->type = LVAL_SYM;
-    v->str = malloc(strlen(x) + 1);
+    v->sym = malloc(strlen(x) + 1);
     strcpy(v->sym, x);
     return v;
 }
