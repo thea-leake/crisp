@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
             builtin:  \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |  \
                       \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\" |       \
                       \"if\" | \"and\" | \"or\" | \"+\" | \"-\" | \"*\" | \"/\" |  \
-                      \"%\"                                                       ;\
+                      \"%\" | \"define\"                                          ;\
             symbol:   /[a-zA-Z:!_\\-]+/                                           ;\
             atom:     <builtin> | <string> | <number> | <bool> | <nil> | <symbol> ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
