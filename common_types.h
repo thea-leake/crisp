@@ -35,7 +35,7 @@ lval* lval_bool(char*  x);
 lval* lval_num_float(float x);
 lval* lval_str(char* x);
 lval* lval_sym(char* x);
-lval* lval_func(char* x);
+lval* lval_func(int x);
 lval* lval_err(char* x);
 lval* lval_list(list* l);
 lval* lval_nil();

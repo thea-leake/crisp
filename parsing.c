@@ -72,9 +72,6 @@ lval* get_literal(mpc_ast_t* t, env* e){
 }
 
 lval* get_atom_type(mpc_ast_t* t){
-    if (strstr(t->tag, "builtin")){
-        return lval_func(t->contents);
-    }
     if (strstr(t->tag, "float")) {
         return lval_num_float(atof(t->contents));
     }

@@ -57,10 +57,10 @@ lval* lval_sym(char* x){
     return v;
 }
 
-lval* lval_func(char* x){
+lval* lval_func(int builtin){
     lval* v = malloc(sizeof(lval));
     v->type = LVAL_FUNC;
-    v->func = get_opr(x);
+    v->func = builtin;
     return v;
 }
 

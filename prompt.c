@@ -20,7 +20,6 @@ int main(int argc, char** argv) {
     mpc_parser_t* Number = mpc_new("number");
     mpc_parser_t* String = mpc_new("string");
     mpc_parser_t* Nil = mpc_new("nil");
-    mpc_parser_t* Builtin = mpc_new("builtin");
     mpc_parser_t* Symbol = mpc_new("symbol");
     mpc_parser_t* Atom = mpc_new("atom");
     mpc_parser_t* List = mpc_new("list");
@@ -36,19 +35,15 @@ int main(int argc, char** argv) {
             number:   <float> | <integer>                                         ;\
             string:   /\"(\\\\.|[^\"])*\"/                                        ;\
             nil:      \"nil\"                                                     ;\
-            builtin:  \"add\" | \"sub\" | \"mul\" | \"div\" | \"mod\" | \"car\" |  \
-                      \"cdr\" |  \"list\" | \"eval\" | \"list\" | \"cons\" |       \
-                      \"if\" | \"and\" | \"or\" | \"+\" | \"-\" | \"*\" | \"/\" |  \
-                      \"%\" | \"define\"                                          ;\
-            symbol:   /[a-zA-Z:!_\\-]+/                                           ;\
-            atom:     <builtin> | <string> | <number> | <bool> | <nil> | <symbol> ;\
+            symbol:   /[a-zA-Z:!_\\-\\+%\\/]+/                                    ;\
+            atom:     <string> | <number> | <bool> | <nil> | <symbol>             ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
                       '(' <element>+')'                                           ;\
             element:   <atom> | <list> | <literal>                                ;\
             literal:  '''<list>                                                   ;\
             expr:     /^/ <list>| <literal> /$/                                   ;\
         ",
-        Bool, Integer, Float, Number, String, Nil, Builtin, Symbol, Atom, List,
+        Bool, Integer, Float, Number, String, Nil, Symbol, Atom, List,
         Element, Literal, Expr
     );
     env* session_env = init_env();
@@ -81,7 +76,7 @@ int main(int argc, char** argv) {
     mpc_cleanup(
         13,
 
-        Bool, Integer, Float, Number, String, Nil, Builtin, Symbol, Atom, List,
+        Bool, Integer, Float, Number, String, Nil, Symbol, Atom, List,
         Element, Literal, Expr
     );
     return 0;
