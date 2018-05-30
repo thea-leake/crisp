@@ -50,7 +50,6 @@ list* list_prepend(list* l, lval* v);
 lval* first_expr(list* l);
 list* rest_expr(list* l);
 list* copy_list(env* e, list* l);
-int get_opr(char* x);
 void lval_del(lval* v);
 void list_del(list* l);
 void print_lval(env* e, lval* v);
