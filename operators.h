@@ -6,15 +6,15 @@
 
 enum {SUM, DIFF, MUL, DIV, MOD, CAR, CDR, LIST, CONS, EVAL, IF, AND, OR, DEFINE, FUNC_UNDEF};
 
-lval* sum_op(list* l);
-lval* sub_op(list* l);
-lval* mul_op(list* l);
-lval* div_op(list* l);
-lval* mod_op(list* l);
-lval* car_op(list* l);
-lval* cdr_op(list* l);
-lval* list_op(list* l);
-lval* cons_op(list* l);
+lval* sum_op(env* e, list* l);
+lval* sub_op(env* e, list* l);
+lval* mul_op(env* e, list* l);
+lval* div_op(env* e, list* l);
+lval* mod_op(env* e, list* l);
+lval* car_op(env* e, list* l);
+lval* cdr_op(env* e, list* l);
+lval* list_op(env* e, list* l);
+lval* cons_op(env* e, list* l);
 lval* eval_op(env* e, list* l);
 lval* if_op(env* e,list* l);
 lval* and_op(env* e, list* l);

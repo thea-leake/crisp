@@ -6,9 +6,9 @@
 #include <string.h>
 
 
-lval* sum_op(list* l){
+lval* sum_op(env* e, list* l){
+    lval* expr = eval_lval(e, l->expr);
     if (l->next == NULL){
-        lval* expr = l->expr;
         if (expr->type == LVAL_NUM_INT){
             return lval_num_int(expr->num_int);
         } else if (expr->type == LVAL_NUM_INT){
@@ -17,8 +17,7 @@ lval* sum_op(list* l){
         return lval_err("Invalid Type provided");
         }
     }
-    lval* expr = l->expr;
-    lval* accum = sum_op(l->next);
+    lval* accum = sum_op(e, l->next);
     float expr_val;
     float accum_val;
 
@@ -53,12 +52,12 @@ lval* sum_op(list* l){
     return lval_num_float(sum);
 }
 
-lval* sub_op(list* l){
+lval* sub_op(env* e, list* l){
     if (l->next == NULL){
         return l->expr;
     }
-    lval* expr = l->expr;
-    lval* accum = sub_op(l->next);
+    lval* expr = eval_lval(e, l->expr);
+    lval* accum = sub_op(e, l->next);
     float expr_val;
     float accum_val;
 
@@ -91,9 +90,9 @@ lval* sub_op(list* l){
     return lval_num_float(diff);
 }
 
-lval* mul_op(list* l){
+lval* mul_op(env* e, list* l){
+    lval* expr = eval_lval(e, l->expr);
     if (l->next == NULL){
-        lval* expr = l->expr;
         if (expr->type == LVAL_NUM_INT){
             return lval_num_int(expr->num_int);
         } else if (expr->type == LVAL_NUM_INT){
@@ -102,8 +101,7 @@ lval* mul_op(list* l){
         return lval_err("Invalid Type provided");
         }
     }
-    lval* expr = l->expr;
-    lval* accum = mul_op(l->next);
+    lval* accum = mul_op(e, l->next);
     float expr_val;
     float accum_val;
 
@@ -134,9 +132,9 @@ lval* mul_op(list* l){
     return lval_num_float(product);
 }
 
-lval* div_op(list* l){
+lval* div_op(env* e, list* l){
+    lval* v = eval_lval(e, l->expr);
     if (l->next == NULL){
-        lval* v = l->expr;
         if (v->type == LVAL_NUM_INT){
             if (v->num_int == 0){
                 return lval_err("Unable to divide by 0");
@@ -153,17 +151,16 @@ lval* div_op(list* l){
             return lval_err("Invalid Type provided");
         }
     }
-    lval* expr = l->expr;
-    lval* accum = div_op(l->next);
+    lval* accum = div_op(e, l->next);
     float expr_val;
     float accum_val;
 
 
-    if (expr->type == LVAL_NUM_INT){
-        expr_val = expr->num_int;
+    if (v->type == LVAL_NUM_INT){
+        expr_val = v->num_int;
     }
-    else  if (expr->type == LVAL_NUM_FLOAT) {
-        expr_val = expr->num_float;
+    else  if (v->type == LVAL_NUM_FLOAT) {
+        expr_val = v->num_float;
     } else {
         return lval_err("Invalid Type provided");
     }
@@ -195,12 +192,12 @@ lval* div_op(list* l){
     return lval_num_float(ratio);
 }
 
-lval* mod_op(list* l){
+lval* mod_op(env* e, list* l){
     if (l->next == NULL){
         return lval_err("Only one arg provided");
     }
-    lval* expr = l->expr;
-    lval* accum = mod_op(l->next);
+    lval* expr = eval_lval(e, l->expr);
+    lval* accum = mod_op(e, l->next);
     int expr_val;
     int accum_val;
 
@@ -226,19 +223,22 @@ lval* mod_op(list* l){
      return lval_num_int(modulo);
 }
 
-lval* car_op(list* l){
+lval* car_op(env* e, list* l){
+    (void) e;
     return first_expr(l->expr->list);
 }
 
-lval* cdr_op(list* l){
+lval* cdr_op(env* e, list* l){
+    (void) e;
     return lval_list(rest_expr(l->expr->list));
 }
 
-lval* list_op(list* l){
+lval* list_op(env* e, list* l){
+    (void) e;
     return lval_list(l);
 }
 
-lval* cons_op(list* l){
+lval* cons_op(env* e, list* l){
     if (l->next == NULL){
         return lval_err("No list to const to");
     } if (l->next->next != NULL){
@@ -246,7 +246,7 @@ lval* cons_op(list* l){
     } if (l->next->expr->type != LVAL_LIST){
         return lval_err("Second arg must be list");
     }
-    lval* x = l->expr;
+    lval* x = eval_lval(e, l->expr);
     list* y = l->next->expr->list;
     //might use copy_list, depending on ease of garbage collection
     list* n = list_prepend(y, x);
