@@ -15,6 +15,11 @@ lval* get_val(env* e, char* key){
       }
       return get_builtin(key);
    }
+   if (e->key != NULL){
+      if (strcmp(e->key, key) == 0) {
+         return e->val;
+      }
+   }
    return get_val(e->next, key);
 }
 
