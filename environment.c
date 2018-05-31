@@ -7,22 +7,25 @@
 #include "operators.h"
 
 lval* get_val(env* e, char* key){
-   if (e->key == NULL){
+   if (e->next == NULL){
+      if (e->key != NULL){
+         if (strcmp(e->key, key) == 0) {
+            return e->val;
+         }
+      }
       return get_builtin(key);
-   }
-   if (strcmp(key, e->key) == 0) {
-      return e->val;
    }
    return get_val(e->next, key);
 }
 
 bool put_val(env* e, lval* l, char* key){
    if (e->next == NULL){
+      printf("definig new val\n");
       env* nv = new_val(l, key);
       e->next = nv;
       return True;
    }
-   return put_val(e, l, key);
+   return put_val(e->next, l, key);
 }
 
 env* init_env(){
@@ -39,6 +42,8 @@ env* new_val(lval* l, char* key){
    strcpy(nk, key);
    n->key = nk;
    n->val = copy_lval(n, l);
+   n->next = NULL;
+   printf("Created new val\n");
    return n;
 }
 
