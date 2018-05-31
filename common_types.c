@@ -256,39 +256,6 @@ void print_lval(env* e, lval* v){
     }
 }
 
-int get_opr(char* x){
-    if (strcmp("+", x) == 0 || strcmp("add", x) == 0){
-        return SUM;
-    } if (strcmp("-", x) == 0 || strcmp("sub", x) == 0){
-        return DIFF;
-    } if (strcmp("*", x) == 0 || strcmp("mul", x) == 0){
-        return MUL;
-    } if (strcmp("/", x) == 0 || strcmp("div", x) == 0){
-        return DIV;
-    } if (strcmp("%", x) == 0 || strcmp("mod", x) == 0){
-        return MOD;
-    } if (strcmp("car", x) == 0) {
-       return CAR;
-    } if (strcmp("cdr", x) == 0) {
-       return CDR;
-    } if (strcmp("list", x) == 0){
-       return LIST;
-    } if (strcmp("cons", x) == 0){
-       return CONS;
-    } if (strcmp("eval", x) == 0){
-       return EVAL;
-    } if (strcmp("if", x) == 0){
-       return IF;
-    } if (strcmp("and", x) == 0){
-       return AND;
-    } if (strcmp("or", x) == 0){
-       return OR;
-    } if (strcmp("define", x) == 0){
-       return DEFINE;
-    }
-    return FUNC_UNDEF;
-}
-
 void print_opr(int x){
    switch(x){
       case SUM: printf("+"); break;
