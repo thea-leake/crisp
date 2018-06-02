@@ -56,8 +56,11 @@ env* new_val(env* p, lval* l, char* key){
 }
 
 void del_env(env* e){
-   free(e->key);
-   lval_del(e->val);
+   if (e->key != NULL){
+      free(e->key);
+   } if (e->val != NULL){
+      lval_del(e->val);
+   }
    env* n = e->next;
    free(e);
    if (n != NULL){
