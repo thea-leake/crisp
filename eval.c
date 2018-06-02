@@ -30,23 +30,7 @@ lval* eval_lval(env* e, lval* v){
 }
 
 lval* eval_func(env* e, list * l){
-    lval* func = eval_lval(e, l->expr);
+    lval* func_lval = eval_lval(e, l->expr);
     list* operands = l->next;
-    switch(func->func){
-      case SUM:  return sum_op(e, operands);
-      case DIFF:  return sub_op(e, operands);
-      case MUL:  return mul_op(e, operands);
-      case DIV:  return div_op(e, operands);
-      case MOD: return mod_op(e, operands);
-      case CAR:return car_op(e, operands);
-      case CDR: return cdr_op(e, operands);
-      case LIST: return list_op(e, operands);
-      case CONS: return cons_op(e, operands);
-      case EVAL: return eval_op(e, operands);
-      case IF: return if_op(e, operands);
-      case AND: return and_op(e, operands);
-      case OR: return or_op(e, operands);
-      case DEFINE: return define_op(e, operands);
-      default:   return lval_err("func undefined\n");
-   }
+    return (func_lval->func->func)(e, operands);
 }

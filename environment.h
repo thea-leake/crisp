@@ -3,13 +3,6 @@
 
 #include "common_types.h"
 
-typedef struct env env;
-
-struct env {
-    char* key;
-    lval* val;
-    env* next;
-};
 
 lval* get_val(env* e, char* key);
 bool put_val(env* e , lval* l, char* key);

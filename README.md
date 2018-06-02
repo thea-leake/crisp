@@ -8,7 +8,7 @@ It originally started around the [Build Your Own Lisp](http://www.buildyourownli
 
 # Build:
 ``` make build```
-Builds interpreter and places it in ```bin/lispy```
+Builds interpreter and places it in ```bin/crispy```
 
 # Clean:
 ``` make clean```
@@ -23,28 +23,32 @@ Current external dependencies are:
 
 # Example usage:
 ```
-$ ./bin/crispy
-Lispy version 0.0.0.0.1, Starting args: 1 0x7ffee766a130
+(default) Thea Addison Leake@Theas-MacBook:crisp $ ./bin/crispy
+Crisp version 0.0.0.0.1, Starting args: 1 0x7ffee61b5128
 To exit type ctrl-c
-crispy> (or false 1 true)
-1
+crispy> (define a 1)
+nil
+crispy> (define b 4)
+nil
+crispy> (+ a b)
+5
+crispy> (or false  b 1 true)
+4
 crispy> (or false nil false)
 false
-crispy> (and true 1 3 false 3)
+crispy> (and true a 3 false 3)
 false
-crispy> (and true 1 3 3)
-3
-crispy> (if (true) (+ 3 4 ( * 3 4 )) ( - 12 (* 3 2) ))
+crispy> (if true (+ 3 4 ( * 3 4 a  )) ( - 12 (* 3 b)  ))
 19
-crispy> (cons "grr" '( 3 4 true  ))
-("grr" 3 4 true)
-crispy> (list 2 4 (+ 4 3))
-(2 4 7)
-crispy> (car (list 2 4 (+ 4 3)))
+crispy> (cons "grr" '( a b true   ))
+("grr" 1 4 true)
+crispy> (list 2 b a (+ b 3))
+(2 4 1 7)
+crispy> (car (list 2 b (+ a 3)))
 2
-crispy> (cdr (list 2 4 (+ 4 3)))
+crispy> (cdr (list 2 b (+ b 3)))
 (4 7)
-crispy> (cons 4 (cdr (list 2 4 (+ 4 3))))
-(4 4 7)
-crispy>
+crispy> (cons a (cdr (list 2 b (+ b 3))))
+(1 4 7)
+crispy>')
 ```

@@ -57,17 +57,26 @@ lval* lval_sym(char* x){
     return v;
 }
 
-lval* lval_func(int builtin){
+lval* lval_func(int func_type, bltn_ptr func_ptr, char* ident){
     lval* v = malloc(sizeof(lval));
+    builtin* f = malloc(sizeof(builtin));
+    f->func_type = func_type;
+    f->func = func_ptr;
+    f->ident = ident;
     v->type = LVAL_FUNC;
-    v->func = builtin;
+    v->func = f;
     return v;
 }
 
 lval* copy_func(lval* v){
     lval* n = malloc(sizeof(lval));
+    builtin* f = malloc(sizeof(builtin));
+    f->func_type = v->func->func_type;
+    f->func = v->func->func;
+    f->ident = malloc(strlen(v->func->ident) + 1);
+    strcpy(f->ident, v->func->ident);
     n->type = LVAL_FUNC;
-    n->func = v->func;
+    n->func = f;
     return n;
 }
 
@@ -172,7 +181,7 @@ void lval_del(lval* v){
     switch (v->type){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
-        case LVAL_FUNC: break;
+        case LVAL_FUNC: free(v->func->ident); free(v->func); break;
         case LVAL_BOOL: break;
         case LVAL_NIL: break;
         case LVAL_NOOP: break;
@@ -231,7 +240,7 @@ void print_lval(env* e, lval* v){
         printf("%s", v->str);
         break;
     case LVAL_FUNC:
-        print_opr(v->func);
+        printf("%s", v->func->ident);
         break;
     case LVAL_BOOL:
         print_bool(v->bool);
@@ -247,6 +256,7 @@ void print_lval(env* e, lval* v){
         break;
     case LVAL_SYM:
         print_lval(e, get_val(e, v->sym));
+        break;
     case LVAL_NIL:
         printf("nil");
         break;
@@ -254,20 +264,4 @@ void print_lval(env* e, lval* v){
         printf("_NOOP\n");
         break;
     }
-}
-
-void print_opr(int x){
-   switch(x){
-      case SUM: printf("+"); break;
-      case DIFF: printf("-"); break;
-      case MUL: printf("*"); break;
-      case DIV: printf("/"); break;
-      case MOD: printf("%%"); break;
-      case CAR: printf("car"); break;
-      case CDR: printf("cdr"); break;
-      case LIST: printf("cons"); break;
-      case EVAL: printf("eval"); break;
-      case IF: printf("if"); break;
-      default: printf("!!func undefined!!");
-   }
 }

@@ -25,7 +25,6 @@ lval* get_val(env* e, char* key){
 
 bool put_val(env* e, lval* l, char* key){
    if (e->next == NULL){
-      printf("definig new val\n");
       env* nv = new_val(l, key);
       e->next = nv;
       return True;
@@ -48,7 +47,6 @@ env* new_val(lval* l, char* key){
    n->key = nk;
    n->val = copy_lval(n, l);
    n->next = NULL;
-   printf("Created new val\n");
    return n;
 }
 
@@ -64,33 +62,33 @@ void del_env(env* e){
 
 lval* get_builtin(char* key){
    if (strcmp("+", key) == 0 || strcmp("add", key) == 0){
-       return lval_func(SUM);
+       return lval_func(SUM, &sum_op, key);
    } if (strcmp("-", key) == 0 || strcmp("sub", key) == 0){
-       return lval_func(DIFF);
+       return lval_func(DIFF, &sub_op, key);
    } if (strcmp("*", key) == 0 || strcmp("mul", key) == 0){
-       return lval_func(MUL);
+       return lval_func(MUL, &mul_op, key);
    } if (strcmp("/", key) == 0 || strcmp("div", key) == 0){
-       return lval_func(DIV);
+       return lval_func(DIV, &div_op, key);
    } if (strcmp("%", key) == 0 || strcmp("mod", key) == 0){
-       return lval_func(MOD);
+       return lval_func(MOD, &mod_op, key);
    } if (strcmp("car", key) == 0) {
-      return lval_func(CAR);
+      return lval_func(CAR, &car_op, key);
    } if (strcmp("cdr", key) == 0) {
-      return lval_func(CDR);
+      return lval_func(CDR, &cdr_op, key);
    } if (strcmp("list", key) == 0){
-      return lval_func(LIST);
+      return lval_func(LIST, &list_op, key);
    } if (strcmp("cons", key) == 0){
-      return lval_func(CONS);
+      return lval_func(CONS, &cons_op, key);
    } if (strcmp("eval", key) == 0){
-      return lval_func(EVAL);
+      return lval_func(EVAL, &eval_op, key);
    } if (strcmp("if", key) == 0){
-      return lval_func(IF);
+      return lval_func(IF, &if_op, key);
    } if (strcmp("and", key) == 0){
-      return lval_func(AND);
+      return lval_func(AND, &and_op, key);
    } if (strcmp("or", key) == 0){
-      return lval_func(OR);
+      return lval_func(OR, &or_op, key);
    } if (strcmp("define", key) == 0){
-      return lval_func(DEFINE);
+      return lval_func(DEFINE, &define_op, key);
    }
    return lval_nil();
 }
