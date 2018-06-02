@@ -13,7 +13,10 @@ lval* get_val(env* e, char* key){
             return e->val;
          }
       }
-      return get_builtin(key);
+      if (e->parent == NULL){
+         return get_builtin(key);
+      }
+      return get_val(e->parent, key);
    }
    if (e->key != NULL){
       if (strcmp(e->key, key) == 0) {
@@ -32,11 +35,12 @@ bool put_val(env* e, lval* l, char* key){
    return put_val(e->next, l, key);
 }
 
-env* init_env(){
+env* init_env(env* parent){
    env* e = malloc(sizeof(env));
    e->next = NULL;
    e->key = NULL;
    e->val = NULL;
+   e->parent = parent;
    return e;
 }
 
@@ -47,6 +51,7 @@ env* new_val(lval* l, char* key){
    n->key = nk;
    n->val = copy_lval(n, l);
    n->next = NULL;
+   n->parent = NULL;
    return n;
 }
 

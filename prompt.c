@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
         Bool, Integer, Float, Number, String, Nil, Symbol, Atom, List,
         Element, Literal, Expr
     );
-    env* session_env = init_env();
+    env* session_env = init_env(NULL);
 
     // infinite read eval print loop
     while(1) {

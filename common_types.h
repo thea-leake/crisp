@@ -40,6 +40,7 @@ struct env {
     char* key;
     lval* val;
     env* next;
+    env* parent;
 };
 
 
