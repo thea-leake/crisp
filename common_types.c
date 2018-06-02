@@ -57,10 +57,9 @@ lval* lval_sym(char* x){
     return v;
 }
 
-lval* lval_func(int func_type, bltn_ptr func_ptr, char* ident){
+lval* lval_func(bltn_ptr func_ptr, char* ident){
     lval* v = malloc(sizeof(lval));
     builtin* f = malloc(sizeof(builtin));
-    f->func_type = func_type;
     f->func = func_ptr;
     f->ident = ident;
     v->type = LVAL_FUNC;
@@ -71,7 +70,6 @@ lval* lval_func(int func_type, bltn_ptr func_ptr, char* ident){
 lval* copy_func(lval* v){
     lval* n = malloc(sizeof(lval));
     builtin* f = malloc(sizeof(builtin));
-    f->func_type = v->func->func_type;
     f->func = v->func->func;
     f->ident = malloc(strlen(v->func->ident) + 1);
     strcpy(f->ident, v->func->ident);

@@ -4,8 +4,6 @@
 #include "common_types.h"
 #include "environment.h"
 
-enum {SUM, DIFF, MUL, DIV, MOD, CAR, CDR, LIST, CONS, EVAL, IF, AND, OR, DEFINE, FUNC_UNDEF};
-
 lval* sum_op(env* e, list* l);
 lval* sub_op(env* e, list* l);
 lval* mul_op(env* e, list* l);
@@ -20,6 +18,7 @@ lval* if_op(env* e,list* l);
 lval* and_op(env* e, list* l);
 lval* or_op(env* e, list* l);
 lval* define_op(env* e, list* l);
+
 bool is_true(lval* v);
 
 #endif
