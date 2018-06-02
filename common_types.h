@@ -4,19 +4,24 @@
 typedef int bool;
 enum {False, True};
 
-enum { LVAL_BOOL, LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYM, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_NIL, LVAL_NOOP};
+enum { LVAL_BOOL, LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYM, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_LAMBDA, LVAL_NIL, LVAL_NOOP};
 
 typedef struct list list;
 typedef struct lval lval;
 typedef struct builtin builtin;
 typedef struct env env;
+typedef struct lambda lambda;
 typedef  lval*(*bltn_ptr) (env* e, list* l);
 
 
 struct builtin {
-    int func_type;
     bltn_ptr func;
     char* ident;
+};
+
+struct lambda {
+    list* var_expr;
+    list* eval_expr;
 };
 
 struct lval {
@@ -29,6 +34,7 @@ struct lval {
     char* err;
     bool bool;
     list* list;
+    lambda* lambda;
 };
 
 struct list {
@@ -54,11 +60,13 @@ lval* lval_sym(char* x);
 lval* lval_func(bltn_ptr func_ptr, char* ident);
 lval* lval_err(char* x);
 lval* lval_list(list* l);
+lval* lval_lambda(env* e, list* vars, list* expr);
 lval* lval_nil();
 lval* lval_noop();
 lval* copy_lval(env* e, lval* v);
 lval* copy_func(lval* v);
 lval* copy_bool(lval* v);
+lval* copy_lambda(env* e, lval* v);
 list* prepend_create(lval* v, list* l);
 list* init_list(lval* v);
 list* list_from_array(lval* v[], int expr_index, int expr_ct);

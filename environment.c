@@ -94,6 +94,8 @@ lval* get_builtin(char* key){
       return lval_func(&or_fn, key);
    } if (strcmp("define", key) == 0){
       return lval_func(&define_fn, key);
+   } if (strcmp("lambda", key) == 0){
+      return lval_func(&lambda_fn, key);
    }
    return lval_nil();
 }

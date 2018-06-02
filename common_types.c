@@ -57,6 +57,24 @@ lval* lval_sym(char* x){
     return v;
 }
 
+lval* lval_lambda(env* e, list* var_expr, list* eval_expr){
+   lval* v = malloc(sizeof(lval));
+   v->type = LVAL_LAMBDA;
+   v->lambda = malloc(sizeof(lambda));
+   v->lambda->var_expr = copy_list(e, var_expr);
+   v->lambda->eval_expr = copy_list(e, eval_expr);
+   return v;
+}
+
+lval* copy_lambda(env* e, lval* v){
+   lval* n = malloc(sizeof(lval));
+   n->type = LVAL_LAMBDA;
+   n->lambda = malloc(sizeof(lambda));
+   n->lambda->var_expr = copy_list(e, v->lambda->var_expr);
+   n->lambda->eval_expr = copy_list(e, v->lambda->eval_expr);
+   return n;
+}
+
 lval* lval_func(bltn_ptr func_ptr, char* ident){
     lval* v = malloc(sizeof(lval));
     builtin* f = malloc(sizeof(builtin));
@@ -125,6 +143,8 @@ lval* copy_lval(env* e, lval* v){
          return lval_err(v->err);
       case LVAL_LIST:
          return lval_list(copy_list(e, v->list));
+      case LVAL_LAMBDA:
+         return copy_lambda(e, v);
       case LVAL_NIL:
          return lval_nil();
       default:
@@ -187,6 +207,11 @@ void lval_del(lval* v){
         case LVAL_STR: free(v->str); break;
         case LVAL_ERR: free(v->err); break;
         case LVAL_SYM: free(v->sym); break;
+        case LVAL_LAMBDA:
+           list_del(v->lambda->var_expr);
+           list_del(v->lambda->eval_expr);
+           free(v->lambda);
+           break;
     }
     free(v);
 }
@@ -261,5 +286,11 @@ void print_lval(env* e, lval* v){
     case LVAL_NOOP:
         printf("_NOOP\n");
         break;
+    case LVAL_LAMBDA:
+        printf("#lambda# args: ");
+        print_list(e, v->lambda->var_expr);
+        printf("procedure: ");
+        print_list(e, v->lambda->eval_expr);
+        printf("\n");
     }
 }
