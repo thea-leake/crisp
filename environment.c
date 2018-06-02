@@ -28,7 +28,7 @@ lval* get_val(env* e, char* key){
 
 bool put_val(env* e, lval* l, char* key){
    if (e->next == NULL){
-      env* nv = new_val(l, key);
+      env* nv = new_val(e->parent, l, key);
       e->next = nv;
       return True;
    }
@@ -44,14 +44,14 @@ env* init_env(env* parent){
    return e;
 }
 
-env* new_val(lval* l, char* key){
+env* new_val(env* p, lval* l, char* key){
    env* n = malloc(sizeof(env));
    char* nk = malloc(strlen(key) + 1);
    strcpy(nk, key);
    n->key = nk;
    n->val = copy_lval(n, l);
    n->next = NULL;
-   n->parent = NULL;
+   n->parent = p;
    return n;
 }
 

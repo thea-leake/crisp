@@ -230,16 +230,22 @@ void list_del(list* l){
 
 void print_list(env* e, list* l){
    printf("(");
-   print_list_contents(e, l);
+   print_list_contents(e, l, True);
    printf(")");
 }
 
-void print_list_contents(env* e, list* l){
+void print_list_symbols(env* e, list* l){
+   printf("(");
+   print_list_contents(e, l, False);
+   printf(")");
+}
+
+void print_list_contents(env* e, list* l, bool eval_symbols){
    if (l != NULL){
-      print_lval(e, l->expr);
+      print_lval_sym_eval(e, l->expr, eval_symbols);
       if (l->next != NULL){
          printf(" ");
-         print_list_contents(e, l->next);
+         print_list_contents(e, l->next, eval_symbols);
       }
    }
 }
@@ -255,6 +261,9 @@ void print_bool(int b){
 }
 
 void print_lval(env* e, lval* v){
+   print_lval_sym_eval(e, v, True);
+}
+void print_lval_sym_eval(env* e, lval* v, bool eval){
     switch(v->type) {
     case LVAL_ERR:
         printf("%s", v->err);
@@ -278,7 +287,11 @@ void print_lval(env* e, lval* v){
         print_list(e, v->list);
         break;
     case LVAL_SYM:
-        print_lval(e, get_val(e, v->sym));
+        if (eval == True){
+           print_lval(e, get_val(e, v->sym));
+        } else {
+           printf("%s", v->sym);
+        }
         break;
     case LVAL_NIL:
         printf("nil");
@@ -287,10 +300,10 @@ void print_lval(env* e, lval* v){
         printf("_NOOP\n");
         break;
     case LVAL_LAMBDA:
-        printf("#lambda# args: ");
-        print_list(e, v->lambda->var_expr);
-        printf("procedure: ");
-        print_list(e, v->lambda->eval_expr);
-        printf("\n");
+        printf("#lambda args: ");
+        print_list_symbols(e, v->lambda->var_expr);
+        printf(" procedure: ");
+        print_list_symbols(e, v->lambda->eval_expr);
+        printf("#\n");
     }
 }

@@ -77,8 +77,10 @@ list* copy_list(env* e, list* l);
 void lval_del(lval* v);
 void list_del(list* l);
 void print_lval(env* e, lval* v);
+void print_lval_sym_eval(env* e, lval* v, bool eval);
 void print_list(env* e, list* l);
-void print_list_contents(env* e, list* l);
+void print_list_symbols(env* e, list* l);
+void print_list_contents(env* e, list* l, bool eval_symbols);
 void print_bool(int b);
 void print_opr(int x);
 

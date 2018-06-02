@@ -325,5 +325,5 @@ lval* define_fn(env* e, list* l){
 }
 
 lval* lambda_fn(env* e, list* l){
-    return lval_lambda(e, l->next, l->next->next);
+    return lval_lambda(e, l->expr->list, l->next->expr->list);
 }
