@@ -67,33 +67,33 @@ void del_env(env* e){
 
 lval* get_builtin(char* key){
    if (strcmp("+", key) == 0 || strcmp("add", key) == 0){
-       return lval_func(&sum_op, key);
+       return lval_func(&sum_fn, key);
    } if (strcmp("-", key) == 0 || strcmp("sub", key) == 0){
-       return lval_func(&sub_op, key);
+       return lval_func(&sub_fn, key);
    } if (strcmp("*", key) == 0 || strcmp("mul", key) == 0){
-       return lval_func(&mul_op, key);
+       return lval_func(&mul_fn, key);
    } if (strcmp("/", key) == 0 || strcmp("div", key) == 0){
-       return lval_func(&div_op, key);
+       return lval_func(&div_fn, key);
    } if (strcmp("%", key) == 0 || strcmp("mod", key) == 0){
-       return lval_func(&mod_op, key);
+       return lval_func(&mod_fn, key);
    } if (strcmp("car", key) == 0) {
-      return lval_func(&car_op, key);
+      return lval_func(&car_fn, key);
    } if (strcmp("cdr", key) == 0) {
-      return lval_func(&cdr_op, key);
+      return lval_func(&cdr_fn, key);
    } if (strcmp("list", key) == 0){
-      return lval_func(&list_op, key);
+      return lval_func(&list_fn, key);
    } if (strcmp("cons", key) == 0){
-      return lval_func(&cons_op, key);
+      return lval_func(&cons_fn, key);
    } if (strcmp("eval", key) == 0){
-      return lval_func(&eval_op, key);
+      return lval_func(&eval_fn, key);
    } if (strcmp("if", key) == 0){
-      return lval_func(&if_op, key);
+      return lval_func(&if_fn, key);
    } if (strcmp("and", key) == 0){
-      return lval_func(&and_op, key);
+      return lval_func(&and_fn, key);
    } if (strcmp("or", key) == 0){
-      return lval_func(&or_op, key);
+      return lval_func(&or_fn, key);
    } if (strcmp("define", key) == 0){
-      return lval_func(&define_op, key);
+      return lval_func(&define_fn, key);
    }
    return lval_nil();
 }

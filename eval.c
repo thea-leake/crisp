@@ -21,7 +21,7 @@ list* eval_list(env* e, list* l, bool list_start){
 
 lval* eval_lval(env* e, lval* v){
     if (v->type == LVAL_LIST){
-        return eval_op(e, v->list);
+        return eval_fn(e, v->list);
     }
     if (v->type == LVAL_SYM){
        return get_val(e, v->sym);

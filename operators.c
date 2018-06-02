@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-lval* sum_op(env* e, list* l){
+lval* sum_fn(env* e, list* l){
     lval* expr = eval_lval(e, l->expr);
     if (l->next == NULL){
         if (expr->type == LVAL_NUM_INT){
@@ -17,7 +17,7 @@ lval* sum_op(env* e, list* l){
         return lval_err("Invalid Type provided");
         }
     }
-    lval* accum = sum_op(e, l->next);
+    lval* accum = sum_fn(e, l->next);
     float expr_val;
     float accum_val;
 
@@ -52,12 +52,12 @@ lval* sum_op(env* e, list* l){
     return lval_num_float(sum);
 }
 
-lval* sub_op(env* e, list* l){
+lval* sub_fn(env* e, list* l){
     if (l->next == NULL){
         return l->expr;
     }
     lval* expr = eval_lval(e, l->expr);
-    lval* accum = sub_op(e, l->next);
+    lval* accum = sub_fn(e, l->next);
     float expr_val;
     float accum_val;
 
@@ -90,7 +90,7 @@ lval* sub_op(env* e, list* l){
     return lval_num_float(diff);
 }
 
-lval* mul_op(env* e, list* l){
+lval* mul_fn(env* e, list* l){
     lval* expr = eval_lval(e, l->expr);
     if (l->next == NULL){
         if (expr->type == LVAL_NUM_INT){
@@ -101,7 +101,7 @@ lval* mul_op(env* e, list* l){
         return lval_err("Invalid Type provided");
         }
     }
-    lval* accum = mul_op(e, l->next);
+    lval* accum = mul_fn(e, l->next);
     float expr_val;
     float accum_val;
 
@@ -132,7 +132,7 @@ lval* mul_op(env* e, list* l){
     return lval_num_float(product);
 }
 
-lval* div_op(env* e, list* l){
+lval* div_fn(env* e, list* l){
     lval* v = eval_lval(e, l->expr);
     if (l->next == NULL){
         if (v->type == LVAL_NUM_INT){
@@ -151,7 +151,7 @@ lval* div_op(env* e, list* l){
             return lval_err("Invalid Type provided");
         }
     }
-    lval* accum = div_op(e, l->next);
+    lval* accum = div_fn(e, l->next);
     float expr_val;
     float accum_val;
 
@@ -192,12 +192,12 @@ lval* div_op(env* e, list* l){
     return lval_num_float(ratio);
 }
 
-lval* mod_op(env* e, list* l){
+lval* mod_fn(env* e, list* l){
     if (l->next == NULL){
         return lval_err("Only one arg provided");
     }
     lval* expr = eval_lval(e, l->expr);
-    lval* accum = mod_op(e, l->next);
+    lval* accum = mod_fn(e, l->next);
     int expr_val;
     int accum_val;
 
@@ -223,22 +223,22 @@ lval* mod_op(env* e, list* l){
      return lval_num_int(modulo);
 }
 
-lval* car_op(env* e, list* l){
+lval* car_fn(env* e, list* l){
     (void) e;
     return first_expr(l->expr->list);
 }
 
-lval* cdr_op(env* e, list* l){
+lval* cdr_fn(env* e, list* l){
     (void) e;
     return lval_list(rest_expr(l->expr->list));
 }
 
-lval* list_op(env* e, list* l){
+lval* list_fn(env* e, list* l){
     (void) e;
     return lval_list(l);
 }
 
-lval* cons_op(env* e, list* l){
+lval* cons_fn(env* e, list* l){
     if (l->next == NULL){
         return lval_err("No list to const to");
     } if (l->next->next != NULL){
@@ -253,7 +253,7 @@ lval* cons_op(env* e, list* l){
     return lval_list(n);
 }
 
-lval* eval_op(env* e, list* l){
+lval* eval_fn(env* e, list* l){
     list* r = eval_list(e, l, True);
     if (r->next != NULL){
         // lists should be contained in an lval list
@@ -281,7 +281,7 @@ bool is_true(lval* v){
     return True;
 }
 
-lval* if_op(env* e, list* l){
+lval* if_fn(env* e, list* l){
     if (l->next->next->next != NULL){
         return lval_err("Too many arguments passed in to if.");
     }
@@ -292,7 +292,7 @@ lval* if_op(env* e, list* l){
     return eval_lval(e, l->next->next->expr);
 }
 
-lval* and_op(env* e, list* l){
+lval* and_fn(env* e, list* l){
     lval* n = eval_lval(e, l->expr);
     if (l->next == NULL){
         return n;
@@ -300,10 +300,10 @@ lval* and_op(env* e, list* l){
     if (is_true(n) == False){
         return n;
     }
-    return and_op(e, l->next);
+    return and_fn(e, l->next);
 }
 
-lval* or_op(env* e, list* l){
+lval* or_fn(env* e, list* l){
     lval* n = eval_lval(e, l->expr);
     if (l->next == NULL){
         return n;
@@ -311,10 +311,10 @@ lval* or_op(env* e, list* l){
     if (is_true(n) == True){
         return n;
     }
-    return or_op(e, l->next);
+    return or_fn(e, l->next);
 }
 
-lval* define_op(env* e, list* l){
+lval* define_fn(env* e, list* l){
     char* key = l->expr->sym;
     lval* exists = get_val(e, key);
     if (exists->type != LVAL_NIL){
