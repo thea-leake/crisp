@@ -11,8 +11,7 @@
 
 int main(int argc, char** argv) {
     // Version and exit information
-    printf("Crisp version 0.0.0.0.1, Starting args: %d %p\n", argc, argv);
-    puts("To exit type ctrl-c");
+    printf("Crispy lisp interpreter.  Type Control-c to exit,\n");
 
     mpc_parser_t* Bool = mpc_new("bool");
     mpc_parser_t* Integer = mpc_new("integer");

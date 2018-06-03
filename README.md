@@ -1,11 +1,11 @@
-A Lisp interpreter written in C built around recursing - hence crisp.
+A Lisp interpreter written in C built around recursing - hence the name crisp.
 
 It originally started around the [Build Your Own Lisp](http://www.buildyourownlisp.com/) and the [Make-A-Lisp](https://github.com/kanaka/mal/blob/master/process/guide.md) project, but has largely been personal exploration as I found I wanted the interpretor to behave internally more like Scheme.  This was created solely as an excersize to learn C, and to write an interpreter, as I've wanted to do both for a while.  Any recommendations and pointers are welcome, but keep in mind this wasn't written for use in the wild :).
 
 # Notes:
  - It currently uses GCCs TCO build option, however many of the recursive functions are currently not TCO compatible.
  - It still has one loop - for the repl - the l part of 'repl'.
- - Numeric functions automatically downcast return to int when return val is int.
+ - Numeric functions automatically downcast return to int when return val can be losslessly converted to int.
 
 # Build:
 ``` make build```
@@ -24,9 +24,8 @@ Current external dependencies are:
 
 # Example usage:
 ```
-(default) Thea Addison Leake@Theas-MacBook:crisp $ ./bin/crispy
-Crisp version 0.0.0.0.1, Starting args: 1 0x7ffee46e3128
-To exit type ctrl-c
+crisp $ ./bin/crispy
+Crispy lisp interpreter.  Type Control-c to exit,
 crispy> (define a +)
 nil
 crispy> (define a +)
