@@ -79,7 +79,7 @@ lval* get_atom_type(mpc_ast_t* t){
         return lval_num_int(atoi(t->contents));
     }
     if (strstr(t->tag, "bool")){
-       return lval_bool(t->contents);
+       return lval_parse_bool(t->contents);
     }
     if (strstr(t->tag, "symbol")){
        return lval_sym(t->contents);

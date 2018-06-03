@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
             number:   <float> | <integer>                                         ;\
             string:   /\"(\\\\.|[^\"])*\"/                                        ;\
             nil:      \"nil\"                                                     ;\
-            symbol:   /[a-zA-Z:!_%\\?\\-\\+\\*\\/]+/                              ;\
+            symbol:   /[a-zA-Z:!_%=\\?\\-\\+\\*\\/]+/                              ;\
             atom:     <string> | <number> | <bool> | <nil> | <symbol>             ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
                       '(' <element>+')'                                           ;\

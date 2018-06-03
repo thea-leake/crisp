@@ -12,7 +12,15 @@ lval* lval_num_int(int x){
     return v;
 }
 
-lval* lval_bool(char* x){
+
+lval* lval_bool(bool x){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_BOOL;
+    v->bool = x;
+    return v;
+}
+
+lval* lval_parse_bool(char* x){
     if (strcmp("true", x) == 0){
        lval* t = malloc(sizeof(lval));
        t->type = LVAL_BOOL;

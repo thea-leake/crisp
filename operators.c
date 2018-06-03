@@ -223,6 +223,58 @@ lval* mod_fn(env* e, list* l){
      return lval_num_int(modulo);
 }
 
+float get_num(lval* v){
+    if (v->type == LVAL_NUM_INT){
+        return (float) v->num_int;
+    }
+    return v->num_float;
+}
+
+bool is_numeric(lval* l){
+    switch (l->type){
+        case LVAL_NUM_INT: return True;
+        case LVAL_NUM_FLOAT: return True;
+    }
+    return False;
+}
+
+lval* check_next_eq(env* e, list* l){
+    if (l->next == NULL){
+        return lval_bool(True);
+    }
+    return eq_fn(e, l);
+}
+
+lval* eq_fn(env* e, list* l){
+    lval* first = eval_lval(e, first_expr(l));
+    lval* next = eval_lval(e, first_expr(rest_expr(l)));
+    if (is_numeric(first) && is_numeric(next)) {
+        if (get_num(first) == get_num(next)) {
+            if (rest_expr(l)->next == NULL){
+                return lval_bool(True);
+            }
+            return check_next_eq(e, rest_expr(l));
+        }
+        return lval_bool(False);
+    }
+    if (first->type != next->type){
+        return lval_bool(False);
+    }
+    if (first->type == LVAL_STR) {
+        if (strcmp(first->str, next->str) == 0){
+            return check_next_eq(e, rest_expr(l));
+        }
+        return lval_bool(False);
+    }
+    if (first->type == LVAL_BOOL){
+        if (first->bool == next->bool) {
+            return check_next_eq(e, rest_expr(l));
+        }
+        return lval_bool(False);
+    }
+    return lval_err("No comparison available for type");
+}
+
 lval* car_fn(env* e, list* l){
     (void) e;
     return first_expr(l->expr->list);

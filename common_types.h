@@ -55,7 +55,8 @@ struct env {
 #include  "environment.h"
 
 lval* lval_num_int(int x);
-lval* lval_bool(char*  x);
+lval* lval_bool(bool x);
+lval* lval_parse_bool(char*  x);
 lval* lval_num_float(float x);
 lval* lval_str(char* x);
 lval* lval_sym(char* x);

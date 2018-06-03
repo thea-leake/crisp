@@ -79,6 +79,8 @@ lval* get_builtin(char* key){
        return lval_func(&div_fn, key);
    } if (strcmp("%", key) == 0 || strcmp("mod", key) == 0){
        return lval_func(&mod_fn, key);
+   }if (strcmp("=", key) == 0){
+      return lval_func(&eq_fn, key);
    } if (strcmp("car", key) == 0) {
       return lval_func(&car_fn, key);
    } if (strcmp("cdr", key) == 0) {
