@@ -61,6 +61,6 @@ lval* build_scoped_env(env* e, list* vars, list* vals){
    if (vals == NULL){
       return lval_err("Not enough arguments for procedure");
    }
-   put_val(e, vals->expr, vars->expr->sym);
+   put_val(e, vals->expr, vars->expr->sym, ENV_SCOPED);
    return build_scoped_env(e, vars->next, vals->next);
 }

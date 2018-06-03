@@ -26,13 +26,13 @@ lval* get_val(env* e, char* key){
    return get_val(e->next, key);
 }
 
-bool put_val(env* e, lval* l, char* key){
+bool put_val(env* e, lval* l, char* key, int env_type){
    if (e->next == NULL){
       env* nv = new_val(e->parent, l, key);
       e->next = nv;
       return True;
    }
-   return put_val(e->next, l, key);
+   return put_val(e->next, l, key,  env_type);
 }
 
 env* init_env(env* parent){
@@ -99,6 +99,8 @@ lval* get_builtin(char* key){
       return lval_func(&define_fn, key);
    } if (strcmp("lambda", key) == 0){
       return lval_func(&lambda_fn, key);
+   } if (strcmp("let", key) == 0){
+      return lval_func(&let_fn, key);
    }
    return lval_nil();
 }

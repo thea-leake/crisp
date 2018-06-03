@@ -19,6 +19,8 @@ lval* and_fn(env* e, list* l);
 lval* or_fn(env* e, list* l);
 lval* define_fn(env* e, list* l);
 lval* lambda_fn(env* e, list* l);
+lval* let_fn(env* e, list* l);
+lval* put_let(env* e, list* l);
 
 bool is_true(lval* v);
 

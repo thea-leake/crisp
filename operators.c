@@ -320,10 +320,33 @@ lval* define_fn(env* e, list* l){
     if (exists->type != LVAL_NIL){
         return lval_err("already defined");
     }
-    put_val(e, eval_lval(e, l->next->expr), key);
+    put_val(e, eval_lval(e, l->next->expr), key, ENV_SESSION);
     return lval_nil();
 }
 
 lval* lambda_fn(env* e, list* l){
     return lval_lambda(e, l->expr->list, l->next->expr->list);
+}
+
+lval* let_fn(env* e, list* l){
+    env* list_env = init_env(e);
+    lval* list_put = put_let(list_env, l->expr->list);
+    if (list_put->type == LVAL_ERR){
+        return list_put;
+    }
+    lval_del(list_put);
+    lval* eval_resp = eval_func(list_env, l->next);
+    del_env(list_env);
+    return eval_resp;
+}
+
+lval* put_let(env* e, list* l){
+    if (l == NULL ){
+        return lval_nil();
+    }
+    if (l->next == NULL){
+        return lval_err("No value provided for symbol");
+    }
+    put_val(e, l->next->expr, l->expr->sym, ENV_SCOPED);
+    return put_let(e, l->next->next);
 }

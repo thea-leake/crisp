@@ -6,6 +6,8 @@ enum {False, True};
 
 enum { LVAL_BOOL, LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYM, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_LAMBDA, LVAL_NIL, LVAL_NOOP};
 
+enum {ENV_SESSION, ENV_SCOPED};
+
 typedef struct list list;
 typedef struct lval lval;
 typedef struct builtin builtin;
