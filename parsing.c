@@ -121,5 +121,5 @@ lval* parse_eval(mpc_ast_t* t, env* e){
         mpc_ast_t* tval = t->children[index];
         return get_eval_type(tval, e);
     }
-    return lval_noop();
+    return lval_err("No valid return parsing and evaling AST. something is wrong");
 }

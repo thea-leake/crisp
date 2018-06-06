@@ -404,8 +404,5 @@ lval* put_let(env* e, list* l){
 }
 
 lval* quit_fn(env* e, list* l){
-    if (l != NULL){
-        list_del(l);
-    }
     return lval_terminate();
 }
