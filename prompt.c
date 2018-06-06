@@ -61,17 +61,12 @@ int main(int argc, char** argv) {
             print_lval(session_env, result);
             printf("\n");
             if (result->type == LVAL_TERMINATE){
-                printf("Deleting lval\n");
                 lval_del(result);
                 if (session_env != NULL){
-                    printf("Deleing env\n");
                     del_env(session_env);
                 }
-                printf("Deleiting input\n");
                 free(input);
-                printf("Deleting ast\n");
                 mpc_ast_delete(r.output);
-                printf("Running ast cleanup\n");
                 mpc_cleanup(
                     12,
                     Bool, Integer, Float, Number, String, Nil, Symbol, Atom, List,
