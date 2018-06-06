@@ -1,6 +1,6 @@
 A Lisp interpreter written in C built around recursing - hence the name crisp.
 
-It originally started around the [Build Your Own Lisp](http://www.buildyourownlisp.com/) book but has largely been personal exploration as I found I wanted the interpretor to behave internally more like Scheme.  This was created solely as an excersize to learn C, and to write an interpreter, as I've wanted to do both for a while.  Any recommendations and pointers are welcome, but keep in mind this wasn't written for use in the wild :).
+It originally started around the [Build Your Own Lisp](http://www.buildyourownlisp.com/) book but has largely been personal exploration as I found I wanted the interpretor to behave internally more like Scheme.  This was created as an excersize to learn C, and to write an interpreter, as I've wanted to do both for a while.  Any recommendations and pointers are welcome, but keep in mind this wasn't written for use in the wild :).
 
 # Notes:
  - It currently uses GCCs TCO build option, however many of the recursive functions are currently not TCO compatible.

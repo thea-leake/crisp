@@ -133,6 +133,12 @@ lval* lval_noop(){
     return v;
 }
 
+lval* lval_terminate(){
+   lval* v = malloc(sizeof(lval));
+   v->type = LVAL_TERMINATE;
+   return v;
+}
+
 lval* copy_lval(env* e, lval* v){
    switch(v->type){
       case LVAL_NUM_INT:
@@ -155,6 +161,8 @@ lval* copy_lval(env* e, lval* v){
          return copy_lambda(e, v);
       case LVAL_NIL:
          return lval_nil();
+      case LVAL_TERMINATE:
+         return lval_terminate();
       default:
          printf("Error copying lval ");
          print_lval(e, v); printf("\n");
@@ -211,6 +219,7 @@ void lval_del(lval* v){
         case LVAL_BOOL: break;
         case LVAL_NIL: break;
         case LVAL_NOOP: break;
+        case LVAL_TERMINATE: break;
         case LVAL_LIST: list_del(v->list);
         case LVAL_STR: free(v->str); break;
         case LVAL_ERR: free(v->err); break;
@@ -313,5 +322,9 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         printf(" procedure: ");
         print_list_symbols(e, v->lambda->eval_expr);
         printf("#\n");
+        break;
+    case LVAL_TERMINATE:
+        printf("Received termintate, ending session.\nGoodbye.\n");
+        break;
     }
 }

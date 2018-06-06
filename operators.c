@@ -402,3 +402,10 @@ lval* put_let(env* e, list* l){
     put_val(e, l->next->expr, l->expr->sym, ENV_SCOPED);
     return put_let(e, l->next->next);
 }
+
+lval* quit_fn(env* e, list* l){
+    if (l != NULL){
+        list_del(l);
+    }
+    return lval_terminate();
+}

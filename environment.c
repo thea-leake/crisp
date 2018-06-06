@@ -103,6 +103,8 @@ lval* get_builtin(char* key){
       return lval_func(&lambda_fn, key);
    } if (strcmp("let", key) == 0){
       return lval_func(&let_fn, key);
+   } if (strcmp("quit", key) == 0){
+      return lval_func(&quit_fn, key);
    }
    return lval_nil();
 }
