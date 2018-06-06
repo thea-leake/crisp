@@ -35,7 +35,6 @@ lval* eval_func(env* e, list * l){
     // if builtin
     if (func_lval->type == LVAL_FUNC){
        lval* res = (func_lval->func->func)(e, operands);
-       list_del(l);
        return res;
     }
     // create fn env, with parent env to search for matching symbols if no matches
@@ -44,14 +43,13 @@ lval* eval_func(env* e, list * l){
     lval* env_set = build_scoped_env(e, func_lval->lambda->var_expr, operands);
     if (env_set->type == LVAL_ERR){
        del_env(fn_vars);
-       list_del(l);
        return env_set;
     }
-    lval_del(env_set);
     lval* lambda_eval = eval_func(fn_vars, func_lval->lambda->eval_expr);
     // del will cascade through all lambda vars, but not parent env.
     del_env(fn_vars);
     list_del(l);
+    lval_del(env_set);
     return lambda_eval;
 }
 

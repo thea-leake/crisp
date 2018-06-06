@@ -215,15 +215,20 @@ void lval_del(lval* v){
     switch (v->type){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
-        case LVAL_FUNC: free(v->func->ident); free(v->func); break;
+        case LVAL_FUNC:
+            free(v->func->ident); free(v->func); break;
         case LVAL_BOOL: break;
         case LVAL_NIL: break;
         case LVAL_NOOP: break;
         case LVAL_TERMINATE: break;
-        case LVAL_LIST: list_del(v->list);
-        case LVAL_STR: free(v->str); break;
-        case LVAL_ERR: free(v->err); break;
-        case LVAL_SYM: free(v->sym); break;
+        case LVAL_LIST:
+            list_del(v->list);
+        case LVAL_STR:
+            free(v->str); break;
+        case LVAL_ERR:
+            free(v->err); break;
+        case LVAL_SYM:
+            free(v->sym); break;
         case LVAL_LAMBDA:
            list_del(v->lambda->var_expr);
            list_del(v->lambda->eval_expr);
