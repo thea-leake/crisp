@@ -44,7 +44,7 @@ lval* get_eval_type(mpc_ast_t* t, env* e){
     }
     if (strstr(t->tag, "list")){
         list* l = build_list(t, e, t->children_num, 0, False);
-        return eval_func(e, l);
+        return eval(e, l);
     }
     if (strstr(t->tag, "nil")){
         return lval_nil();

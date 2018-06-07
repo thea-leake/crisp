@@ -387,7 +387,7 @@ lval* let_fn(env* e, list* l){
         return list_put;
     }
     lval_del(list_put);
-    lval* eval_resp = eval_func(list_env, l->next);
+    lval* eval_resp = eval(list_env, l->next);
     del_env(list_env);
     return eval_resp;
 }
