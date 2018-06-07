@@ -329,7 +329,7 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         printf("#\n");
         break;
     case LVAL_TERMINATE:
-        printf("Received termintate, ending session.\nGoodbye.\n");
+        printf("Ending session.\nGoodbye.\n");
         break;
     }
 }
