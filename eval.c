@@ -30,22 +30,29 @@ lval* eval_lval(env* e, lval* v){
 }
 
 lval* eval(env* e, list* l){
+   // the eval_lval here is what is giving the periodic mem leaks
    lval* first_expr = eval_lval(e, l->expr);
    if (first_expr->type == LVAL_FUNC ){
-      return eval_func(e, l);
+      lval* fn_resp = eval_func(e, l);
+      list_del(l);
+      return fn_resp;
    } if(first_expr->type == LVAL_LAMBDA){
-      return eval_lambda(e, l);
+      lval* lmd_resp = eval_lambda(e, l);
+      list_del(l);
+      return lmd_resp;
    }
    if (l->next == NULL){
       return first_expr;
    }
    print_lval(e, l->expr);
    print_list(e, l);
+   list_del(l);
    return lval_err("First list expression doesn't accept params");
 }
 
 
 lval* eval_lambda(env* e, list * l){
+   // and here
     lval* func_lval = eval_lval(e, l->expr);
     list* operands = l->next;
     // create fn env, with parent env to search for matching symbols if no matches
@@ -61,13 +68,13 @@ lval* eval_lambda(env* e, list * l){
     lval* lambda_eval = eval_func(fn_vars, func_lval->lambda->eval_expr);
     // del will cascade through all lambda vars, but not parent env.
     del_env(fn_vars);
-    list_del(l);
     lval_del(env_set);
     return lambda_eval;
 
 }
 
 lval* eval_func(env* e, list * l){
+   // and here
     lval* func_lval = eval_lval(e, l->expr);
     list* operands = l->next;
     return (func_lval->func->func)(e, operands);
