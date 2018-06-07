@@ -5,20 +5,6 @@
 #include "operators.h"
 #include "eval.h"
 
-list* eval_list(env* e, list* l, bool list_start){
-    lval* v = eval_lval(e, l->expr);
-    if (l->next == NULL){
-        return prepend_create(v, NULL);
-    }
-    list* n = eval_list(e, l->next, False);
-
-    list* r = prepend_create(v, n);
-    if (list_start == True) {
-      return prepend_create(eval(e, r), NULL);
-   }
-   return r;
-}
-
 lval* eval_lval(env* e, lval* v){
     if (v->type == LVAL_LIST){
         return eval_fn(e, v->list);
@@ -30,7 +16,6 @@ lval* eval_lval(env* e, lval* v){
 }
 
 lval* eval(env* e, list* l){
-   // the eval_lval here is what is giving the periodic mem leaks
    lval* first_expr = eval_lval(e, l->expr);
    if (first_expr->type == LVAL_FUNC ){
       lval* fn_resp = eval_func(e, l);
@@ -52,7 +37,6 @@ lval* eval(env* e, list* l){
 
 
 lval* eval_lambda(env* e, list * l){
-   // and here
     lval* func_lval = eval_lval(e, l->expr);
     list* operands = l->next;
     // create fn env, with parent env to search for matching symbols if no matches
@@ -74,7 +58,6 @@ lval* eval_lambda(env* e, list * l){
 }
 
 lval* eval_func(env* e, list * l){
-   // and here
     lval* func_lval = eval_lval(e, l->expr);
     list* operands = l->next;
     return (func_lval->func->func)(e, operands);
