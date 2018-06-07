@@ -306,12 +306,9 @@ lval* cons_fn(env* e, list* l){
 }
 
 lval* eval_fn(env* e, list* l){
-    list* r = eval_list(e, l, True);
-    if (r->next != NULL){
-        // lists should be contained in an lval list
-        return lval_err("Eval returned too many values");
-    }
-    return r->expr;
+    list* lc = copy_list(e, l);
+    lval* resp = eval(e, lc);
+    return resp;
 }
 
 

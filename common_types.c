@@ -222,7 +222,7 @@ void lval_del(lval* v){
         case LVAL_NOOP: break;
         case LVAL_TERMINATE: break;
         case LVAL_LIST:
-            list_del(v->list);
+            list_del(v->list); break;
         case LVAL_STR:
             free(v->str); break;
         case LVAL_ERR:
