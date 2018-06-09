@@ -28,32 +28,25 @@ lval* sum_numeric(env* e, list* l, float accum){
 
 lval* sub_fn(env* e, list* l){
     lval* expr = eval_lval(e, l->expr);
+    if (is_numeric(expr) == False){
+        return lval_err("Difference for type not implemented");
+    }
     if (l->next == NULL){
-        return num_anchor(l->expr);
+        return get_lval_num( -1 * get_num(expr));
     }
-    lval* accum = sub_fn(e, l->next);
-    float expr_val;
-    float accum_val;
+    return sub_numeric(e, l->next, get_num(expr));
+}
 
-
-    if (is_numeric(expr)) {
-        expr_val = get_num(expr);
-    } else {
-        lval_del(accum);
-        return lval_err("Invalid Type provided");
+lval* sub_numeric(env* e, list* l, float accum){
+    lval* expr = eval_lval(e, l->expr);
+    if (is_numeric(expr) == False){
+        return lval_err("Incompatible types for difference operation");
     }
-
-    if (is_numeric(accum)){
-        accum_val = get_num(accum);
-    } else {
-        lval_del(accum);
-        return lval_err("Invalid Type provided");
+    float diff = accum - get_num(expr);
+    if (l->next == NULL){
+        return get_lval_num(diff);
     }
-
-    float diff = expr_val - accum_val;
-    lval_del(accum);
-
-    return get_lval_num(diff);
+    return sub_numeric(e, l->next, diff);
 }
 
 lval* mul_fn(env* e, list* l){
