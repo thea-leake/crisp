@@ -8,31 +8,22 @@
 
 lval* sum_fn(env* e, list* l){
     lval* expr = eval_lval(e, l->expr);
+    if (is_numeric(expr)){
+        return sum_numeric(e, l, 0);
+    }
+    return lval_err("Sum for type not implemented");
+}
+
+lval* sum_numeric(env* e, list* l, float accum){
+    lval* expr = eval_lval(e, l->expr);
+    if (is_numeric(expr) == False){
+        return lval_err("Incompatible types for addition operation");
+    }
+    float sum = get_num(expr) + accum;
     if (l->next == NULL){
-        return num_anchor(expr);
+        return get_lval_num(sum);
     }
-    lval* accum = sum_fn(e, l->next);
-    float expr_val;
-    float accum_val;
-
-    if (is_numeric(expr)) {
-        expr_val = get_num(expr);
-    } else {
-        lval_del(accum);
-        return lval_err("Invalid Type provided");
-    }
-
-    if (is_numeric(accum)){
-        accum_val = get_num(accum);
-    } else {
-        lval_del(accum);
-        return lval_err("Invalid Type provided");
-    }
-
-    float sum = expr_val + accum_val;
-    lval_del(accum);
-
-    return get_lval_num(sum);
+    return sum_numeric(e, l->next, sum);
 }
 
 lval* sub_fn(env* e, list* l){
