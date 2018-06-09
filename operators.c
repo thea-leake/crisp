@@ -21,20 +21,15 @@ lval* sum_fn(env* e, list* l){
     float expr_val;
     float accum_val;
 
-
-    if (expr->type == LVAL_NUM_INT){
-        expr_val = expr->num_int;
-    }
-    else  if (expr->type == LVAL_NUM_FLOAT) {
-        expr_val = expr->num_float;
+    if (is_numeric(expr)) {
+        expr_val = get_num(expr);
     } else {
         lval_del(accum);
         return lval_err("Invalid Type provided");
     }
-    if (accum->type == LVAL_NUM_INT){
-        accum_val = accum->num_int;
-    } else if (accum->type == LVAL_NUM_FLOAT){
-        accum_val = accum->num_float;
+
+    if (is_numeric(accum)){
+        accum_val = get_num(accum);
     } else {
         lval_del(accum);
         return lval_err("Invalid Type provided");
