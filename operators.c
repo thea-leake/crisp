@@ -9,13 +9,7 @@
 lval* sum_fn(env* e, list* l){
     lval* expr = eval_lval(e, l->expr);
     if (l->next == NULL){
-        if (expr->type == LVAL_NUM_INT){
-            return lval_num_int(expr->num_int);
-        } else if (expr->type == LVAL_NUM_INT){
-            return lval_num_float(expr->num_float);
-        } else {
-        return lval_err("Invalid Type provided");
-        }
+        return num_anchor(expr);
     }
     lval* accum = sum_fn(e, l->next);
     float expr_val;
@@ -37,149 +31,104 @@ lval* sum_fn(env* e, list* l){
 
     float sum = expr_val + accum_val;
     lval_del(accum);
-    //lval_del(accum);
 
     return get_lval_num(sum);
 }
 
 lval* sub_fn(env* e, list* l){
-    if (l->next == NULL){
-        return l->expr;
-    }
     lval* expr = eval_lval(e, l->expr);
+    if (l->next == NULL){
+        return num_anchor(l->expr);
+    }
     lval* accum = sub_fn(e, l->next);
     float expr_val;
     float accum_val;
 
 
-    if (expr->type == LVAL_NUM_INT){
-        expr_val = expr->num_int;
-    }
-    else  if (expr->type == LVAL_NUM_FLOAT) {
-        expr_val = expr->num_float;
+    if (is_numeric(expr)) {
+        expr_val = get_num(expr);
     } else {
+        lval_del(accum);
         return lval_err("Invalid Type provided");
     }
-    if (accum->type == LVAL_NUM_INT){
-        accum_val = accum->num_int;
-    } else if (accum->type == LVAL_NUM_FLOAT){
-        accum_val = accum->num_float;
+
+    if (is_numeric(accum)){
+        accum_val = get_num(accum);
     } else {
+        lval_del(accum);
         return lval_err("Invalid Type provided");
     }
 
     float diff = expr_val - accum_val;
     lval_del(accum);
 
-
-    int diff_int = (int) diff;
-    if (diff == diff_int) {
-         int s = (int) diff;
-         return lval_num_int(s);
-    }
-    return lval_num_float(diff);
+    return get_lval_num(diff);
 }
 
 lval* mul_fn(env* e, list* l){
     lval* expr = eval_lval(e, l->expr);
     if (l->next == NULL){
-        if (expr->type == LVAL_NUM_INT){
-            return lval_num_int(expr->num_int);
-        } else if (expr->type == LVAL_NUM_INT){
-            return lval_num_float(expr->num_float);
-        } else {
-        return lval_err("Invalid Type provided");
-        }
+        return num_anchor(expr);
     }
-    lval* accum = mul_fn(e, l->next);
+
+    lval* accum = sum_fn(e, l->next);
     float expr_val;
     float accum_val;
 
-
-    if (expr->type == LVAL_NUM_INT){
-        expr_val = expr->num_int;
-    }
-    else  if (expr->type == LVAL_NUM_FLOAT) {
-        expr_val = expr->num_float;
+    if (is_numeric(expr)) {
+        expr_val = get_num(expr);
     } else {
+        lval_del(accum);
         return lval_err("Invalid Type provided");
     }
-    if (accum->type == LVAL_NUM_INT){
-        accum_val = accum->num_int;
-    } else if (accum->type == LVAL_NUM_FLOAT){
-        accum_val = accum->num_float;
+
+    if (is_numeric(accum)){
+        accum_val = get_num(accum);
     } else {
+        lval_del(accum);
         return lval_err("Invalid Type provided");
     }
     float product = expr_val * accum_val;
- //   lval_del(accum);
+    lval_del(accum);
 
-    int product_int = (int) product;
-    if (product == product_int) {
-         int s = (int) product;
-         return lval_num_int(s);
-    }
-    return lval_num_float(product);
+    return get_lval_num(product);
 }
 
 lval* div_fn(env* e, list* l){
-    lval* v = eval_lval(e, l->expr);
+    lval* expr = eval_lval(e, l->expr);
     if (l->next == NULL){
-        if (v->type == LVAL_NUM_INT){
-            if (v->num_int == 0){
+        if(is_numeric(expr)){
+            if (get_num(expr) == 0){
                 return lval_err("Unable to divide by 0");
             }
-            return lval_num_int(v->num_int );
-        } else if (v->type == LVAL_NUM_FLOAT){
-            if (v->num_float == 0){
-                return lval_err("Unable to divide by 0");
-            }
-            return lval_num_float(v->num_float );
-        } else if (v->type == LVAL_ERR) {
-            return lval_err(v->err);
-        } else {
-            return lval_err("Invalid Type provided");
+            return num_anchor(expr);
         }
     }
+
     lval* accum = div_fn(e, l->next);
     float expr_val;
     float accum_val;
 
-
-    if (v->type == LVAL_NUM_INT){
-        expr_val = v->num_int;
-    }
-    else  if (v->type == LVAL_NUM_FLOAT) {
-        expr_val = v->num_float;
+    if (is_numeric(expr)) {
+        expr_val = get_num(expr);
     } else {
+        lval_del(accum);
         return lval_err("Invalid Type provided");
     }
 
-    if (accum->type == LVAL_NUM_INT){
-         if (accum->num_int == 0){
+    if (is_numeric(accum)){
+        accum_val = get_num(accum);
+        if (accum_val == 0){
             return lval_err("Unable to divide by 0");
         }
-       accum_val = accum->num_int;
-    } else if (accum->type == LVAL_NUM_FLOAT){
-        if (accum->num_float == 0){
-            return lval_err("Unable to divide by 0");
-        }
-       accum_val = accum->num_float;
-    } else if ( accum->type == LVAL_ERR ) {
-        return lval_err(accum->err);
     } else {
+        lval_del(accum);
         return lval_err("Invalid Type provided");
     }
 
     float ratio = expr_val / accum_val;
-//    lval_del(accum);
 
-    int ratio_int = (int) ratio;
-    if (ratio == ratio_int) {
-         int s = (int) ratio;
-         return lval_num_int(s);
-    }
-    return lval_num_float(ratio);
+    return get_lval_num(ratio);
 }
 
 lval* mod_fn(env* e, list* l){
@@ -219,6 +168,14 @@ lval* get_lval_num(float n){
         return lval_num_int(n_int);
     }
     return lval_num_float(n);
+}
+
+lval* num_anchor(lval* v){
+    if (is_numeric(v)){
+        return get_lval_num(get_num(v));
+    } else {
+    return lval_err("Invalid Type provided");
+    }
 }
 
 float get_num(lval* v){
