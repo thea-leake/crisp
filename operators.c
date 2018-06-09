@@ -17,7 +17,7 @@ lval* sum_fn(env* e, list* l){
 lval* sum_numeric(env* e, list* l, float accum){
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
-        return lval_err("Incompatible types for addition operation");
+        return lval_err("Incompatible types for sum operation");
     }
     float sum = get_num(expr) + accum;
     if (l->next == NULL){
@@ -51,31 +51,22 @@ lval* sub_numeric(env* e, list* l, float accum){
 
 lval* mul_fn(env* e, list* l){
     lval* expr = eval_lval(e, l->expr);
+    if (is_numeric(expr)){
+        return mul_numeric(e, l, 0);
+    }
+    return lval_err("Product for type not implemented");
+}
+
+lval* mul_numeric(env* e, list* l, float accum){
+    lval* expr = eval_lval(e, l->expr);
+    if (is_numeric(expr) == False){
+        return lval_err("Incompatible types for product operation");
+    }
+    float product = accum * get_num(expr);
     if (l->next == NULL){
-        return num_anchor(expr);
+        return get_lval_num(product);
     }
-
-    lval* accum = sum_fn(e, l->next);
-    float expr_val;
-    float accum_val;
-
-    if (is_numeric(expr)) {
-        expr_val = get_num(expr);
-    } else {
-        lval_del(accum);
-        return lval_err("Invalid Type provided");
-    }
-
-    if (is_numeric(accum)){
-        accum_val = get_num(accum);
-    } else {
-        lval_del(accum);
-        return lval_err("Invalid Type provided");
-    }
-    float product = expr_val * accum_val;
-    lval_del(accum);
-
-    return get_lval_num(product);
+    return mul_numeric(e, l, product);
 }
 
 lval* div_fn(env* e, list* l){
