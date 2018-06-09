@@ -27,6 +27,7 @@ lval* quit_fn(env* e, list* l);
 lval* sum_numeric(env* e, list* l, float accum);
 lval* sub_numeric(env* e, list* l, float accum);
 lval* mul_numeric(env* e, list* l, float accum);
+lval* div_numeric(env* e, list* l, float accum);
 lval* check_next_eq(env* e, list* l);
 lval* get_lval_num(float n);
 lval* num_anchor(lval* v);

@@ -66,44 +66,29 @@ lval* mul_numeric(env* e, list* l, float accum){
     if (l->next == NULL){
         return get_lval_num(product);
     }
-    return mul_numeric(e, l, product);
+    return mul_numeric(e, l->next, product);
 }
 
 lval* div_fn(env* e, list* l){
     lval* expr = eval_lval(e, l->expr);
+    if (is_numeric(expr) == False){
+        return lval_err("Quotient for type not implemented");
+    } if (l->next == NULL){
+        return get_lval_num(1 / get_num(expr));
+    }
+    return div_numeric(e, l->next, get_num(expr));
+}
+
+lval* div_numeric(env* e, list* l, float accum){
+    lval* expr = eval_lval(e, l->expr);
+    if (get_num(expr) == 0){
+        return lval_err("Unable to divide by 0");
+    }
+    float quotient = accum / get_num(expr);
     if (l->next == NULL){
-        if(is_numeric(expr)){
-            if (get_num(expr) == 0){
-                return lval_err("Unable to divide by 0");
-            }
-            return num_anchor(expr);
-        }
+        return get_lval_num(quotient);
     }
-
-    lval* accum = div_fn(e, l->next);
-    float expr_val;
-    float accum_val;
-
-    if (is_numeric(expr)) {
-        expr_val = get_num(expr);
-    } else {
-        lval_del(accum);
-        return lval_err("Invalid Type provided");
-    }
-
-    if (is_numeric(accum)){
-        accum_val = get_num(accum);
-        if (accum_val == 0){
-            return lval_err("Unable to divide by 0");
-        }
-    } else {
-        lval_del(accum);
-        return lval_err("Invalid Type provided");
-    }
-
-    float ratio = expr_val / accum_val;
-
-    return get_lval_num(ratio);
+    return div_numeric(e, l->next, quotient);
 }
 
 lval* mod_fn(env* e, list* l){
