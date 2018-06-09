@@ -7,7 +7,8 @@
 
 lval* eval_lval(env* e, lval* v){
     if (v->type == LVAL_LIST){
-        return eval_fn(e, v->list);
+        list* lc = copy_list(e, v->list);
+        return eval(e, lc);
     }
     if (v->type == LVAL_SYM){
        return get_val(e, v->sym);
@@ -29,8 +30,6 @@ lval* eval(env* e, list* l){
    if (l->next == NULL){
       return first_expr;
    }
-   print_lval(e, l->expr);
-   print_list(e, l);
    list_del(l);
    return lval_err("First list expression doesn't accept params");
 }
