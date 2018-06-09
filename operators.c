@@ -51,10 +51,14 @@ lval* sub_numeric(env* e, list* l, float accum){
 
 lval* mul_fn(env* e, list* l){
     lval* expr = eval_lval(e, l->expr);
-    if (is_numeric(expr)){
-        return mul_numeric(e, l, 0);
+    if (is_numeric(expr) == False){
+        return lval_err("Product for type not implemented");
     }
-    return lval_err("Product for type not implemented");
+    if (l->next == NULL){
+        // auto downcasting if available for consistency
+        return get_lval_num(get_num(expr));
+    }
+    return mul_numeric(e, l->next, get_num(expr));
 }
 
 lval* mul_numeric(env* e, list* l, float accum){
