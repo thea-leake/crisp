@@ -25,6 +25,7 @@ lval* put_let(env* e, list* l);
 lval* quit_fn(env* e, list* l);
 
 lval* check_next_eq(env* e, list* l);
+lval* get_lval_num(float n);
 
 float get_num(lval* v);
 bool is_numeric(lval* l);

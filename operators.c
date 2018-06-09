@@ -39,12 +39,7 @@ lval* sum_fn(env* e, list* l){
     lval_del(accum);
     //lval_del(accum);
 
-    int sum_int = (int) sum;
-    if (sum == sum_int) {
-         int s = (int) sum;
-         return lval_num_int(s);
-    }
-    return lval_num_float(sum);
+    return get_lval_num(sum);
 }
 
 lval* sub_fn(env* e, list* l){
@@ -216,6 +211,14 @@ lval* mod_fn(env* e, list* l){
     int modulo = expr_val % accum_val;
 
      return lval_num_int(modulo);
+}
+
+lval* get_lval_num(float n){
+    int n_int = (int) n;
+    if (n == n_int){
+        return lval_num_int(n_int);
+    }
+    return lval_num_float(n);
 }
 
 float get_num(lval* v){
