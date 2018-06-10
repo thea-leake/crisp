@@ -99,31 +99,21 @@ lval* mod_fn(env* e, list* l){
     if (l->next == NULL){
         return lval_err("Only one arg provided");
     }
+    if (l->next->next != NULL){
+        return lval_err("Too many arguments provided for modulo");
+    }
     lval* expr = eval_lval(e, l->expr);
-    lval* accum = mod_fn(e, l->next);
-    int expr_val;
-    int accum_val;
-
-
-    if (expr->type == LVAL_NUM_INT){
-        expr_val = expr->num_int;
-    } else {
-        return lval_err("Invalid Type provided");
+    lval* accum = eval_lval(e,l->next->expr);
+    if ((int_compat(expr) == False)||(int_compat(accum) == False)){
+        return lval_err("Operand is not int compatible");
     }
 
-    if (accum->type == LVAL_NUM_INT){
-        accum_val = accum->num_int;
-    } else {
-        return lval_err("Invalid Type provided");
-    }
-
-    if (accum_val == 0){
-        return lval_err("Unable to divide by 0");
-    }
+    int expr_val = (int) get_num(expr);
+    int accum_val = (int) get_num(accum);
 
     int modulo = expr_val % accum_val;
 
-     return lval_num_int(modulo);
+    return lval_num_int(modulo);
 }
 
 lval* get_lval_num(float n){
@@ -321,4 +311,15 @@ lval* put_let(env* e, list* l){
 
 lval* quit_fn(env* e, list* l){
     return lval_terminate();
+}
+
+bool int_compat(lval* l){
+    if ((l->type == LVAL_NUM_INT) || (l->type == LVAL_NUM_FLOAT)){
+        float val = get_num(l);
+        int int_val = (int) val;
+        if (int_val == val){
+            return True;
+        }
+    }
+    return False;
 }

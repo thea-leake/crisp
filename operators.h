@@ -34,6 +34,7 @@ lval* num_anchor(lval* v);
 
 float get_num(lval* v);
 bool is_numeric(lval* l);
+bool int_compat(lval*);
 bool is_true(lval* v);
 
 #endif
