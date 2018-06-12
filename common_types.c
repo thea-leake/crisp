@@ -83,24 +83,18 @@ lval* copy_lambda(env* e, lval* v){
    return n;
 }
 
-lval* lval_func(bltn_ptr func_ptr, char* ident){
+lval* lval_func(char* ident){
     lval* v = malloc(sizeof(lval));
-    builtin* f = malloc(sizeof(builtin));
-    f->func = func_ptr;
-    f->ident = ident;
+    v->sym = ident;
     v->type = LVAL_FUNC;
-    v->func = f;
     return v;
 }
 
 lval* copy_func(lval* v){
     lval* n = malloc(sizeof(lval));
-    builtin* f = malloc(sizeof(builtin));
-    f->func = v->func->func;
-    f->ident = malloc(strlen(v->func->ident) + 1);
-    strcpy(f->ident, v->func->ident);
+    n->sym = malloc(strlen(v->sym) + 1);
+    strcpy(n->sym, v->sym);
     n->type = LVAL_FUNC;
-    n->func = f;
     return n;
 }
 
@@ -216,7 +210,7 @@ void lval_del(lval* v){
         case LVAL_NUM_INT: break;
         case LVAL_NUM_FLOAT: break;
         case LVAL_FUNC:
-            free(v->func->ident); free(v->func); break;
+            free(v->sym); break;
         case LVAL_BOOL: break;
         case LVAL_NIL: break;
         case LVAL_NOOP: break;
@@ -294,7 +288,7 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         printf("%s", v->str);
         break;
     case LVAL_FUNC:
-        printf("%s", v->func->ident);
+        printf("Builtin:%s", v->sym);
         break;
     case LVAL_BOOL:
         print_bool(v->bool);
@@ -312,7 +306,7 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         if (eval == True){
            print_lval(e, get_val(e, v->sym));
         } else {
-           printf("%s", v->sym);
+           printf("VAR:%s", v->sym);
         }
         break;
     case LVAL_NIL:

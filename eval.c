@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "common_types.h"
 #include "environment.h"
 #include "operators.h"
@@ -20,17 +21,14 @@ lval* eval(env* e, list* l){
    lval* first_expr = eval_lval(e, l->expr);
    if (first_expr->type == LVAL_FUNC ){
       lval* fn_resp = eval_func(e, l);
-      list_del(l);
       return fn_resp;
    } if(first_expr->type == LVAL_LAMBDA){
       lval* lmd_resp = eval_lambda(e, l);
-      list_del(l);
       return lmd_resp;
    }
    if (l->next == NULL){
       return first_expr;
    }
-   list_del(l);
    return lval_err("First list expression doesn't accept params");
 }
 
@@ -58,8 +56,8 @@ lval* eval_lambda(env* e, list * l){
 
 lval* eval_func(env* e, list * l){
     lval* func_lval = eval_lval(e, l->expr);
-    list* operands = l->next;
-    return (func_lval->func->func)(e, operands);
+    bltn_ptr func_ptr = get_builtin(func_lval->sym);
+    return (func_ptr)(e, l->next);
 }
 
 lval* build_scoped_env(env* e, list* vars, list* vals){

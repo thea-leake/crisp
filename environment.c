@@ -14,7 +14,7 @@ lval* get_val(env* e, char* key){
          }
       }
       if (e->parent == NULL){
-         return get_builtin(key);
+         return get_builtin_lval(key);
       }
       return get_val(e->parent, key);
    }
@@ -68,43 +68,51 @@ void del_env(env* e){
    }
 }
 
-lval* get_builtin(char* key){
-   if (strcmp("+", key) == 0 || strcmp("add", key) == 0){
-       return lval_func(&sum_fn, key);
-   } if (strcmp("-", key) == 0 || strcmp("sub", key) == 0){
-       return lval_func(&sub_fn, key);
-   } if (strcmp("*", key) == 0 || strcmp("mul", key) == 0){
-       return lval_func(&mul_fn, key);
-   } if (strcmp("/", key) == 0 || strcmp("div", key) == 0){
-       return lval_func(&div_fn, key);
-   } if (strcmp("%", key) == 0 || strcmp("mod", key) == 0){
-       return lval_func(&mod_fn, key);
-   }if (strcmp("=", key) == 0){
-      return lval_func(&eq_fn, key);
-   } if (strcmp("car", key) == 0) {
-      return lval_func(&car_fn, key);
-   } if (strcmp("cdr", key) == 0) {
-      return lval_func(&cdr_fn, key);
-   } if (strcmp("list", key) == 0){
-      return lval_func(&list_fn, key);
-   } if (strcmp("cons", key) == 0){
-      return lval_func(&cons_fn, key);
-   } if (strcmp("eval", key) == 0){
-      return lval_func(&eval_fn, key);
-   } if (strcmp("if", key) == 0){
-      return lval_func(&if_fn, key);
-   } if (strcmp("and", key) == 0){
-      return lval_func(&and_fn, key);
-   } if (strcmp("or", key) == 0){
-      return lval_func(&or_fn, key);
-   } if (strcmp("define", key) == 0){
-      return lval_func(&define_fn, key);
-   } if (strcmp("lambda", key) == 0){
-      return lval_func(&lambda_fn, key);
-   } if (strcmp("let", key) == 0){
-      return lval_func(&let_fn, key);
-   } if (strcmp("quit", key) == 0){
-      return lval_func(&quit_fn, key);
+lval* get_builtin_lval(char* key){
+   bltn_ptr ptr = get_builtin(key);
+   if (ptr == NULL){
+      return lval_nil();
    }
-   return lval_nil();
+   return lval_func(key);
+}
+
+bltn_ptr get_builtin(char* key){
+   if (strcmp("+", key) == 0 || strcmp("add", key) == 0){
+       return &sum_fn;
+   } if (strcmp("-", key) == 0 || strcmp("sub", key) == 0){
+       return &sub_fn;
+   } if (strcmp("*", key) == 0 || strcmp("mul", key) == 0){
+       return &mul_fn;
+   } if (strcmp("/", key) == 0 || strcmp("div", key) == 0){
+       return &div_fn;
+   } if (strcmp("%", key) == 0 || strcmp("mod", key) == 0){
+       return &mod_fn;
+   }if (strcmp("=", key) == 0){
+      return &eq_fn;
+   } if (strcmp("car", key) == 0) {
+      return &car_fn;
+   } if (strcmp("cdr", key) == 0) {
+      return &cdr_fn;
+   } if (strcmp("list", key) == 0){
+      return &list_fn;
+   } if (strcmp("cons", key) == 0){
+      return &cons_fn;
+   } if (strcmp("eval", key) == 0){
+      return &eval_fn;
+   } if (strcmp("if", key) == 0){
+      return &if_fn;
+   } if (strcmp("and", key) == 0){
+      return &and_fn;
+   } if (strcmp("or", key) == 0){
+      return &or_fn;
+   } if (strcmp("define", key) == 0){
+      return &define_fn;
+   } if (strcmp("lambda", key) == 0){
+      return &lambda_fn;
+   } if (strcmp("let", key) == 0){
+      return &let_fn;
+   } if (strcmp("quit", key) == 0){
+      return &quit_fn;
+   }
+   return NULL;
 }

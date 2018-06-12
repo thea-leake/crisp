@@ -16,11 +16,6 @@ typedef struct lambda lambda;
 typedef  lval*(*bltn_ptr) (env* e, list* l);
 
 
-struct builtin {
-    bltn_ptr func;
-    char* ident;
-};
-
 struct lambda {
     list* var_expr;
     list* eval_expr;
@@ -60,7 +55,7 @@ lval* lval_parse_bool(char*  x);
 lval* lval_num_float(float x);
 lval* lval_str(char* x);
 lval* lval_sym(char* x);
-lval* lval_func(bltn_ptr func_ptr, char* ident);
+lval* lval_func(char* ident);
 lval* lval_err(char* x);
 lval* lval_list(list* l);
 lval* lval_lambda(env* e, list* vars, list* expr);
