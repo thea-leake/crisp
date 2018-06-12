@@ -316,11 +316,7 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         printf("_NOOP\n");
         break;
     case LVAL_LAMBDA:
-        printf("#lambda args: ");
-        print_list_symbols(e, v->lambda->var_expr);
-        printf(" procedure: ");
-        print_list_symbols(e, v->lambda->eval_expr);
-        printf("#\n");
+        printf("#lambda#");
         break;
     case LVAL_TERMINATE:
         printf("Ending session.\nGoodbye.\n");

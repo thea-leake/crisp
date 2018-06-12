@@ -207,8 +207,8 @@ lval* cons_fn(env* e, list* l){
     } if (l->next->expr->type != LVAL_LIST){
         return lval_err("Second arg must be list");
     }
-    lval* x = eval_lval(e, l->expr);
-    list* y = l->next->expr->list;
+    lval* x = copy_lval(e, l->expr);
+    list* y = copy_list(e, l->next->expr->list);
     //might use copy_list, depending on ease of garbage collection
     list* n = list_prepend(y, x);
     return lval_list(n);
