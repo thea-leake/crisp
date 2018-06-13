@@ -9,12 +9,14 @@
 lval* eval_lval(env* e, lval* v){
     if (v->type == LVAL_LIST){
         list* lc = copy_list(e, v->list);
-        return eval(e, lc);
+        lval* resp = eval(e, lc);
+        list_del(lc);
+        return resp;
     }
     if (v->type == LVAL_SYM){
-       return get_val(e, v->sym);
+       return copy_lval(e, get_val(e, v->sym));
     }
-    return v;
+    return copy_lval(e,v);
 }
 
 lval* eval(env* e, list* l){
@@ -27,7 +29,7 @@ lval* eval(env* e, list* l){
       return lmd_resp;
    }
    if (l->next == NULL){
-      return first_expr;
+      return copy_lval(e, eval_lval(e, first_expr));
    }
    return lval_err("First list expression doesn't accept params");
 }

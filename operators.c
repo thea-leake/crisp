@@ -217,6 +217,7 @@ lval* cons_fn(env* e, list* l){
 lval* eval_fn(env* e, list* l){
     list* lc = copy_list(e, l);
     lval* resp = eval(e, lc);
+    list_del(lc);
     return resp;
 }
 

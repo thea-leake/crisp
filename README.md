@@ -26,50 +26,48 @@ Current external dependencies are:
  - [mpc](https://github.com/orangeduck/mpc): for parsing code into AST.
 
 # Example usage:
-```
-crisp $ ./bin/crispy
-Crispy lisp interpreter.  Type Control-c to exit,
-crispy> (define a +)
-nil
-crispy> (define a +)
-already defined
+```lisp
+$ ./bin/crispy
+Crispy lisp interpreter.  Type (quit) to exit.
 crispy> (define b 3)
 nil
 crispy> (define c 5)
 nil
-crispy> (let '(c 2) a b c)
-5
-crispy> (define d (lambda '(a b) '(a b b)))
-nil
-crispy> (d a b)
-6
+crispy> (define c 4)
+already defined
+crispy> (if true (+ 3 4 ( * 3 4 c)) (- 12 (* 3 b)))
+67
+crispy> (and true c 3 false 4)
+false
+crispy> (or false nil false)
+false
+crispy> (or false  b 1 true)
+3
 crispy> (= "grr" "grr")
 true
+crispy> (= "grr" b)
+false
 crispy> (define truthy (lambda '(a b) '(= a b)))
 nil
 crispy> (truthy "grr" 1)
 false
-crispy> (= "grr" "grr" "grr")
-true'))')
-crispy> (or false  b 1 true)
+crispy> (define a (lambda '(b c d e) '(if (= c d) ( * d e ) ( a b (* c 2 ) d e))))
+nil
+crispy> (a + 2 8 4)
+32
+crispy> (let '(a (lambda '(a b) '(+ a b))) a 1 2 )
 3
-crispy> (or false nil false)
-false
-crispy> (and true a 3 false 3)
-false
-crispy> (if true (+ 3 4 ( * 3 4 a   )) ( - 12 (* 3 b)   ))
-Invalid Type provided
-crispy> (if true (+ 3 4 ( * 3 4 c   )) ( - 12 (* 3 b)   ))
-67
 crispy> (cons "grr" '( a b true    ))
-("grr" + 3 true)
+("grr" #lambda# 3 true)
 crispy> (list 2 b a (+ b 3))
-(2 3 + 6)
-crispy> (car (list 2 b (+ a 3)))
+(2 3 #lambda# 6)
+crispy> (car (list 2 b (+ c 3)))
 2
 crispy> (cdr (list 2 b (+ b 3)))
 (3 6)
-crispy> (cons a (cdr (list 2 b (+ b 3))))
-(+ 3 6)
-crispy>')
-```
+crispy> (cons c (cdr (list 2 b (+ b 3))))
+(5 3 6)
+crispy> (quit)
+Ending session.
+Goodbye.
+ ```
