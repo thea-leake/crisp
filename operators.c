@@ -305,8 +305,12 @@ lval* put_let(env* e, list* l){
     if (l->next == NULL){
         return lval_err("No value provided for symbol");
     }
-    put_val(e, l->next->expr, l->expr->sym, ENV_SCOPED);
-    return put_let(e, l->next->next);
+    lval* val = eval_lval(e, l->next->expr);
+    put_val(e, val, l->expr->sym, ENV_SCOPED);
+    if (l->next->next != NULL){
+        return put_let(e, l->next->next);
+    }
+    return lval_nil();
 }
 
 lval* quit_fn(env* e, list* l){
