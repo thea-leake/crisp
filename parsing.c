@@ -43,12 +43,18 @@ lval* get_eval_type(mpc_ast_t* t, env* e){
         return get_literal(t, e);
     }
     if (strstr(t->tag, "list")){
+       if (strstr(t->tag, "atom")){
+          // for single element lists as there is no parent list branch parser -
+          // these have single element with both list and atom tags
+          return get_atom_type(t);
+       }
         list* l = build_list(t, e, t->children_num, 0, False);
         return eval(e, l);
     }
     if (strstr(t->tag, "nil")){
         return lval_nil();
     }
+    // get list when called under normal circumstantes - nested under parent list
     return get_atom_type(t);
 }
 
