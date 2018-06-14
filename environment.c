@@ -71,7 +71,7 @@ void del_env(env* e){
 lval* get_builtin_lval(char* key){
    bltn_ptr ptr = get_builtin(key);
    if (ptr == NULL){
-      return lval_nil();
+      return lval_undef();
    }
    return lval_func(key);
 }

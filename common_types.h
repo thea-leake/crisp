@@ -4,7 +4,7 @@
 typedef int bool;
 enum {False, True};
 
-enum { LVAL_BOOL, LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYM, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_LAMBDA, LVAL_NIL, LVAL_NOOP, LVAL_TERMINATE};
+enum { LVAL_BOOL, LVAL_NUM_INT, LVAL_NUM_FLOAT, LVAL_STR, LVAL_SYM, LVAL_FUNC, LVAL_ERR, LVAL_LIST, LVAL_LAMBDA, LVAL_NIL, LVAL_NOOP, LVAL_TERMINATE, LVAL_UNDEF};
 
 enum {ENV_SESSION, ENV_SCOPED};
 
@@ -62,6 +62,7 @@ lval* lval_lambda(env* e, list* vars, list* expr);
 lval* lval_nil();
 lval* lval_terminate();
 lval* lval_noop();
+lval* lval_undef();
 lval* copy_lval(env* e, lval* v);
 lval* copy_func(lval* v);
 lval* copy_bool(lval* v);

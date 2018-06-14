@@ -127,6 +127,13 @@ lval* lval_noop(){
     return v;
 }
 
+
+lval* lval_undef(){
+    lval* v = malloc(sizeof(lval));
+    v->type = LVAL_UNDEF;
+    return v;
+}
+
 lval* lval_terminate(){
    lval* v = malloc(sizeof(lval));
    v->type = LVAL_TERMINATE;
@@ -214,6 +221,7 @@ void lval_del(lval* v){
         case LVAL_BOOL: break;
         case LVAL_NIL: break;
         case LVAL_NOOP: break;
+        case LVAL_UNDEF: break;
         case LVAL_TERMINATE: break;
         case LVAL_LIST:
             list_del(v->list); break;
@@ -314,6 +322,9 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         break;
     case LVAL_NOOP:
         printf("_NOOP\n");
+        break;
+    case LVAL_UNDEF:
+        printf("undef_sym");
         break;
     case LVAL_LAMBDA:
         printf("#lambda#");
