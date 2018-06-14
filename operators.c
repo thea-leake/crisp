@@ -276,7 +276,7 @@ lval* or_fn(env* e, list* l){
 lval* define_fn(env* e, list* l){
     char* key = l->expr->sym;
     lval* exists = get_val(e, key);
-    if (exists->type != LVAL_NOOP){
+    if (exists->type != LVAL_UNDEF){
         lval_del(exists);
         return lval_err("already defined");
     }
