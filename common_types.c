@@ -264,6 +264,13 @@ void print_list_symbols(env* e, list* l){
    printf(")");
 }
 
+void print_list_maybe_eval(env* e, list* l, bool eval_symbols){
+   if (eval_symbols == True) {
+      print_list(e, l);
+   }
+   print_list_symbols(e, l);
+}
+
 void print_list_contents(env* e, list* l, bool eval_symbols){
    if (l != NULL){
       print_lval_sym_eval(e, l->expr, eval_symbols);
@@ -308,13 +315,13 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         printf("%f", v->num_float);
         break;
     case LVAL_LIST:
-        print_list(e, v->list);
+        print_list_maybe_eval(e, v->list, eval);
         break;
     case LVAL_SYM:
         if (eval == True){
            print_lval(e, get_val(e, v->sym));
         } else {
-           printf("VAR:%s", v->sym);
+           printf("SYMBOL:%s", v->sym);
         }
         break;
     case LVAL_NIL:
