@@ -191,6 +191,9 @@ lval* car_fn(env* e, list* l){
 
 lval* cdr_fn(env* e, list* l){
     (void) e;
+    if (rest_expr(l->expr->list) == NULL){
+        return lval_nil();
+    }
     return lval_list(rest_expr(l->expr->list));
 }
 
