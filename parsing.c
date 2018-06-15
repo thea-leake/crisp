@@ -63,6 +63,12 @@ lval* get_literal(mpc_ast_t* t, env* e){
     if (strstr(t->tag, "literal"))  {
         int index = get_literal_list_index(t, 0);
         mpc_ast_t* lit = t->children[index];
+        if (lit->children_num == 0){
+           if (strstr(lit->tag, "atom")){
+              return get_atom_type(lit);
+           }
+           return lval_err("No elements in literal");
+        }
         list* l = build_list(lit, NULL, lit->children_num, index, True);
         return lval_list(l);
     }
