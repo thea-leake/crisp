@@ -289,7 +289,24 @@ lval* define_fn(env* e, list* l){
 }
 
 lval* lambda_fn(env* e, list* l){
-    return lval_lambda(e, l->expr->list, l->next->expr->list);
+    if (l->expr == NULL){
+        return lval_err("Missing var list");
+    } if (l->expr->type != LVAL_LIST){
+        return lval_err("First/variable argument for lambda needs to be list");
+    } if (l->next->expr == NULL){
+        return lval_err("Missing lambda procedure list");
+    } if (l->next->expr->type != LVAL_LIST){
+        return lval_err("Second/procedure argument for lambda needs to be list");
+    } if (l->next->next == NULL){
+        // Returns procedure
+        return lval_lambda(e, l->expr->list, l->next->expr->list);
+    }
+    lval* lambda = lval_lambda(e, l->expr->list, l->next->expr->list);
+    list* call_args = copy_list(e, l->next->next);
+    list* eval_list = prepend_create(lambda, call_args);
+    // returns evaluated procedure
+    return eval_lambda(e, eval_list);
+
 }
 
 lval* let_fn(env* e, list* l){
