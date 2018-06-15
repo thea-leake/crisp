@@ -303,7 +303,7 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         printf("%s", v->str);
         break;
     case LVAL_FUNC:
-        printf("Builtin:%s", v->sym);
+        printf("#builtin:%s", v->sym);
         break;
     case LVAL_BOOL:
         print_bool(v->bool);
@@ -334,7 +334,7 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         printf("undef_sym");
         break;
     case LVAL_LAMBDA:
-        printf("#lambda#");
+        printf("#lambda");
         break;
     case LVAL_TERMINATE:
         printf("Ending session.\nGoodbye.\n");
