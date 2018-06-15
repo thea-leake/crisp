@@ -301,12 +301,13 @@ lval* lambda_fn(env* e, list* l){
         // Returns procedure
         return lval_lambda(e, l->expr->list, l->next->expr->list);
     }
+    // returns evaluated procedure
     lval* lambda = lval_lambda(e, l->expr->list, l->next->expr->list);
     list* call_args = copy_list(e, l->next->next);
     list* eval_list = prepend_create(lambda, call_args);
-    // returns evaluated procedure
-    return eval_lambda(e, eval_list);
-
+    lval* result = eval_lambda(e, eval_list);
+    list_del(eval_list);
+    return result;
 }
 
 lval* let_fn(env* e, list* l){
