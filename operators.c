@@ -155,6 +155,15 @@ lval* check_next_eq(env* e, list* l){
 }
 
 lval* eq_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_err("No argumemnts provided to =");
+    }
+    if (l->expr == NULL){
+        return lval_err("First arguemnt is null");
+    }
+    if (l->next == NULL){
+        return lval_err("Unmatched arg for equality comparison");
+    }
     lval* first = eval_lval(e, first_expr(l));
     lval* next = eval_lval(e, first_expr(rest_expr(l)));
     if (is_numeric(first) && is_numeric(next)) {
