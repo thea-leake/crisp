@@ -186,16 +186,35 @@ lval* eq_fn(env* e, list* l){
 
 lval* car_fn(env* e, list* l){
     (void) e;
+    if (l == NULL ){
+        return lval_err("CDR received no args");
+    }
+    if (l->expr->type != LVAL_LIST){
+        return lval_err("Expected list arg");
+    }
+    if (l->expr->list == NULL){
+        return lval_nil();
+    }
     return first_expr(l->expr->list);
 }
 
 lval* cdr_fn(env* e, list* l){
     (void) e;
-    if (rest_expr(l->expr->list) == NULL){
+    if (l == NULL ){
+        return lval_err("CDR received no args");
+    }
+    if (l->expr->type != LVAL_LIST){
+        return lval_err("Expected list arg");
+    }
+    if (l->expr->list == NULL){
+        return lval_nil();
+    }
+    if (l->expr->list->next == NULL){
         return lval_nil();
     }
     return lval_list(rest_expr(l->expr->list));
 }
+
 
 lval* list_fn(env* e, list* l){
     (void) e;
