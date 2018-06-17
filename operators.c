@@ -190,6 +190,9 @@ lval* eq_fn(env* e, list* l){
         }
         return lval_bool(False);
     }
+    if (first->type == LVAL_NIL && next->type == LVAL_NIL){
+        return check_next_eq(e, rest_expr(l));
+    }
     return lval_err("No comparison available for type");
 }
 
