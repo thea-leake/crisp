@@ -48,7 +48,7 @@ lval* eval_lambda(env* e, list * l){
        del_env(fn_vars);
        return env_set;
     }
-    lval* lambda_eval = eval_func(fn_vars, func_lval->lambda->eval_expr);
+    lval* lambda_eval = eval(fn_vars, func_lval->lambda->eval_expr);
     // del will cascade through all lambda vars, but not parent env.
     del_env(fn_vars);
     lval_del(env_set);

@@ -69,6 +69,9 @@ void del_env(env* e){
 }
 
 lval* get_builtin_lval(char* key){
+   if (key == NULL){
+      return lval_err("get_builtin_lval: Null key ref given");
+   }
    bltn_ptr ptr = get_builtin(key);
    if (ptr == NULL){
       return lval_undef();
