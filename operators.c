@@ -7,6 +7,9 @@
 
 
 lval* sum_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_func("+");
+    }
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr)){
         return sum_numeric(e, l, 0);

@@ -85,7 +85,8 @@ lval* copy_lambda(env* e, lval* v){
 
 lval* lval_func(char* ident){
     lval* v = malloc(sizeof(lval));
-    v->sym = ident;
+    v->sym = malloc(strlen(ident) + 1);
+    strcpy(v->sym, ident);
     v->type = LVAL_FUNC;
     return v;
 }
