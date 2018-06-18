@@ -308,11 +308,18 @@ lval* or_fn(env* e, list* l){
 }
 
 lval* define_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_err("builtin:define: no list passed in to define");
+    } if(l->expr->type != LVAL_SYM){
+        return lval_err("builtin:define: define key must be symbol");
+    } if(l->next == NULL){
+        return lval_err("builtin:define define value missing");
+    }
     char* key = l->expr->sym;
     lval* exists = get_val(e, key);
     if (exists->type != LVAL_UNDEF){
         lval_del(exists);
-        return lval_err("already defined");
+        return lval_err("builtin:define: value already defined");
     }
     lval_del(exists);
     lval* put_expr = eval_lval(e, l->next->expr);
