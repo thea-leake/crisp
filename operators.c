@@ -315,7 +315,11 @@ lval* define_fn(env* e, list* l){
         return lval_err("already defined");
     }
     lval_del(exists);
-    put_val(e, eval_lval(e, l->next->expr), key, ENV_SESSION);
+    lval* put_expr = eval_lval(e, l->next->expr);
+    if (put_expr->type ==LVAL_ERR){
+        return put_expr;
+    }
+    put_val(e, put_expr, key, ENV_SESSION);
     return lval_nil();
 }
 
