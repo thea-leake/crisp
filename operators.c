@@ -321,13 +321,15 @@ lval* define_fn(env* e, list* l){
 
 lval* lambda_fn(env* e, list* l){
     if (l->expr == NULL){
-        return lval_err("Missing var list");
+        return lval_err("builtin:lambda: missing var list");
     } if (l->expr->type != LVAL_LIST){
-        return lval_err("First/variable argument for lambda needs to be list");
+        return lval_err("builtin:lambda: first arg is var list, use deferred list");
+    } if (l->expr->list == NULL){
+        return lval_err("builtin:lambda: args can't be empty , use deferred list");
     } if (l->next->expr == NULL){
-        return lval_err("Missing lambda procedure list");
+        return lval_err("builtin:lambda: missing lambda procedure list");
     } if (l->next->expr->type != LVAL_LIST){
-        return lval_err("Second/procedure argument for lambda needs to be list");
+        return lval_err("builtin:lambda: second/procedure arg needs to be list");
     } if (l->next->next == NULL){
         // Returns procedure
         return lval_lambda(e, l->expr->list, l->next->expr->list);
