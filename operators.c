@@ -30,6 +30,9 @@ lval* sum_numeric(env* e, list* l, float accum){
 }
 
 lval* sub_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_func("-");
+    }
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
         return lval_err("Difference for type not implemented");
@@ -53,6 +56,9 @@ lval* sub_numeric(env* e, list* l, float accum){
 }
 
 lval* mul_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_func("*");
+    }
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
         return lval_err("Product for type not implemented");
@@ -77,6 +83,9 @@ lval* mul_numeric(env* e, list* l, float accum){
 }
 
 lval* div_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_func("/");
+    }
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
         return lval_err("Quotient for type not implemented");
@@ -99,6 +108,9 @@ lval* div_numeric(env* e, list* l, float accum){
 }
 
 lval* mod_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_func("%");
+    }
     if (l->next == NULL){
         return lval_err("Only one arg provided");
     }
