@@ -334,6 +334,8 @@ lval* lambda_fn(env* e, list* l){
         return lval_err("builtin:lambda: missing lambda procedure list");
     } if (l->next->expr->type != LVAL_LIST){
         return lval_err("builtin:lambda: second/procedure arg needs to be list");
+    } if (l->next->expr->list == NULL){
+        return lval_err("builtin:lambda: arg list can't be empty");
     } if (l->next->next == NULL){
         // Returns procedure
         return lval_lambda(e, l->expr->list, l->next->expr->list);
