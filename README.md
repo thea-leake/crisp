@@ -67,8 +67,10 @@ crispy> (cdr (list 2 b (+ b 3)))
 (3 6)
 crispy> (cons c (cdr (list 2 b (+ b 3))))
 (5 3 6)
-crispy> (lambda '(b a) '(a b b) 2 + )
+crispy> ((lambda '(b a) '(a b b)) 2 + )
 4
+crispy> ((lambda (list ) (list + 1 4 )))
+5
 crispy> (quit)
 Ending session.
 Goodbye.

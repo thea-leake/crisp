@@ -8,19 +8,19 @@
 
 lval* sum_fn(env* e, list* l){
     if (l == NULL){
-        return lval_func("+");
+        return lval_err("#builtin:+: missing operands");
     }
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr)){
         return sum_numeric(e, l, 0);
     }
-    return lval_err("Sum for type not implemented");
+    return lval_err("#builtin:+: sum for type not implemented");
 }
 
 lval* sum_numeric(env* e, list* l, float accum){
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
-        return lval_err("Incompatible types for sum operation");
+        return lval_err("#builtin:+: incompatible types for sum operation");
     }
     float sum = get_num(expr) + accum;
     if (l->next == NULL){
@@ -31,11 +31,11 @@ lval* sum_numeric(env* e, list* l, float accum){
 
 lval* sub_fn(env* e, list* l){
     if (l == NULL){
-        return lval_func("-");
+        return lval_err("#builtin:-: missing operands");
     }
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
-        return lval_err("Difference for type not implemented");
+        return lval_err("#builtin:-: difference for type not implemented");
     }
     if (l->next == NULL){
         return get_lval_num( -1 * get_num(expr));
@@ -46,7 +46,7 @@ lval* sub_fn(env* e, list* l){
 lval* sub_numeric(env* e, list* l, float accum){
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
-        return lval_err("Incompatible types for difference operation");
+        return lval_err("#builtin:-: incompatible types for difference operation");
     }
     float diff = accum - get_num(expr);
     if (l->next == NULL){
@@ -57,7 +57,7 @@ lval* sub_numeric(env* e, list* l, float accum){
 
 lval* mul_fn(env* e, list* l){
     if (l == NULL){
-        return lval_func("*");
+        return lval_err("#builtin:*: missing operands");
     }
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
@@ -324,17 +324,17 @@ lval* or_fn(env* e, list* l){
 
 lval* define_fn(env* e, list* l){
     if (l == NULL){
-        return lval_err("builtin:define: no list passed in to define");
+        return lval_err("#builtin:define: no list passed in to define");
     } if(l->expr->type != LVAL_SYM){
-        return lval_err("builtin:define: define key must be symbol");
+        return lval_err("#builtin:define: define key must be symbol");
     } if(l->next == NULL){
-        return lval_err("builtin:define define value missing");
+        return lval_err("#builtin:define define value missing");
     }
     char* key = l->expr->sym;
     lval* exists = get_val(e, key);
     if (exists->type != LVAL_UNDEF){
         lval_del(exists);
-        return lval_err("builtin:define: value already defined");
+        return lval_err("#builtin:define: value already defined");
     }
     lval_del(exists);
     lval* put_expr = eval_lval(e, l->next->expr);
@@ -346,32 +346,30 @@ lval* define_fn(env* e, list* l){
 }
 
 lval* lambda_fn(env* e, list* l){
-    if (l->expr == NULL){
-        return lval_err("builtin:lambda: missing var list");
+    if (l == NULL){
+        return lval_err("#builtin:lambda: missing operands");
+    } if (l->expr == NULL){
+        return lval_err("#builtin:lambda: missing var list");
     } if (l->expr->type != LVAL_LIST){
-        return lval_err("builtin:lambda: first arg is var list, use deferred list");
-    } if (l->expr->list == NULL){
-        return lval_err("builtin:lambda: args can't be empty , use deferred list");
+        return lval_err("#builtin:lambda: first arg is var list");
+    } if (l->next == NULL){
+        return lval_err("#builtin:lambda: missing procedure list");
     } if (l->next->expr == NULL){
-        return lval_err("builtin:lambda: missing lambda procedure list");
+        return lval_err("#builtin:lambda: missing procedure list");
     } if (l->next->expr->type != LVAL_LIST){
-        return lval_err("builtin:lambda: second/procedure arg needs to be list");
+        return lval_err("#builtin:lambda: second/procedure arg needs to be list");
     } if (l->next->expr->list == NULL){
-        return lval_err("builtin:lambda: arg list can't be empty");
+        return lval_err("#builtin:lambda: arg list can't be empty");
     } if (l->next->next == NULL){
-        // Returns procedure
         return lval_lambda(e, l->expr->list, l->next->expr->list);
     }
-    // returns evaluated procedure
-    lval* lambda = lval_lambda(e, l->expr->list, l->next->expr->list);
-    list* call_args = copy_list(e, l->next->next);
-    list* eval_list = prepend_create(lambda, call_args);
-    lval* result = eval_lambda(e, eval_list);
-    list_del(eval_list);
-    return result;
+    return lval_err("#builtin:lambda: too many operands");
 }
 
 lval* let_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_err("#builtin:let: missing operands");
+    }
     env* list_env = init_env(e);
     lval* list_put = put_let(list_env, l->expr->list);
     if (list_put->type == LVAL_ERR){

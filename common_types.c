@@ -69,7 +69,11 @@ lval* lval_lambda(env* e, list* var_expr, list* eval_expr){
    lval* v = malloc(sizeof(lval));
    v->type = LVAL_LAMBDA;
    v->lambda = malloc(sizeof(lambda));
-   v->lambda->var_expr = copy_list(e, var_expr);
+   if (var_expr != NULL){
+      v->lambda->var_expr = copy_list(e, var_expr);
+   } else {
+       v->lambda->var_expr = NULL;
+   }
    v->lambda->eval_expr = copy_list(e, eval_expr);
    return v;
 }
@@ -78,7 +82,11 @@ lval* copy_lambda(env* e, lval* v){
    lval* n = malloc(sizeof(lval));
    n->type = LVAL_LAMBDA;
    n->lambda = malloc(sizeof(lambda));
-   n->lambda->var_expr = copy_list(e, v->lambda->var_expr);
+   if (v->lambda->var_expr != NULL){
+      n->lambda->var_expr = copy_list(e, v->lambda->var_expr);
+   } else {
+      n->lambda->var_expr = NULL;
+   }
    n->lambda->eval_expr = copy_list(e, v->lambda->eval_expr);
    return n;
 }
@@ -298,7 +306,7 @@ void print_lval(env* e, lval* v){
 void print_lval_sym_eval(env* e, lval* v, bool eval){
     switch(v->type) {
     case LVAL_ERR:
-        printf("%s", v->err);
+        printf("ERROR:%s", v->err);
         break;
     case LVAL_STR:
         printf("%s", v->str);
