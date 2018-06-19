@@ -61,7 +61,7 @@ lval* mul_fn(env* e, list* l){
     }
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
-        return lval_err("Product for type not implemented");
+        return lval_err("#builtin:*: product for type unavailable");
     }
     if (l->next == NULL){
         // auto downcasting if available for consistency
@@ -73,7 +73,7 @@ lval* mul_fn(env* e, list* l){
 lval* mul_numeric(env* e, list* l, float accum){
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
-        return lval_err("Incompatible types for product operation");
+        return lval_err("#builtin:*:numeric: product for type unavailable");
     }
     float product = accum * get_num(expr);
     if (l->next == NULL){
@@ -84,11 +84,11 @@ lval* mul_numeric(env* e, list* l, float accum){
 
 lval* div_fn(env* e, list* l){
     if (l == NULL){
-        return lval_func("/");
+        return lval_err("#builtin:/: missing operands");
     }
     lval* expr = eval_lval(e, l->expr);
     if (is_numeric(expr) == False){
-        return lval_err("Quotient for type not implemented");
+        return lval_err("#builtin:/: quotient for type unavailable");
     } if (l->next == NULL){
         return get_lval_num(1 / get_num(expr));
     }
@@ -98,7 +98,7 @@ lval* div_fn(env* e, list* l){
 lval* div_numeric(env* e, list* l, float accum){
     lval* expr = eval_lval(e, l->expr);
     if (get_num(expr) == 0){
-        return lval_err("Unable to divide by 0");
+        return lval_err("#builtin:/:numeric: unable to divide by 0");
     }
     float quotient = accum / get_num(expr);
     if (l->next == NULL){
@@ -109,13 +109,13 @@ lval* div_numeric(env* e, list* l, float accum){
 
 lval* mod_fn(env* e, list* l){
     if (l == NULL){
-        return lval_func("%");
+        return lval_err("#builtin:%: missing operands");
     }
     if (l->next == NULL){
-        return lval_err("Only one arg provided");
+        return lval_err("#builtin:%: missing operand");
     }
     if (l->next->next != NULL){
-        return lval_err("Too many arguments provided for modulo");
+        return lval_err("#builtin:%: too many operands");
     }
     lval* expr = eval_lval(e, l->expr);
     lval* accum = eval_lval(e,l->next->expr);
@@ -137,14 +137,6 @@ lval* get_lval_num(float n){
         return lval_num_int(n_int);
     }
     return lval_num_float(n);
-}
-
-lval* num_anchor(lval* v){
-    if (is_numeric(v)){
-        return get_lval_num(get_num(v));
-    } else {
-    return lval_err("Invalid Type provided");
-    }
 }
 
 float get_num(lval* v){
@@ -171,13 +163,13 @@ lval* check_next_eq(env* e, list* l){
 
 lval* eq_fn(env* e, list* l){
     if (l == NULL){
-        return lval_err("No argumemnts provided to =");
+        return lval_err("#builtin:=: missing operands");
     }
     if (l->expr == NULL){
-        return lval_err("First arguemnt is null");
+        return lval_err("#builtin:=: first argument is missing");
     }
     if (l->next == NULL){
-        return lval_err("Unmatched arg for equality comparison");
+        return lval_err("#builtin:=: unmatched operand for equality comparison");
     }
     lval* first = eval_lval(e, first_expr(l));
     lval* next = eval_lval(e, first_expr(rest_expr(l)));
@@ -208,16 +200,16 @@ lval* eq_fn(env* e, list* l){
     if (first->type == LVAL_NIL && next->type == LVAL_NIL){
         return check_next_eq(e, rest_expr(l));
     }
-    return lval_err("No comparison available for type");
+    return lval_err("#builtin:=: no comparison available for type");
 }
 
 lval* car_fn(env* e, list* l){
     (void) e;
     if (l == NULL ){
-        return lval_err("CDR received no args");
+        return lval_err("#builtin:car: received no operands");
     }
     if (l->expr->type != LVAL_LIST){
-        return lval_err("Expected list arg");
+        return lval_err("#builtin:car: expected list operand");
     }
     if (l->expr->list == NULL){
         return lval_nil();
@@ -228,10 +220,10 @@ lval* car_fn(env* e, list* l){
 lval* cdr_fn(env* e, list* l){
     (void) e;
     if (l == NULL ){
-        return lval_err("CDR received no args");
+        return lval_err("#builtin:cdr: received no operands");
     }
     if (l->expr->type != LVAL_LIST){
-        return lval_err("Expected list arg");
+        return lval_err("#builtin:cdr: expected list arg");
     }
     if (l->expr->list == NULL){
         return lval_nil();
@@ -249,12 +241,15 @@ lval* list_fn(env* e, list* l){
 }
 
 lval* cons_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_err("#builtin:cons: missing operand list");
+    }
     if (l->next == NULL){
-        return lval_err("No list to const to");
+        return lval_err("#builtin:cons: no list to const to");
     } if (l->next->next != NULL){
-        return lval_err("Too many arguments, expect lval and list");
+        return lval_err("#builtin:cons: too many arguments, expect lval and list");
     } if (l->next->expr->type != LVAL_LIST){
-        return lval_err("Second arg must be list");
+        return lval_err("#builtin:const: second operand must be list");
     }
     lval* x = copy_lval(e, l->expr);
     list* y = copy_list(e, l->next->expr->list);
@@ -264,6 +259,9 @@ lval* cons_fn(env* e, list* l){
 }
 
 lval* eval_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_func("eval");
+    }
     list* lc = copy_list(e, l);
     lval* resp = eval(e, lc);
     list_del(lc);
@@ -290,17 +288,28 @@ bool is_true(lval* v){
 }
 
 lval* if_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_err("#builtin:if: missing operand list");
+    } if (l->next == NULL){
+        return lval_err("#builtin:if: missing true cond");
+    }
     if (l->next->next->next != NULL){
-        return lval_err("Too many arguments passed in to if.");
+        return lval_err("#builtin:if: too many operands");
     }
     lval* r = eval_lval(e, l->expr);
     if (is_true(r)) {
         return eval_lval(e, l->next->expr);
     }
+    if (l->next->next == NULL){
+        return lval_nil();
+    }
     return eval_lval(e, l->next->next->expr);
 }
 
 lval* and_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_err("#builtin:and: missing operand list");
+    }
     lval* n = eval_lval(e, l->expr);
     if (l->next == NULL){
         return n;
@@ -312,6 +321,9 @@ lval* and_fn(env* e, list* l){
 }
 
 lval* or_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_err("#builtin:or: missing operand list");
+    }
     lval* n = eval_lval(e, l->expr);
     if (l->next == NULL){
         return n;
