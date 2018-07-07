@@ -1,5 +1,6 @@
 #include "common_types.h"
 #include "operators.h"
+#include "environment.h"
 #include "eval.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -248,11 +249,13 @@ lval* cons_fn(env* e, list* l){
         return lval_err("#builtin:cons: no list to cons to");
     } if (l->next->next != NULL){
         return lval_err("#builtin:cons: too many arguments, expect lval and list");
-    } if (l->next->expr->type != LVAL_LIST){
-        return lval_err("#builtin:const: second operand must be list");
     }
-    lval* x = copy_lval(e, l->expr);
-    list* y = copy_list(e, l->next->expr->list);
+    lval* cons_expr = cons_list(e, l->next->expr);
+    if (cons_expr->type == LVAL_ERR){
+        return cons_expr;
+    }
+    lval* x = copy_lval(e, eval_lval(e, l->expr));
+    list* y = copy_list(e, cons_expr->list);
     //might use copy_list, depending on ease of garbage collection
     list* n = list_prepend(y, x);
     return lval_list(n);
@@ -268,6 +271,17 @@ lval* eval_fn(env* e, list* l){
     return resp;
 }
 
+lval* cons_list(env* e, lval* v){
+    if (v->type == LVAL_LIST) {
+        return v;
+    } if (v->type == LVAL_SYM){
+        lval* val = get_val(e, v->sym);
+            if (val->type == LVAL_LIST){
+                return val;
+            }
+    }
+    return lval_err("#builtin:cons:cons_list: second param not a list");
+}
 
 bool is_true(lval* v){
     int t = v->type;

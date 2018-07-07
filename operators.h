@@ -30,6 +30,7 @@ lval* mul_numeric(env* e, list* l, float accum);
 lval* div_numeric(env* e, list* l, float accum);
 lval* check_next_eq(env* e, list* l);
 lval* get_lval_num(float n);
+lval* cons_list(env* e, lval* v);
 
 float get_num(lval* v);
 bool is_numeric(lval* l);

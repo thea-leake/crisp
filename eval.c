@@ -8,6 +8,9 @@
 
 lval* eval_lval(env* e, lval* v){
     if (v->type == LVAL_LIST){
+        if (v->list == NULL){
+          return copy_lval(e, v);
+        }
         list* lc = copy_list(e, v->list);
         lval* resp = eval(e, lc);
         list_del(lc);
