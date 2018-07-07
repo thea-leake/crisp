@@ -27,7 +27,7 @@ Current external dependencies are:
 
 # Example usage:
 ```lisp
-(default) Thea Addison Leake@Theas-MacBook:crisp $ ./bin/crispy
+$ ./bin/crispy
 Crispy lisp interpreter.  Type (quit) to exit.
 crispy> (define b 3)
 nil
