@@ -359,7 +359,6 @@ lval* define_fn(env* e, list* l){
     char* key = l->expr->sym;
     lval* exists = get_val(e, key);
     if (exists->type != LVAL_UNDEF){
-        lval_del(exists);
         return lval_err("#builtin:define: value already defined");
     }
     lval_del(exists);
