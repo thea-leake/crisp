@@ -73,6 +73,14 @@ crispy> ((lambda '(b a) '(a b b)) 2 + )
 4
 crispy> ((lambda '() '( + 1 4 )))
 5
+Goodbye.
+
+$ ./bin/crispy
+Crispy lisp interpreter.  Type (quit) to exit.
+crispy> (define range (lambda '(r) '(let '(b (lambda '(c d) '(if (= c 0) d (b (- c 1 ) (cons c d )) )))  b r '()  )))
+nil
+crispy> (range 10)
+(0 1 2 3 4 5 6 7 8 9)
 crispy> (quit)
 Ending session.
 Goodbye.
