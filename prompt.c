@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
             symbol:   /[a-zA-Z:!_%=\\?\\-\\+\\*\\/]+/                              ;\
             atom:     <string> | <number> | <bool> | <nil> | <symbol>             ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
-                      '(' <element>+')'                                           ;\
+                      '(' <element>+')' | '('')'                                      ;\
             element:   <atom> | <list> | <literal>                                ;\
             literal:  '''<list>                                                   ;\
             expr:     /^/ <list>| <literal> /$/                                   ;\

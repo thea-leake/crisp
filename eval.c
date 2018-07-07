@@ -20,6 +20,12 @@ lval* eval_lval(env* e, lval* v){
 }
 
 lval* eval(env* e, list* l){
+   if ( l == NULL ){
+      return lval_err("EVAL:Evaluating empty list");
+   }
+   if (l->expr == NULL){
+      return lval_err("EVAL: Operator expression NULL");
+   }
    lval* first_expr = eval_lval(e, l->expr);
    if (first_expr->type == LVAL_FUNC ){
       lval* fn_resp = eval_func(e, l);
@@ -31,7 +37,8 @@ lval* eval(env* e, list* l){
    if (l->next == NULL){
       return copy_lval(e, eval_lval(e, first_expr));
    }
-   return lval_err("First list expression doesn't accept params");
+   print_list(e, l);
+   return lval_err("EVAL:First list expression doesn't accept params");
 }
 
 

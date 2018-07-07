@@ -181,6 +181,9 @@ lval* copy_lval(env* e, lval* v){
 }
 
 list* copy_list(env* e, list* l){
+   if (l ==  NULL){
+      return NULL;
+   }
    lval* v = copy_lval(e, l->expr);
    if (l->next == NULL){
       return prepend_create(v, NULL);

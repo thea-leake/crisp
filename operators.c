@@ -245,7 +245,7 @@ lval* cons_fn(env* e, list* l){
         return lval_err("#builtin:cons: missing operand list");
     }
     if (l->next == NULL){
-        return lval_err("#builtin:cons: no list to const to");
+        return lval_err("#builtin:cons: no list to cons to");
     } if (l->next->next != NULL){
         return lval_err("#builtin:cons: too many arguments, expect lval and list");
     } if (l->next->expr->type != LVAL_LIST){
@@ -398,7 +398,7 @@ lval* put_let(env* e, list* l){
         return lval_nil();
     }
     if (l->next == NULL){
-        return lval_err("No value provided for symbol");
+        return lval_err("#builtin:let: no value provided for symbol");
     }
     lval* val = eval_lval(e, l->next->expr);
     put_val(e, val, l->expr->sym, ENV_SCOPED);
