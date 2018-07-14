@@ -116,6 +116,8 @@ bltn_ptr get_builtin(char* key){
       return &let_fn;
    } if (strcmp("quit", key) == 0){
       return &quit_fn;
+   } if (strcmp("atom?", key) == 0){
+      return &atom_fn;
    }
    return NULL;
 }
