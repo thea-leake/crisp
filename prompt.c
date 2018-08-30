@@ -51,6 +51,12 @@ int main(int argc, char** argv) {
     while(1) {
         char* input = readline("crispy> ");
 
+        if (input == NULL){
+            free(input);
+            printf("\n");
+            break;
+        }
+
         add_history(input);
 
         mpc_result_t r;
@@ -58,24 +64,16 @@ int main(int argc, char** argv) {
             // print AST
             // mpc_ast_print(r.output);
             lval* result = parse_eval(r.output, session_env);
-            print_lval_sym_eval(session_env, result, False);
             printf("\n");
             if (result->type == LVAL_TERMINATE){
                 lval_del(result);
-                if (session_env != NULL){
-                    del_env(session_env);
-                }
                 free(input);
                 mpc_ast_delete(r.output);
-                mpc_cleanup(
-                    12,
-                    Bool, Integer, Float, Number, String, Nil, Symbol, Atom, List,
-                    Element, Literal, Expr
-                );
-                return 0;
+                break;
             }
-                lval_del(result);
-                mpc_ast_delete(r.output);
+            print_lval_sym_eval(session_env, result, False);
+            lval_del(result);
+            mpc_ast_delete(r.output);
         } else {
             mpc_err_print(r.error);
             mpc_err_delete(r.error);
@@ -84,11 +82,12 @@ int main(int argc, char** argv) {
         free(input);
 
     }
+    printf("Ending session.\nGoodbye.\n");
     del_env(session_env);
 
     // clean up our parsers from memory
     mpc_cleanup(
-        13,
+        12,
         Bool, Integer, Float, Number, String, Nil, Symbol, Atom, List,
         Element, Literal, Expr
     );
