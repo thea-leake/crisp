@@ -36,14 +36,30 @@ crispy> (nil? 5)
 false
 crispy> (nil? nil)
 true
+crispy> (define true? (lambda '(x) '(if x true false)))
+nil
+crispy> (true? 1)
+true
+crispy> (true? nil)
+false
+crispy> (true? true)
+true
+crispy> (define false? (lambda '(x) '(if x false true)))
+nil
+crispy> (false? 1)
+false
+crispy> (false? nil)
+true
+crispy> (false? false)
+true
 crispy> (define range (lambda '(r) '(let '(b (lambda '(c d) '(if (= c 0) d (b (- c 1 ) (cons c d )) )))  b r '()  )))
 nil
-crispy> (range 10)
-(0 1 2 3 4 5 6 7 8 9)
+crispy> (range 25)
+(0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24)
 crispy> ((lambda '() '( + 1 4 )))
 5
-crispy> (or false nil false)
-false
+crispy> (or false false nil )
+nil
 crispy> (or false  "grr" 1 true)
 "grr"
 crispy> (define b "rarr")
