@@ -18,7 +18,6 @@ int main(int argc, char** argv) {
     mpc_parser_t* Float = mpc_new("float");
     mpc_parser_t* Number = mpc_new("number");
     mpc_parser_t* String = mpc_new("string");
-    mpc_parser_t* Nil = mpc_new("nil");
     mpc_parser_t* Symbol = mpc_new("symbol");
     mpc_parser_t* Atom = mpc_new("atom");
     mpc_parser_t* List = mpc_new("list");
@@ -33,16 +32,15 @@ int main(int argc, char** argv) {
             float:    /-?[0-9]+\\.[0-9]+/                                         ;\
             number:   <float> | <integer>                                         ;\
             string:   /\"(\\\\.|[^\"])*\"/                                        ;\
-            nil:      \"nil\"                                                     ;\
-            symbol:   /[a-zA-Z:!_%=\\?\\-\\+\\*\\/]+/                              ;\
-            atom:     <string> | <number> | <bool> | <nil> | <symbol>             ;\
+            symbol:   /[a-zA-Z:!_%=\\?\\-\\+\\*\\/]+/                             ;\
+            atom:     <string> | <number> | <bool> | <symbol>                     ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
-                      '(' <element>+')' | '('')'                                      ;\
+                      '(' <element>+')' | '('')'                                  ;\
             element:   <atom> | <list> | <literal>                                ;\
             literal:  '''<list>                                                   ;\
             expr:     /^/ <list>| <literal> /$/                                   ;\
         ",
-        Bool, Integer, Float, Number, String, Nil, Symbol, Atom, List,
+        Bool, Integer, Float, Number, String, Symbol, Atom, List,
         Element, Literal, Expr
     );
     env* session_env = init_env(NULL);
@@ -87,8 +85,8 @@ int main(int argc, char** argv) {
 
     // clean up our parsers from memory
     mpc_cleanup(
-        12,
-        Bool, Integer, Float, Number, String, Nil, Symbol, Atom, List,
+        11,
+        Bool, Integer, Float, Number, String, Symbol, Atom, List,
         Element, Literal, Expr
     );
     return 0;

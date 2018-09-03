@@ -72,6 +72,9 @@ lval* get_builtin_lval(char* key){
    if (key == NULL){
       return lval_err("get_builtin_lval: Null key ref given");
    }
+   if (strcmp("nil", key) == 0){
+      return lval_nil();
+   }
    bltn_ptr ptr = get_builtin(key);
    if (ptr == NULL){
       return lval_undef();
@@ -120,6 +123,5 @@ bltn_ptr get_builtin(char* key){
       return &atom_fn;
    } if (strcmp("list?", key) == 0){
       return &is_list_fn;
-   }
-   return NULL;
+   }   return NULL;
 }
