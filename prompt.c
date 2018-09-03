@@ -64,7 +64,6 @@ int main(int argc, char** argv) {
             // print AST
             // mpc_ast_print(r.output);
             lval* result = parse_eval(r.output, session_env);
-            printf("\n");
             if (result->type == LVAL_TERMINATE){
                 lval_del(result);
                 free(input);
@@ -72,6 +71,7 @@ int main(int argc, char** argv) {
                 break;
             }
             print_lval_sym_eval(session_env, result, False);
+            printf("\n");
             lval_del(result);
             mpc_ast_delete(r.output);
         } else {
