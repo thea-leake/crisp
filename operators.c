@@ -437,6 +437,16 @@ lval* atom_fn(env* e, list* l){
         }
     } return lval_bool(False);
 }
+
+lval* is_list_fn(env* e, list* l){
+    if (l == NULL){
+        return lval_err("#builtin:list?: no operand provided");
+    } if (l->expr->type == LVAL_LIST){
+        return lval_bool(True);
+    } return lval_bool(False);
+}
+
+
 bool int_compat(lval* l){
     if ((l->type == LVAL_NUM_INT) || (l->type == LVAL_NUM_FLOAT)){
         float val = get_num(l);

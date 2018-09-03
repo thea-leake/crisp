@@ -118,6 +118,8 @@ bltn_ptr get_builtin(char* key){
       return &quit_fn;
    } if (strcmp("atom?", key) == 0){
       return &atom_fn;
+   } if (strcmp("list?", key) == 0){
+      return &is_list_fn;
    }
    return NULL;
 }
