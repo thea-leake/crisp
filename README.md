@@ -27,62 +27,35 @@ Current external dependencies are:
 
 # Example usage:
 ```lisp
-$ ./bin/crispy
+./bin/crispy
 Crispy lisp interpreter.  Type (quit) to exit.
-crispy> (define b 3)
+crispy> (define nil? (lambda '(x) '(if (= nil x) true false)))
 nil
-crispy> (define c 5)
-nil
-crispy> (define c 4)
-ERROR:#builtin:define: value already defined
-crispy> (if true (+ 3 4 ( * 3 4 c)) (- 12 (* 3 b)))
-67
-crispy> (and true c 3 false 4)
+crispy> (nil? 5)
 false
-crispy> (or false nil false)
-false
-crispy> (or false  b 1 true)
-3
-crispy> (= "grr" "grr")
+crispy> (nil? nil)
 true
-crispy> (= "grr" b)
-false
-crispy> (define eq (lambda '(a b) '(= a b)))
-nil
-crispy> (eq "grr" 1)
-false
-crispy> (define a (lambda '(b c d e) '(if (= c d) ( * d e ) ( a b (* c 2 ) d e))))
-nil
-crispy> (a + 2 8 4)
-32
-crispy> (let '(a (lambda '(a b) '(+ a b))) a 1 2 )
-3
-crispy>  (cons "grr" '( a b true ))
-("grr" SYMBOL:a SYMBOL:b true)
-crispy> (list 2 b a (+ b 3))
-(2 SYMBOL:b SYMBOL:a 6)
-crispy> (car '( 2 b (+ c 3))
-<stdin>:1:21: error: expected '"', '-', one or more of one of '0123456789', "true", "false", "nil", one or more of one of 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:!_%=?-+*/', '(', ''' or ')' at end of input
-crispy> (car '( 2 b (+ c 3)))
-2
-crispy> (cdr '( 2 b (+ b 3)))
-(SYMBOL:b (SYMBOL:+ SYMBOL:b 3))
-crispy> (cons c (cdr (list 2 b (+ b 3))))
-(5 SYMBOL:b 6)
-crispy> ((lambda '(b a) '(a b b)) 2 + )
-4
-crispy> ((lambda '() '( + 1 4 )))
-5
-Goodbye.
-
-$ ./bin/crispy
-Crispy lisp interpreter.  Type (quit) to exit.
 crispy> (define range (lambda '(r) '(let '(b (lambda '(c d) '(if (= c 0) d (b (- c 1 ) (cons c d )) )))  b r '()  )))
 nil
 crispy> (range 10)
 (0 1 2 3 4 5 6 7 8 9)
-crispy> (quit)
+crispy> ((lambda '() '( + 1 4 )))
+5
+crispy> (or false nil false)
+false
+crispy> (or false  "grr" 1 true)
+"grr"
+crispy> (define b "rarr")
+nil
+crispy> (= "grr" b)
+false
+crispy> (define c 1)
+nil
+crispy> (and true c 3 false 4)
+false
+crispy> (and true c 3 )
+3
+crispy> ^D
 Ending session.
 Goodbye.
-
- ```
+```
