@@ -13,7 +13,6 @@ int main(int argc, char** argv) {
     // Version and exit information
     printf("Crispy lisp interpreter.  Type (quit) to exit.\n");
 
-    mpc_parser_t* Bool = mpc_new("bool");
     mpc_parser_t* Integer = mpc_new("integer");
     mpc_parser_t* Float = mpc_new("float");
     mpc_parser_t* Number = mpc_new("number");
@@ -27,20 +26,19 @@ int main(int argc, char** argv) {
 
     mpca_lang(MPCA_LANG_DEFAULT,
         "                                                                          \
-            bool:    \"true\" | \"false\"                                         ;\
             integer:  /-?[0-9]+/                                                  ;\
             float:    /-?[0-9]+\\.[0-9]+/                                         ;\
             number:   <float> | <integer>                                         ;\
             string:   /\"(\\\\.|[^\"])*\"/                                        ;\
             symbol:   /[a-zA-Z:!_%=\\?\\-\\+\\*\\/]+/                             ;\
-            atom:     <string> | <number> | <bool> | <symbol>                     ;\
+            atom:     <string> | <number> | <symbol>                              ;\
             list:     <atom>+ |'(' <atom>+ ')' | <atom>+ <list>+ |                 \
                       '(' <element>+')' | '('')'                                  ;\
             element:   <atom> | <list> | <literal>                                ;\
             literal:  '''<list>                                                   ;\
             expr:     /^/ <list>| <literal> /$/                                   ;\
         ",
-        Bool, Integer, Float, Number, String, Symbol, Atom, List,
+        Integer, Float, Number, String, Symbol, Atom, List,
         Element, Literal, Expr
     );
     env* session_env = init_env(NULL);
@@ -85,8 +83,8 @@ int main(int argc, char** argv) {
 
     // clean up our parsers from memory
     mpc_cleanup(
-        11,
-        Bool, Integer, Float, Number, String, Symbol, Atom, List,
+        10,
+        Integer, Float, Number, String, Symbol, Atom, List,
         Element, Literal, Expr
     );
     return 0;

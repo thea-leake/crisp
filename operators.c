@@ -307,8 +307,10 @@ lval* if_fn(env* e, list* l){
     } if (l->next == NULL){
         return lval_err("#builtin:if: missing true cond");
     }
-    if (l->next->next->next != NULL){
-        return lval_err("#builtin:if: too many operands");
+    if (l->next->next != NULL){
+        if (l->next->next->next != NULL){
+            return lval_err("#builtin:if: too many operands");
+        }
     }
     lval* r = eval_lval(e, l->expr);
     if (is_true(r)) {
