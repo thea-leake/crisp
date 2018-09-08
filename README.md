@@ -6,7 +6,8 @@ It originally started around the [Build Your Own Lisp](http://www.buildyourownli
  - It currently uses Clangs TCO build option, however many of the recursive functions are currently not TCO compatible.
  - It still has one loop - for the repl - the l part of 'repl'.
  - Numeric functions automatically downcast return to int when return val can be losslessly converted to int.
- - Repo for documentation is [here](https://github.com/thea-leake/crispy-docs), however I do not have it hosted anywhere yet.
+ - Repo for documentation is [here](https://github.com/thea-leake/crispy-docs).
+ - Documentation is hosted [here](https://blooming-hollows-95289.herokuapp.com/).
 
 # Build:
 ``` make build```
