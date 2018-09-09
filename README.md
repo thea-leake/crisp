@@ -7,7 +7,7 @@ It originally started around the [Build Your Own Lisp](http://www.buildyourownli
  - It still has one loop - for the repl - the l part of 'repl'.
  - Numeric functions automatically downcast return to int when return val can be losslessly converted to int.
  - Repo for documentation is [here](https://github.com/thea-leake/crispy-docs).
- - Documentation is hosted [here](https://blooming-hollows-95289.herokuapp.com/).
+ - Documentation is hosted [here](https://crispy-lisp.herokuapp.com/).
 
 # Build:
 ``` make build```
