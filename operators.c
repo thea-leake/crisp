@@ -303,9 +303,14 @@ bool is_true(lval* v){
             return True;
         }
         return False;
-    } if (t == LVAL_NIL) {
+    }
+    if (t == LVAL_NIL) {
         return False;
-    } if (t == LVAL_LIST){
+    }
+    if (t == LVAL_ERR) {
+        return False;
+    }
+    if (t == LVAL_LIST){
         if (v->list->expr != NULL || v->list->next != NULL){
             return True;
         }
@@ -443,14 +448,29 @@ lval* quit_fn(env* e, list* l){
 lval* atom_fn(env* e, list* l){
     if (l == NULL){
         return lval_err("#builtin:atom?: no operand provided");
-    } if (l->next == NULL) {
+    }
+    if (l->next == NULL) {
+        if (l->expr->type == LVAL_SYM){
+            lval* v = get_val(e, l->expr->sym);
+            if (v->type == LVAL_LIST){
+                if (v->list != NULL){
+                    return lval_bool(False);
+                }
+            }
+            return lval_bool(True);
+        }
         if (l->expr->type != LVAL_LIST){
             return lval_bool(True);
         }
         if( l->expr->list == NULL){
             return lval_bool(True);
         }
-    } return lval_bool(False);
+        printf("Hit end of control stmt\n");
+    }
+    if (l->expr == NULL) {
+        return lval_err("builtin:atom?: operand is null");
+    }
+    return lval_bool(False);
 }
 
 lval* is_list_fn(env* e, list* l){
@@ -459,17 +479,21 @@ lval* is_list_fn(env* e, list* l){
     }
 
     if (l->next != NULL){
-        return lval_err("#builtin:list?: Too many operands, only takes one list");
+        return lval_err("#builtin:list?: Too many operands, only takes one");
     }
 
     if (l->expr->type == LVAL_SYM){
         lval* v = get_val(e, l->expr->sym);
-        return is_list_fn(e, v->list);
+        if (v->type == LVAL_LIST){
+            return lval_bool(True);
+        }
     }
 
     if (l->expr->type == LVAL_LIST){
         return lval_bool(True);
-    } return lval_bool(False);
+    }
+
+    return lval_bool(False);
 }
 
 
