@@ -465,7 +465,6 @@ lval* atom_fn(env* e, list* l){
         if( l->expr->list == NULL){
             return lval_bool(True);
         }
-        printf("Hit end of control stmt\n");
     }
     if (l->expr == NULL) {
         return lval_err("builtin:atom?: operand is null");
