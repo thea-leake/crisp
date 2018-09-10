@@ -205,9 +205,15 @@ lval* eq_fn(env* e, list* l){
 }
 
 lval* car_fn(env* e, list* l){
-    (void) e;
     if (l == NULL ){
         return lval_err("#builtin:car: received no operands");
+    }
+    if (l->next != NULL){
+        return lval_err("#builtin:car: Too many operands, only takes one list");
+    }
+    if (l->expr->type == LVAL_SYM){
+        lval* v = get_val(e, l->expr->sym);
+        return car_fn(e, v->list);
     }
     if (l->expr->type != LVAL_LIST){
         return lval_err("#builtin:car: expected list operand");
@@ -218,10 +224,17 @@ lval* car_fn(env* e, list* l){
     return first_expr(l->expr->list);
 }
 
+
 lval* cdr_fn(env* e, list* l){
-    (void) e;
     if (l == NULL ){
         return lval_err("#builtin:cdr: received no operands");
+    }
+    if (l->next != NULL){
+        return lval_err("#builtin:cdr: Too many operands, only takes one list");
+    }
+    if (l->expr->type == LVAL_SYM){
+        lval* v = get_val(e, l->expr->sym);
+        return cdr_fn(e, v->list);
     }
     if (l->expr->type != LVAL_LIST){
         return lval_err("#builtin:cdr: expected list arg");
@@ -443,7 +456,18 @@ lval* atom_fn(env* e, list* l){
 lval* is_list_fn(env* e, list* l){
     if (l == NULL){
         return lval_err("#builtin:list?: no operand provided");
-    } if (l->expr->type == LVAL_LIST){
+    }
+
+    if (l->next != NULL){
+        return lval_err("#builtin:list?: Too many operands, only takes one list");
+    }
+
+    if (l->expr->type == LVAL_SYM){
+        lval* v = get_val(e, l->expr->sym);
+        return is_list_fn(e, v->list);
+    }
+
+    if (l->expr->type == LVAL_LIST){
         return lval_bool(True);
     } return lval_bool(False);
 }

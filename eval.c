@@ -40,8 +40,7 @@ lval* eval(env* e, list* l){
    if (l->next == NULL){
       return copy_lval(e, eval_lval(e, first_expr));
    }
-   print_list(e, l);
-   return lval_err("EVAL:First list expression doesn't accept params");
+   return lval_list(copy_list(e, l));
 }
 
 
