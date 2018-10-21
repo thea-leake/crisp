@@ -52,7 +52,7 @@ expr* init_partial_expr(char c){
     val_container->list = NULL;
     val_container->symbol = NULL;
     val_container->partial = val_partial;
-    val_partial->count = 1;
+    val_partial->count = 0;
     val_partial->prev = NULL;
     val_partial->c = c;
     return val_container;
@@ -72,7 +72,7 @@ cell* init_atom(cell* prev, char c){
     return new_cell;
 }
 
-cell* add_char(cell* prev_cell, char c,type type){
+cell* add_char(cell* prev_cell, char c){
     if (prev_cell == NULL){
         return init_atom(NULL, c);
     }
@@ -90,19 +90,18 @@ cell* add_char(cell* prev_cell, char c,type type){
         nw_chr->count = 0;
     }
     nw_chr->prev = prev;
-    // Updating head as we've prepended an item to the list
     prev_cell->val->partial = nw_chr;
     return prev_cell;
 }
 
-void prev_cell_to_char(char* c, partial* curr){
+void char_lst_to_char(char* c, partial* curr){
     if (curr ==  NULL ){
         return;
     }
     c[curr->count] = curr->c;
     partial* prev = curr->prev;
     free(curr);
-    prev_cell_to_char(c, prev);
+    char_lst_to_char(c, prev);
 }
 
 
@@ -112,8 +111,8 @@ char* cell_to_char(partial* string){
         return NULL;
     }
     char* char_array = malloc((sizeof(char) * string->count + 1 ));
-    char_array[string->count] = '\0';
-    prev_cell_to_char(char_array, string);
+    char_array[string->count + 1] = '\0';
+    char_lst_to_char(char_array, string);
     return char_array;
 }
 
@@ -135,23 +134,21 @@ cell* handle_whitespace(cell* prev_cell){
         return prev_cell;
     }
     return roll_up_atom(prev_cell);
-
 }
 
 
-cell* read_line(iosrc* io, cell* prev_cell, int char_count){
+cell* read_line(iosrc* io, cell* prev_cell){
     char input = getc(io->input_src);
     if (input == EOF){
-        printf("Goodbye!\n");
         exit(0);
     }
     if (input == '\n'){
-        return prev_cell;
+        return handle_whitespace(prev_cell);
     }
     if (input == ' ' || input == '\t' ){
-        return read_line(io, handle_whitespace(prev_cell), char_count );
+        return read_line(io, handle_whitespace(prev_cell));
     }
-    return read_line(io, add_char(prev_cell, input, SYMBOL), char_count + 1);
+    return read_line(io, add_char(prev_cell, input));
 }
 
 
@@ -181,7 +178,7 @@ int main(){
     repl->output_src = stdout;
     while (true) {
         printf("Getting line:\n");
-        cell* input_cell = read_line(repl, NULL, 0);
+        cell* input_cell = read_line(repl, NULL);
         print_list(input_cell);
         free(input_cell);
         // now need to add cascading free
