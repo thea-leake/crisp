@@ -37,6 +37,7 @@ struct partial {
     int count;
     partial* prev;
     char c;
+    int escaped;
 };
 
 struct iosrc {
@@ -57,6 +58,7 @@ expr* init_partial_expr(char c){
     val_container->symbol = NULL;
     val_container->partial = val_partial;
     val_partial->count = 0;
+    val_partial->escaped = false;
     val_partial->prev = NULL;
     val_partial->c = c;
     return val_container;
@@ -76,6 +78,25 @@ cell* init_atom(cell* prev, char c){
     return new_cell;
 }
 
+partial* append_partial(partial* prev, char c){
+    partial* nw_chr = malloc(sizeof(partial));
+    if (c == '\\'){
+        nw_chr->c = '!';
+        nw_chr->escaped = true;
+    } else {
+        nw_chr->c = c;
+        nw_chr->escaped = false;
+    }
+    nw_chr->prev = prev;
+    if (prev != NULL){
+        nw_chr->count = prev->count + 1;
+    } else {
+        nw_chr->count = 0;
+    }
+    nw_chr->prev = prev;
+    return nw_chr;
+}
+
 cell* add_char(cell* prev_cell, char c){
     if (prev_cell == NULL){
         return init_atom(NULL, c);
@@ -85,16 +106,12 @@ cell* add_char(cell* prev_cell, char c){
 
     }
     partial* prev = prev_cell->val->partial;
-    partial* nw_chr = malloc(sizeof(partial));
-    nw_chr->c = c;
-    nw_chr->prev = prev;
-    if (prev != NULL){
-        nw_chr->count = prev->count + 1;
-    } else {
-        nw_chr->count = 0;
+    if (prev->escaped == true){
+        prev->c = c;
+        prev->escaped = false;
+        return prev_cell;
     }
-    nw_chr->prev = prev;
-    prev_cell->val->partial = nw_chr;
+    prev_cell->val->partial = append_partial(prev, c);
     return prev_cell;
 }
 
@@ -133,9 +150,12 @@ cell* roll_up_atom(cell* item){
     return item;
 }
 
-cell* handle_whitespace(cell* prev_cell){
+cell* handle_whitespace(cell* prev_cell, char c){
     if (prev_cell != NULL && prev_cell->val->type != PARTIAL){
         return prev_cell;
+    }
+    if (prev_cell->val->partial->escaped == true){
+        return add_char(prev_cell, c);
     }
     return roll_up_atom(prev_cell);
 }
@@ -148,10 +168,10 @@ cell* read_line(iosrc* io, cell* prev_cell){
         exit(0);
     }
     if (input == '\n'){
-        return handle_whitespace(prev_cell);
+        return handle_whitespace(prev_cell, input);
     }
     if (input == ' ' || input == '\t' ){
-        return read_line(io, handle_whitespace(prev_cell));
+        return read_line(io, handle_whitespace(prev_cell, input));
     }
     return read_line(io, add_char(prev_cell, input));
 }
