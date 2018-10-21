@@ -45,6 +45,10 @@ struct iosrc {
 };
 
 
+void delete_partial(partial* p);
+void delete_expr(expr* e);
+
+
 expr* init_partial_expr(char c){
     expr* val_container = malloc(sizeof(expr));
     partial* val_partial = malloc(sizeof(partial));
@@ -140,6 +144,7 @@ cell* handle_whitespace(cell* prev_cell){
 cell* read_line(iosrc* io, cell* prev_cell){
     char input = getc(io->input_src);
     if (input == EOF){
+        free(io);
         exit(0);
     }
     if (input == '\n'){
@@ -168,8 +173,41 @@ void print_list(cell* list){
     }
         printf("Not symbol\n");
         return print_list(list->prev);
+}
 
+void delete_partial(partial* p){
+    if (p == NULL){
+        return;
+    }
+    partial* prev = p->prev;
+    free(p);
+    delete_partial(prev);
+}
 
+void delete_expr(expr* e){
+    if (e->type == PARTIAL){
+        delete_partial(e->partial);
+    } else if (e->type == SYMBOL){
+        free(e->symbol);
+    } // add fw delete list
+    free(e);
+}
+
+void delete_cell_bw(cell* c){
+    if (c == NULL){
+        return;
+    }
+    cell* prev = c->prev;
+    cell* parent = c->parent;
+    delete_expr(c->val);
+    free(c);
+    if (prev == NULL){
+        if (parent == NULL){
+            return;
+        }
+        return delete_cell_bw(parent);
+    }
+    delete_cell_bw(prev);
 }
 
 int main(){
@@ -180,7 +218,7 @@ int main(){
         printf("Getting line:\n");
         cell* input_cell = read_line(repl, NULL);
         print_list(input_cell);
-        free(input_cell);
+        delete_cell_bw(input_cell);
         // now need to add cascading free
     }
     free(repl);
