@@ -183,6 +183,7 @@ lval* copy_lval(env* e, lval* v){
 
 lval* copy_maybe_item(env* e, list* l){
   if (l->expr == NULL){
+    printf("No expression in list item!\n");
     return NULL;
   }
   return copy_lval(e, l->expr);
@@ -252,7 +253,6 @@ void lval_del(lval* v){
         case LVAL_SYM:
             free(v->sym); break;
         case LVAL_LAMBDA:
-          printf("Collecting unneeded lambda\n");
            list_del(v->lambda->var_expr);
            list_del(v->lambda->eval_expr);
            free(v->lambda);
