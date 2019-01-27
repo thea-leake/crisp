@@ -25,6 +25,7 @@ lval* put_let(env* e, list* l);
 lval* atom_fn(env* e, list* l);
 lval* is_list_fn(env* e, list* l);
 lval* quit_fn(env* e, list* l);
+lval* print_fn(env* e, list* l);
 
 lval* sum_numeric(env* e, list* l, float accum);
 lval* sub_numeric(env* e, list* l, float accum);

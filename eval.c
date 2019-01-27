@@ -62,7 +62,6 @@ lval* eval_lambda(env* e, list * l){
     del_env(fn_vars);
     lval_del(env_set);
     return lambda_eval;
-
 }
 
 lval* eval_func(env* e, list * l){

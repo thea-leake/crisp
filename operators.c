@@ -506,3 +506,12 @@ bool int_compat(lval* l){
     }
     return False;
 }
+
+lval* print_fn(env* e, list* l){
+  if (l == NULL){
+    return lval_nil();
+  }
+  print_lval(e, l->expr);
+  printf("\n");
+  return print_fn(e, l->next);
+}

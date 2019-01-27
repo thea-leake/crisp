@@ -180,11 +180,19 @@ lval* copy_lval(env* e, lval* v){
    }
 }
 
+
+lval* copy_maybe_item(env* e, list* l){
+  if (l->expr == NULL){
+    return NULL;
+  }
+  return copy_lval(e, l->expr);
+}
+
 list* copy_list(env* e, list* l){
    if (l ==  NULL){
       return NULL;
    }
-   lval* v = copy_lval(e, l->expr);
+   lval* v = copy_maybe_item(e, l);
    if (l->next == NULL){
       return prepend_create(v, NULL);
    }
@@ -244,6 +252,7 @@ void lval_del(lval* v){
         case LVAL_SYM:
             free(v->sym); break;
         case LVAL_LAMBDA:
+          printf("Collecting unneeded lambda\n");
            list_del(v->lambda->var_expr);
            list_del(v->lambda->eval_expr);
            free(v->lambda);
@@ -285,11 +294,15 @@ void print_list_maybe_eval(env* e, list* l, bool eval_symbols){
 
 void print_list_contents(env* e, list* l, bool eval_symbols){
    if (l != NULL){
-      print_lval_sym_eval(e, l->expr, eval_symbols);
-      if (l->next != NULL){
-         printf(" ");
-         print_list_contents(e, l->next, eval_symbols);
-      }
+     if (l->expr == NULL){
+       printf("Cell expr is null\n");
+     } else {
+       print_lval_sym_eval(e, l->expr, eval_symbols);
+     }
+     if (l->next != NULL) {
+       printf(" ");
+       print_list_contents(e, l->next, eval_symbols);
+     }
    }
 }
 
@@ -307,6 +320,10 @@ void print_lval(env* e, lval* v){
    print_lval_sym_eval(e, v, True);
 }
 void print_lval_sym_eval(env* e, lval* v, bool eval){
+  if (v == NULL){
+    printf("Unable to print NULL val");
+    return;
+  }
     switch(v->type) {
     case LVAL_ERR:
         printf("ERROR:%s", v->err);
@@ -315,7 +332,7 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         printf("%s", v->str);
         break;
     case LVAL_FUNC:
-        printf("#builtin:%s", v->sym);
+        printf("%s", v->sym);
         break;
     case LVAL_BOOL:
         print_bool(v->bool);
@@ -333,7 +350,7 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         if (eval == True){
            print_lval(e, get_val(e, v->sym));
         } else {
-           printf("SYMBOL:%s", v->sym);
+           printf("%s", v->sym);
         }
         break;
     case LVAL_NIL:
@@ -346,7 +363,12 @@ void print_lval_sym_eval(env* e, lval* v, bool eval){
         printf("undef_sym");
         break;
     case LVAL_LAMBDA:
-        printf("#lambda");
+        printf("(lambda ");
+        printf("'");
+        print_list_symbols(e, v->lambda->var_expr);
+        printf(" '");
+        print_list_symbols(e, v->lambda->eval_expr);
+        printf(")");
         break;
     case LVAL_TERMINATE:
         printf("Terminated");
