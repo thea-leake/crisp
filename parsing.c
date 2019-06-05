@@ -19,7 +19,7 @@ list* build_list(mpc_ast_t* t, env* e, int count, int accum_count, bool is_liter
     int next_count = accum_count + 1;
     if (next_count >= count) {
         if (tmp->type != LVAL_NOOP){
-            return  prepend_create(tmp, NULL);
+          return  prepend_create(tmp, NULL);
         }
         return NULL;
     }
@@ -115,7 +115,7 @@ int get_ast_expr_index(mpc_ast_t* t, int index){
 
 int get_literal_list_index(mpc_ast_t* t, int index){
     mpc_ast_t* ti = t->children[index];
-    if (strstr(ti->tag, "atom") || (strstr(ti->tag, "list"))){
+    if (strstr(ti->tag, "atom") || (strstr(ti->tag, "list")) || ((index + 1) >= t->children_num )){
           return index;
     }
     int n = index + 1;
